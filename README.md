@@ -11,3 +11,4 @@
     4. tạo route dashboard và home
     5. tạo file rotes tổng
     6. nhúng routes vào app.tsx
+    7. npm i express cors dot env, npm i -D nodemon,typescript,ts-node-dev,@types/node,@types/express,@types/cors
