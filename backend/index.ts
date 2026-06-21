@@ -4,6 +4,8 @@ import dotenv from "dotenv";
 dotenv.config();
 import clientRoutes from "./routes/client/index.route";
 import adminRoutes from "./routes/admin/index.route";
+import database from "./config/database";
+database();
 
 const app: Express = express();
 const port = Number(process.env.PORT);

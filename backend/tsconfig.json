@@ -2,8 +2,25 @@
   "compilerOptions": {
     "target": "ES6",
     "module": "CommonJS",
+    "moduleResolution": "node",
+    "ignoreDeprecations": "6.0",
     "removeComments": true,
     "esModuleInterop": true,
-    "outDir": "dist"
-  }
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "outDir": "dist",
+    "rootDir": "./",
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "lib": ["ES6"],
+    "typeRoots": [
+        "./node_modules/@types",
+        "./types"
+    ],
+    "types": ["node", "mongoose-slug-updater"]
+  },
+  "include": ["**/*.ts"],
+  "exclude": ["node_modules", "dist"]
 }
