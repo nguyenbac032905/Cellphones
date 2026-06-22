@@ -1,16 +1,31 @@
 import { Outlet } from "react-router-dom";
+import{ useState } from 'react';
+import { Layout, theme } from 'antd';
+import AdminSidebar from "./components/AdminSidebar";
+import AdminHeader from "./components/AdminHeader";
+const { Content } = Layout;
 
 const AdminLayout = () => {
-    return(
-        <div className="flex min-h-screen">
-            <aside className="w-64 bg-black text-white p-5">Sidebar</aside>
-            <div className="flex-1">
-                <header className="bg-gray-100 p-4 border-b">Admin header</header>
-            </div>
-            <main className="p-5">
-                <Outlet />
-            </main>
-        </div>
+    const [collapsed, setCollapsed] = useState(false);
+    const {token: { colorBgContainer, borderRadiusLG }} = theme.useToken();
+    return (
+        <Layout style={{ minHeight: "100vh"}}>
+            <AdminSidebar collapsed={collapsed} setCollapsed={setCollapsed}/>
+            <Layout>
+                <AdminHeader collapsed={collapsed} setCollapsed={setCollapsed}/>
+                <Content
+                    style={{
+                        margin: '24px 16px',
+                        padding: 24,
+                        minHeight: 280,
+                        background: colorBgContainer,
+                        borderRadius: borderRadiusLG,
+                    }}
+                >
+                    <Outlet />
+                </Content>
+            </Layout>
+        </Layout>
     )
 }
 export default AdminLayout;
