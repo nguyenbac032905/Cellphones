@@ -1,4 +1,6 @@
 import { Request,Response } from "express";
-export const index = (req: Request, res: Response) => {
-    res.json("admin products");
+import Product from "../../models/product.model";
+export const index = async (req: Request, res: Response) => {
+    const products = await Product.find({});
+    res.status(200).json(products);
 }

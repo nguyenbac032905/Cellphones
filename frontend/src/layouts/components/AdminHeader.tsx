@@ -1,22 +1,56 @@
 import {
+    BellFilled,
+    DownOutlined,
     MenuFoldOutlined,
     MenuUnfoldOutlined,
+    UserOutlined,
+    LogoutOutlined,
 } from '@ant-design/icons';
-import { Button, Input, Layout, theme } from 'antd';
+import { Badge, Button, Input, Layout, theme, Dropdown} from 'antd';
 import type { Dispatch, SetStateAction } from 'react';
+import type { MenuProps } from 'antd';
 
-const { Header} = Layout;
-const {Search} = Input;
+const { Header } = Layout;
+const { Search } = Input;
 
 type AdminHeaderProps = {
-  collapsed: boolean;
-  setCollapsed: Dispatch<SetStateAction<boolean>>;
+    collapsed: boolean;
+    setCollapsed: Dispatch<SetStateAction<boolean>>;
 };
 
-const AdminHeader = ({collapsed, setCollapsed}: AdminHeaderProps) => {
-    const { token: { colorBgContainer}, } = theme.useToken();
-    return(
-        <Header style={{ padding: 0, background: colorBgContainer }}>
+const AdminHeader = ({ collapsed, setCollapsed }: AdminHeaderProps) => {
+    const { token: { colorBgContainer }, } = theme.useToken();
+    const items: MenuProps['items'] = [
+        {
+            key: 'myAccount',
+            label: 'My Account',
+            disabled: true,
+        },
+        {
+            type: 'divider',
+        },
+        {
+            key: 'profile',
+            label: 'Profile',
+            icon: <UserOutlined />
+        },
+        {
+            key: 'logout',
+            label: 'Logout',
+            icon: <LogoutOutlined />,
+            danger: true
+        }
+    ];
+    const handleMenuClick: MenuProps["onClick"] = (e) => {
+        if(e.key === "profile"){
+            console.log("Link to profile");
+        }
+        if(e.key === "logout"){
+            console.log("Logout");
+        }
+    }
+    return (
+        <Header style={{ paddingLeft: 0, background: colorBgContainer }}>
             <div className="grid grid-cols-9 items-center gap-x-10">
                 <Button
                     className='col-span-1'
@@ -29,16 +63,36 @@ const AdminHeader = ({collapsed, setCollapsed}: AdminHeaderProps) => {
                         height: 64,
                     }}
                 />
-                <div className='col-span-4'><Search placeholder="Tìm kiếm..."/></div>
-                <div className='col-span-4 flex'>
-                    <span>Notify</span>
-                    <div className='flex'>
-                        <span>avatar</span>
-                        <span>name</span>
+                <div className='xl:col-span-4 col-span-5'><Search placeholder="Tìm kiếm..." /></div>
+                <div className="xl:col-span-4 col-span-3 flex items-center justify-end gap-6">
+                    <div className="relative cursor-pointer p-2">
+                        <Badge count={6} size="small">
+                            <BellFilled className="text-xl !text-[#1677ff]" />
+                        </Badge>
                     </div>
+                    <Dropdown menu={{items, onClick: handleMenuClick}} trigger={["click"]}>
+                        <div className="flex items-center gap-3 px-3 py-1 rounded-full cursor-pointer hover:bg-gray-100">
+                            <div className="w-9 h-9 rounded-full overflow-hidden border border-gray-200">
+                                <img
+                                    src="../../../public/avatar.jpg"
+                                    alt="avatar"
+                                    className="w-full h-full object-cover"
+                                />
+                            </div>
+                            <div className="leading-tight">
+                                <p className="font-semibold text-gray-800 text-sm">
+                                    Nguyễn Văn Bắc
+                                </p>
+                                <p className="text-xs text-gray-500">
+                                    Admin
+                                </p>
+                            </div>
+                            <DownOutlined className="text-xs text-gray-500" />
+                        </div>
+                    </Dropdown>
                 </div>
             </div>
         </Header>
-)
+    )
 }
 export default AdminHeader;

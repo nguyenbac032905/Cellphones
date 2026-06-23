@@ -13,3 +13,18 @@
     6. nhúng routes vào app.tsx
     7. npm i express cors dotenv, npm i -D nodemon,typescript,ts-node-dev,@types/node,@types/express,@types/cors
     8. cau hinh thu muc
+3. Kết nối mongoDb
+    1.Thêm DATABASE_URL vào .env và tạo file database.config để kết nối để database,
+    2. Cài mongoose-slug-updater và thêm file types cho nó vì thư viện này chưa hỗ trợ ts, khai báo nơi đọc types trong tsconfig 
+    3. Tạo model Product và ProductCategory
+    4. Thêm index cho Product và ProductCategory cho hợp lí
+    5. call thử api
+4. Dựng layout phía admin
+    1. Nhúng layout mẫu của ant
+    2. tách ra thành các components sidebar, header admin.
+    3. bổ sung thanh tìm kiếm, block user và notifycation trênh header
+5. Call Api bằng axios
+    1.tạo file handle error
+    2.Cấu hình axios instance và tạo interceptor cho privateClient và publicClient (handle error cho interceptor)
+    3.Tạo service product để call api và trả về dữ liệu chuẩn
+    4. Gọi service bên UI

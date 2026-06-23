@@ -1,3 +1,3 @@
 export default {
-    prefixAdmin: "/admin"
+    prefixAdmin: "/admin/api"
 };
