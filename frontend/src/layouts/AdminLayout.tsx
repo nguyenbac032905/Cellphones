@@ -7,7 +7,6 @@ const { Content } = Layout;
 
 const AdminLayout = () => {
     const [collapsed, setCollapsed] = useState(false);
-    const {token: { colorBgContainer, borderRadiusLG }} = theme.useToken();
     return (
         <Layout style={{ minHeight: "100vh"}}>
             <AdminSidebar collapsed={collapsed} setCollapsed={setCollapsed}/>
@@ -17,9 +16,7 @@ const AdminLayout = () => {
                     style={{
                         margin: '24px 16px',
                         padding: 24,
-                        minHeight: 280,
-                        background: colorBgContainer,
-                        borderRadius: borderRadiusLG,
+                        minHeight: 280
                     }}
                 >
                     <Outlet />

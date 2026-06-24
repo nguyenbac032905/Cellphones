@@ -7,7 +7,7 @@ export const productAdminService = {
         try {
             const res = await publicClient.get<Product[]>("/admin/api/products");
             // Axios trả data trực tiếp trong res.data
-            return res.data;
+            return res.data.map((product) => ({ ...product, id: product._id }));
         } catch (error) {
             const message = getErrorMessage(error);
             throw new Error(message);

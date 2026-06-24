@@ -1,4 +1,5 @@
 export interface Product {
+    id?: string;
     _id: string;
     title: string;
     product_category_id?: string | null;
