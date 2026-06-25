@@ -1,16 +1,18 @@
 import { publicClient } from "../../../shared/api/publicClient";
 import { getErrorMessage } from "../../../shared/utils/errorHandler";
-import type { Product } from "../types/products.type";
+import type { ProductListResponse, ProductQuery } from "../types/products.type";
 
 export const productAdminService = {
-    getAll: async (): Promise<Product[]> => {
+    getAll: async (query: ProductQuery): Promise<ProductListResponse> => {
         try {
-            const res = await publicClient.get<Product[]>("/admin/api/products");
-            // Axios trả data trực tiếp trong res.data
-            return res.data.map((product) => ({ ...product, id: product._id }));
+            const res = await publicClient.get<ProductListResponse>("/admin/api/products",{ params: query });
+            return {
+                pagination: res.data.pagination,
+                products: res.data.products
+            };
         } catch (error) {
             const message = getErrorMessage(error);
             throw new Error(message);
         }
-    },
+    }
 };

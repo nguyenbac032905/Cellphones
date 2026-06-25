@@ -28,3 +28,8 @@
     2.Cấu hình axios instance và tạo interceptor cho privateClient và publicClient (handle error cho interceptor)
     3.Tạo service product để call api và trả về dữ liệu chuẩn
     4. Gọi service bên UI
+6. Tạo giao diện trang products list admin
+    1.Tạo admin product table: tạo biến column để chứa tên các cột, sử dụng render để render ra mã tsx nếu cần. sử dụng thuộc tính pagination bottomCenter để căn giữa pagination sử dụng rowSelected để tạo checkbox chọn row và trả về rowKey
+    3.Tạo admin product Filter: sử dụng grid của tailwind để chia layout và responsive 
+    4.Tạo admin product Toolbar: sử dụng grid của tailwind để chia layout và responsive 
+    5.responsive cho table product, header admin

@@ -50,7 +50,7 @@ const AdminHeader = ({ collapsed, setCollapsed }: AdminHeaderProps) => {
         }
     }
     return (
-        <Header style={{ paddingLeft: 0, background: colorBgContainer }}>
+        <Header style={{ paddingLeft: 0, background: colorBgContainer, lineHeight: "normal", }}>
             <div className="grid grid-cols-9 items-center gap-x-10">
                 <Button
                     className='col-span-1'
@@ -63,8 +63,8 @@ const AdminHeader = ({ collapsed, setCollapsed }: AdminHeaderProps) => {
                         height: 64,
                     }}
                 />
-                <div className='xl:col-span-4 col-span-5'><Search placeholder="Tìm kiếm..." /></div>
-                <div className="xl:col-span-4 col-span-3 flex items-center justify-end gap-6">
+                <div className='col-span-4 max-sm:ml-2'><Search placeholder="Tìm kiếm..." /></div>
+                <div className="col-span-4 flex items-center justify-end gap-2">
                     <div className="relative cursor-pointer p-2">
                         <Badge count={6} size="small">
                             <BellFilled className="text-xl !text-[#1677ff]" />
@@ -79,7 +79,7 @@ const AdminHeader = ({ collapsed, setCollapsed }: AdminHeaderProps) => {
                                     className="w-full h-full object-cover"
                                 />
                             </div>
-                            <div className="leading-tight">
+                            <div className="leading-tight hidden lg:block">
                                 <p className="font-semibold text-gray-800 text-sm">
                                     Nguyễn Văn Bắc
                                 </p>

@@ -1,12 +1,12 @@
 import { Button, Image, Input, Space, Switch, Table } from "antd";
-import type { Product } from "../types/products.type";
+import type { Product, ProductListResponse, ProductQuery } from "../types/products.type";
 import { Link } from "react-router-dom";
-
 type Props = {
-    products: Product[];
-};
-
-const ProductTable = ({ products }: Props) => {
+    query: ProductQuery,
+    updateQuery: (values: Partial<ProductQuery>) => void,
+    data: ProductListResponse
+}
+const ProductTable = ({ data,query,updateQuery}: Props) => {
     const columns = [
         {
             title: "Position",
@@ -50,7 +50,7 @@ const ProductTable = ({ products }: Props) => {
                     checkedChildren="Active"
                     unCheckedChildren="Inactive"
                     onChange={(checked) => {
-                        console.log(record.id, checked);
+                        console.log(record._id, checked);
                         // gọi API update status ở đây
                     }}
                 />
@@ -61,12 +61,12 @@ const ProductTable = ({ products }: Props) => {
             key: "actions",
             render: (_: any, record: Product) => (
                 <Space>
-                    <Link to={`/admin/products/details/${record.id}`}>
+                    <Link to={`/admin/products/details/${record._id}`}>
                         <Button color="default" variant="outlined" style={{ width: 65 }}>
                             Chi tiết
                         </Button>
                     </Link>
-                    <Link to={`/admin/products/edit/${record.id}`}>
+                    <Link to={`/admin/products/edit/${record._id}`}>
                         <Button color="primary" variant="outlined" style={{ width: 65 }}>
                             Sửa
                         </Button>
@@ -81,13 +81,23 @@ const ProductTable = ({ products }: Props) => {
 
     return (
         <Table 
-            dataSource={products}
+            dataSource={data.products}
             columns={columns}
-            rowKey="id"
-            pagination={{position: ["bottomCenter"]}} 
+            rowKey="_id"
             className="overflow-hidden rounded-2xl border border-gray-200"
             rowSelection={{ type: "checkbox"}}
             scroll={{x:1000}}
+            pagination={{
+                position: ["bottomCenter"],
+                current: Number(data.pagination.page || 1),
+                pageSize: Number(data.pagination.limit || 4),
+                total: data.pagination.total,
+                onChange: (page) => {
+                    updateQuery({
+                        page: Number(page)
+                    });
+                }
+            }} 
         />
     )
 };

@@ -3,10 +3,17 @@ import {
     ReloadOutlined,
     SwapOutlined
 } from "@ant-design/icons";
-import { Card, Select } from "antd";
+import { Card, Select, TreeSelect } from "antd";
+import type { ProductQuery } from "../types/products.type";
+import { useAdminCategoriesTree } from "../../productCategories/hooks/useAdminCategoriesTree";
 
+type Props = {
+    query: ProductQuery,
+    updateQuery: (values: Partial<ProductQuery>) => void
+}
 
-const AdminProductFilter = () => {
+const AdminProductFilter = ({query, updateQuery}: Props) => {
+    const {data: categories} = useAdminCategoriesTree();
     return (
         <Card
             bordered={false}
@@ -23,7 +30,9 @@ const AdminProductFilter = () => {
                         <Select
                             variant="borderless"
                             className="w-full"
-                            defaultValue=""
+                            value={query.status}
+                            placeholder="Filter status"
+                            onChange={(value) => updateQuery({status: value, page:1})}
                             options={[
                                 { value: "", label: "All Status" },
                                 { value: "active", label: "Active" },
@@ -32,22 +41,31 @@ const AdminProductFilter = () => {
                         />
                     </div>
                     <div className="sm:col-span-2 border-r border-gray-200 px-4 py-4 flex items-center justify-center">
-                        <Select
+                        <TreeSelect
+                            value={query.category}
                             variant="borderless"
                             className="w-full"
-                            defaultValue=""
-                            options={[
-                                { value: "", label: "All category" },
-                                { value: "iphone", label: "iPhone" },
-                                { value: "oppo", label: "Oppo" },
-                            ]}
+                            placeholder="Filter category"
+                            treeData={categories}
+                            allowClear
+                            onChange={(value) => updateQuery({ category: value, page:1 })}
+                                treeDefaultExpandedKeys={
+                                categories[0]?._id ? [categories[0]._id] : []
+                            }
+                            fieldNames={{
+                                label: "title",
+                                value: "_id",
+                                children: "children"
+                            }}
                         />
                     </div>
                     <div className="sm:col-span-2 border-r border-gray-200 px-4 py-4 flex items-center justify-center">
                         <Select
                             variant="borderless"
                             className="w-full"
-                            defaultValue=""
+                            placeholder="Filter stock"
+                            value={query.stock}
+                            onChange={(value) => updateQuery({stock: value, page:1})}
                             options={[
                                 { value: "", label: "All stock" },
                                 { value: "instock", label: "In Stock" },
@@ -67,6 +85,8 @@ const AdminProductFilter = () => {
                                 variant="borderless"
                                 className="w-full"
                                 placeholder="Sort by"
+                                value={query.sort}
+                                onChange={(value) => updateQuery({sort: value})}
                                 options={[
                                     { value: "stock-asc", label: "Stock ↑" },
                                     { value: "stock-desc", label: "Stock ↓" },
@@ -79,7 +99,7 @@ const AdminProductFilter = () => {
                                 ]}
                             />
                         </div>
-                        <button className="col-span-1 flex items-center justify-center gap-2 border-r border-gray-200 text-red-500 transition hover:bg-red-50">
+                        <button onClick={() => updateQuery({status: "", category: "", stock: "", sort: "", search: ""})} className="col-span-1 flex items-center justify-center gap-2 border-r border-gray-200 text-red-500 transition hover:bg-red-50">
                             <ReloadOutlined />
                             <span className="hidden xl:block">Reset</span>
                         </button>

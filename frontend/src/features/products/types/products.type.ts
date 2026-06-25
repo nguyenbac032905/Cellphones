@@ -1,5 +1,4 @@
 export interface Product {
-    id?: string;
     _id: string;
     title: string;
     product_category_id?: string | null;
@@ -19,4 +18,24 @@ export interface Product {
     deletedAt?: string | null;
     createdAt: string;
     updatedAt: string;
+}
+
+export type ProductListResponse = {
+  products: Product[];
+  pagination: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
+};
+
+export interface ProductQuery{
+    status?: string;
+    stock?: string;
+    category?: string;
+    sort?: string;
+    search?: string;
+    page?: number;
+    limit?: number;
 }
