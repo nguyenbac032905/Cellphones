@@ -2,6 +2,7 @@
 import mongoose from "mongoose";
 import Product from "../../models/product.model";
 import { getAllChildCategoryIds } from "./productCategories.service";
+import { AppError } from "../../utils/AppError";
 
 type Query = {
   status?: string;
@@ -63,7 +64,7 @@ export const getProducts = async (query:Query = {}) => {
             sortOption = {position: -1}
             break;
     }
-
+    
     const pipeline: any[] = [];
     //search
     if(search){
@@ -134,3 +135,47 @@ export const getProducts = async (query:Query = {}) => {
         }
     }
 }
+
+export const updateProductService = async (req: any) => {
+    const id = req.params.productID;
+    if(!mongoose.Types.ObjectId.isValid(id)){
+        throw new AppError("Invalid product id", 400);
+    }
+    const productUpdateWhiteList = [
+        "title",
+        "product_category_id",
+        "description",
+        "content",
+        "price",
+        "discountPercentage",
+        "stock",
+        "thumbnail",
+        "images",
+        "status",
+        "position",
+        "featured"
+    ];
+
+     const updateFields: Record<string, any> = {};
+
+    productUpdateWhiteList.forEach((field) => {
+        if (req.body[field] !== undefined) {
+            updateFields[field] = req.body[field];
+        }
+    });
+
+    const product = await Product.findByIdAndUpdate(
+        id,
+        updateFields,
+        {
+            new: true,
+            runValidators: true
+        }
+    );
+
+    if(!product) {
+        throw new AppError("Product not found", 404);
+    }
+
+    return product;
+};

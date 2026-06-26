@@ -7,8 +7,7 @@ import { useAdminProducts } from "../hooks/useAdminProducts";
 
 const AdminProductsPage = () => {
     const {query, updateQuery} = useAdminProductQuery();
-    const {data, loading, error} = useAdminProducts(query);
-    console.log(query)
+    const {data, loading, error, refetch} = useAdminProducts(query);
     if (loading) {
         return (
             <div className="flex min-h-[300px] items-center justify-center">
@@ -28,7 +27,7 @@ const AdminProductsPage = () => {
             </div>
             <AdminProductFilter query={query} updateQuery={updateQuery}/>
             <AdminProductToolbar query={query} updateQuery={updateQuery}/>
-            <ProductTable data={data} query={query} updateQuery={updateQuery}/>
+            <ProductTable data={data} query={query} updateQuery={updateQuery} refetch={refetch}/>
         </div>
     )
 }

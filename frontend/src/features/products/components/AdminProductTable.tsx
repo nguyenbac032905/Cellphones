@@ -1,12 +1,18 @@
 import { Button, Image, Input, Space, Switch, Table } from "antd";
 import type { Product, ProductListResponse, ProductQuery } from "../types/products.type";
 import { Link } from "react-router-dom";
+import { useAdminUpdateProduct } from "../hooks/useAdminUpdateProduct";
+import { useState } from "react";
 type Props = {
     query: ProductQuery,
     updateQuery: (values: Partial<ProductQuery>) => void,
-    data: ProductListResponse
+    data: ProductListResponse,
+    refetch: () => Promise<void>
 }
-const ProductTable = ({ data,query,updateQuery}: Props) => {
+const ProductTable = ({ data,query,updateQuery, refetch}: Props) => {
+    const {updateProduct,loading,error} = useAdminUpdateProduct();
+    const [updatingId, setUpdatingId] = useState("");
+
     const columns = [
         {
             title: "Position",
@@ -47,11 +53,18 @@ const ProductTable = ({ data,query,updateQuery}: Props) => {
             render: (_: any, record: Product) => (
                 <Switch
                     checked={record.status === "active"}
+                    loading={loading}
                     checkedChildren="Active"
                     unCheckedChildren="Inactive"
-                    onChange={(checked) => {
-                        console.log(record._id, checked);
-                        // gọi API update status ở đây
+                    onChange={async (checked) => {
+                        console.log(checked)
+                        try {
+                            setUpdatingId(record._id);
+                            await updateProduct({status: checked ? "active" : "inactive"},record._id);
+                            await refetch();
+                        } finally {
+                            setUpdatingId("");
+                        }
                     }}
                 />
             ),

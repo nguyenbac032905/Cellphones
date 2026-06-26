@@ -1,7 +1,11 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { productAdminService } from "../services/productAdmin.service";
-import type {ProductListResponse, ProductQuery} from "../types/products.type";
+import type {
+    ProductListResponse,
+    ProductQuery
+} from "../types/products.type";
 import { getErrorMessage } from "../../../shared/utils/errorHandler";
+
 export const useAdminProducts = (query: ProductQuery) => {
     const [data, setData] = useState<ProductListResponse>({
         products: [],
@@ -12,26 +16,36 @@ export const useAdminProducts = (query: ProductQuery) => {
             totalPages: 0,
         },
     });
+
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
+    const fetchProducts = useCallback(async () => {
+        try {
+            setLoading(true);
+            setError("");
+
+            const data = await productAdminService.getAll(query);
+
+            setData(data);
+        } catch (error) {
+            setError(getErrorMessage(error));
+        } finally {
+            setLoading(false);
+        }
+    }, [
+        query.status,
+        query.category,
+        query.search,
+        query.sort,
+        query.page,
+        query.limit,
+        query.stock
+    ]);
+
     useEffect(() => {
-        const fetchProducts = async () => {
-            try {
-                setLoading(true);
-                setError("");
-
-                const data = await productAdminService.getAll(query);
-
-                setData(data);
-            } catch (error) {
-                setError(getErrorMessage(error));
-            } finally {
-                setLoading(false);
-            }
-        };
         fetchProducts();
-    }, [query.status, query.category,query.search,query.sort,query.page,query.limit, query.stock]);
+    }, [fetchProducts]);
 
-    return {data,loading,error};
+    return {data,loading,error,refetch: fetchProducts};
 };

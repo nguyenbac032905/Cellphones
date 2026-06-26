@@ -33,3 +33,11 @@
     3.Tạo admin product Filter: sử dụng grid của tailwind để chia layout và responsive 
     4.Tạo admin product Toolbar: sử dụng grid của tailwind để chia layout và responsive 
     5.responsive cho table product, header admin
+7. Làm tính năng filter, sort, search, pagination
+    1. Tạo useAdminProductQuery để tạo query và hàm updatequerry và gọi hook đó bên productPage để truyền vào useProducts để callAPI.
+    và bên backend sẽ nhận được các query đó.
+    2. filter: tạo 1 biết match để thêm nhưng field status, stock và điều kiện của nó. category thì cần lấy ra những thằng con của danh mục đó rồi tìm tât cả sản phẩm trong các danh mục đó, sau đó mới thêm vào match.
+    3. Sort: tạo sortOption và sử dụng switch để xử lí các trường hợp sắp xếp
+    4. Search: mình cần đánh index search cho slug, title để tìm kiếm tốt hơn trên mongo atlas, sau đó tạo toán tử $search để tìm
+    5. sau đó mình sẽ push vào pipeline theo thứ  tự search rồi mới đến match (thỏa mãn điều kiện), rồi mới đến lookup(join bảng),unwind (vì bảng trả về mảng nên phải tách thành object),set(dùng để thay đổi các trường) rồi mới đến sort và facet ( dùng để tạo 2 luồng query cùng lúc, 1 cái lấy ra products và 1 cái dùng để đếm số sản phẩm). cuối cùng gọi đến hàm agregate và truyền pipeline vào
+    6. Pagination: sử dụng pagination sẵn của ant và bắt sự kiện change để thay đổi query
