@@ -7,9 +7,10 @@ import { getErrorMessage } from "../../../shared/utils/errorHandler";
 type Props = {
     updateQuery: (values: Partial<ProductQuery>) => void,
     data: ProductListResponse,
-    refetch: () => Promise<void>
+    refetch: () => Promise<void>,
+    setSelectedRows: React.Dispatch<React.SetStateAction<Product[]>>
 }
-const ProductTable = ({ data,updateQuery, refetch}: Props) => {
+const ProductTable = ({ data,updateQuery, refetch, setSelectedRows}: Props) => {
     const {updateProduct,error: errorUpdate} = useAdminUpdateProduct();
     const [updatingId, setUpdatingId] = useState("");
 
@@ -119,7 +120,12 @@ const ProductTable = ({ data,updateQuery, refetch}: Props) => {
                 columns={columns}
                 rowKey="_id"
                 className="overflow-hidden rounded-2xl border border-gray-200"
-                rowSelection={{ type: "checkbox"}}
+                rowSelection={{ 
+                    type: "checkbox",
+                    onChange: (_, selectedRows) => {
+                        setSelectedRows(selectedRows);
+                    }
+                }}
                 scroll={{x:1000}}
                 pagination={{
                     placement: ["bottomCenter"],

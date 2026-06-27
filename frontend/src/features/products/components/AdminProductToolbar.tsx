@@ -4,20 +4,28 @@ import {
     PlusOutlined,
     EditOutlined
 } from "@ant-design/icons";
-import { Card, Select, Input, Button } from "antd";
+import { Card, Select, Input, Button, message } from "antd";
 import { Link } from "react-router-dom";
-import type { ProductQuery } from "../types/products.type";
-import { useState } from "react";
+import type { Product,  ProductQuery } from "../types/products.type";
+import { useState} from "react";
+import { useAdminUpdateProduct } from "../hooks/useAdminUpdateProduct";
+import { useAdminDeleteProduct } from "../hooks/useAdminDeleteProduct";
 
 const { Search } = Input;
 
 type Props = {
     query: ProductQuery,
-    updateQuery: (values: Partial<ProductQuery>) => void
+    updateQuery: (values: Partial<ProductQuery>) => void,
+    selectedRows: Product[],
+    refetch: () => Promise<void>,
 }
 
-const AdminProductToolbar = ({query, updateQuery}: Props) => {
+const AdminProductToolbar = ({query, updateQuery, selectedRows, refetch}: Props) => {
     const [keyword, setKeyword] = useState(query.search || "");
+
+    const {updateProduct} = useAdminUpdateProduct();
+    const {deleteProduct} = useAdminDeleteProduct();
+    const [action, setAction] = useState<string>();
     return (
         <Card
             variant="borderless"
@@ -36,6 +44,8 @@ const AdminProductToolbar = ({query, updateQuery}: Props) => {
                         size="large"
                         className="min-w-[190px]"
                         placeholder="Select action"
+                        value={action}
+                        onChange={(value) => setAction(value)}
                         options={[
                             { value: "active", label: "Active" },
                             { value: "inactive", label: "Inactive" },
@@ -46,6 +56,44 @@ const AdminProductToolbar = ({query, updateQuery}: Props) => {
                     <Button
                         size="large"
                         className="min-w-[90px]"
+                        disabled={!action || selectedRows.length === 0}
+                        onClick={async () => {
+                            if (!action) return;
+                            if (action === "active") {
+                                await Promise.all(
+                                    selectedRows.map(product =>
+                                        updateProduct({ status: "active" }, String(product._id))
+                                    )
+                                );
+                                message.success("Cập nhật trạng thái hoạt động thành công!")
+                            }
+                            if (action === "inactive") {
+                                await Promise.all(
+                                    selectedRows.map(product =>
+                                        updateProduct({ status: "inactive" }, String(product._id))
+                                    )
+                                );
+                                message.success("Cập nhật trạng thái dừng hoạt động thành công!")
+                            }
+                            if (action === "delete") {
+                                // gọi API delete bulk hoặc từng item
+                                await Promise.all(
+                                    selectedRows.map(product =>
+                                        deleteProduct(String(product._id))
+                                    )
+                                );
+                                message.success("Xóa sản phẩm thành công!")
+                            }
+                            if(action === "position") {
+                                await Promise.all(
+                                    selectedRows.map(product =>
+                                        updateProduct({ position: product.position }, String(product._id))
+                                    )
+                                );
+                                message.success("Cập nhật vị trí thành công!")
+                            }
+                            setAction(undefined);
+                        }}
                     >
                         Apply
                     </Button>

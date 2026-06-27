@@ -4,13 +4,15 @@ import AdminProductToolbar from "../components/AdminProductToolbar";
 import { Alert, message, Spin } from "antd";
 import { useAdminProductQuery } from "../hooks/useAdminProductQuery";
 import { useAdminProducts } from "../hooks/useAdminProducts";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import type { Product } from "../types/products.type";
 
 const AdminProductsPage = () => {
     const {query, updateQuery} = useAdminProductQuery();
     const {data, loading, error, refetch} = useAdminProducts(query);
     const [messageApi, contextHolder] = message.useMessage();
-
+    const [selectedRows, setSelectedRows] = useState<Product[]>([]);
+    
     useEffect(() => {
         if (error) {
             messageApi.error(error);
@@ -37,8 +39,8 @@ const AdminProductsPage = () => {
                     </p>
                 </div>
                 <AdminProductFilter query={query} updateQuery={updateQuery}/>
-                <AdminProductToolbar query={query} updateQuery={updateQuery}/>
-                <ProductTable data={data} updateQuery={updateQuery} refetch={refetch}/>
+                <AdminProductToolbar query={query} updateQuery={updateQuery} selectedRows={selectedRows} refetch={refetch}/>
+                <ProductTable data={data} updateQuery={updateQuery} refetch={refetch} setSelectedRows={setSelectedRows}/>
             </div>
         </>
     )

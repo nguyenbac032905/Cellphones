@@ -22,7 +22,7 @@ export const getProducts = async (query:Query = {}) => {
     const skip = (pageNum-1)*limitNum;
 
     //filter
-    const match: any = {};
+    const match: any = {deleted: false};
     if(status) match.status=status;
     if(stock){
         if(stock === "instock"){
@@ -170,6 +170,23 @@ export const updateProductService = async (productID: string, body: Record<strin
             new: true,
             runValidators: true
         }
+    );
+
+    if(!product) {
+        throw new AppError("Product not found", 404);
+    }
+
+    return product;
+};
+export const deleteProductService = async (productID: string) => {
+    if(!mongoose.Types.ObjectId.isValid(productID)){
+        throw new AppError("Invalid product id", 400);
+    }
+
+    const product = await Product.findByIdAndUpdate(
+        productID,
+        {deleted: true},
+        { new: true }
     );
 
     if(!product) {
