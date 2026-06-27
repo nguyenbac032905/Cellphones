@@ -136,9 +136,8 @@ export const getProducts = async (query:Query = {}) => {
     }
 }
 
-export const updateProductService = async (req: any) => {
-    const id = req.params.productID;
-    if(!mongoose.Types.ObjectId.isValid(id)){
+export const updateProductService = async (productID: string, body: Record<string, any>) => {
+    if(!mongoose.Types.ObjectId.isValid(productID)){
         throw new AppError("Invalid product id", 400);
     }
     const productUpdateWhiteList = [
@@ -159,13 +158,13 @@ export const updateProductService = async (req: any) => {
      const updateFields: Record<string, any> = {};
 
     productUpdateWhiteList.forEach((field) => {
-        if (req.body[field] !== undefined) {
-            updateFields[field] = req.body[field];
+        if (body[field] !== undefined) {
+            updateFields[field] = body[field];
         }
     });
 
     const product = await Product.findByIdAndUpdate(
-        id,
+        productID,
         updateFields,
         {
             new: true,

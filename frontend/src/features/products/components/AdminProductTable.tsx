@@ -1,16 +1,16 @@
-import { Button, Image, Input, Space, Switch, Table } from "antd";
+import { Button, Image, Input, message, Space, Switch, Table } from "antd";
 import type { Product, ProductListResponse, ProductQuery } from "../types/products.type";
 import { Link } from "react-router-dom";
 import { useAdminUpdateProduct } from "../hooks/useAdminUpdateProduct";
 import { useState } from "react";
+import { getErrorMessage } from "../../../shared/utils/errorHandler";
 type Props = {
-    query: ProductQuery,
     updateQuery: (values: Partial<ProductQuery>) => void,
     data: ProductListResponse,
     refetch: () => Promise<void>
 }
-const ProductTable = ({ data,query,updateQuery, refetch}: Props) => {
-    const {updateProduct,loading,error} = useAdminUpdateProduct();
+const ProductTable = ({ data,updateQuery, refetch}: Props) => {
+    const {updateProduct,error: errorUpdate} = useAdminUpdateProduct();
     const [updatingId, setUpdatingId] = useState("");
 
     const columns = [
@@ -18,8 +18,26 @@ const ProductTable = ({ data,query,updateQuery, refetch}: Props) => {
             title: "Position",
             dataIndex: "position",
             key: "position",
-            render: (position: number) => (
-                <Input value={position} style={{width: 32}}/>
+            render: (position: number,record: Product) => (
+                <Input 
+                    defaultValue={position}
+                    disabled={record._id === updatingId}
+                    style={{ width: 60, textAlign: "center" }}
+                    onBlur={async (e) => {
+                        const newPosition = Number(e.target.value);
+                        if (newPosition === position) return;
+
+                        try {
+                            setUpdatingId(record._id);
+                            await updateProduct({ position: newPosition }, record._id);
+                            message.success("Cập nhật vị trí thành công!");
+                        } catch (error) {
+                            message.error(getErrorMessage(error));
+                        } finally {
+                            setUpdatingId("");
+                        }
+                    }}
+                />
             )
         },
         {
@@ -53,15 +71,17 @@ const ProductTable = ({ data,query,updateQuery, refetch}: Props) => {
             render: (_: any, record: Product) => (
                 <Switch
                     checked={record.status === "active"}
-                    loading={loading}
+                    loading={updatingId === record._id}
                     checkedChildren="Active"
                     unCheckedChildren="Inactive"
                     onChange={async (checked) => {
-                        console.log(checked)
                         try {
                             setUpdatingId(record._id);
                             await updateProduct({status: checked ? "active" : "inactive"},record._id);
+                            message.success("Cập nhật trạng thái thành công!");
                             await refetch();
+                        } catch (error) {
+                            message.error(getErrorMessage(errorUpdate));
                         } finally {
                             setUpdatingId("");
                         }
@@ -93,25 +113,27 @@ const ProductTable = ({ data,query,updateQuery, refetch}: Props) => {
     ];
 
     return (
-        <Table 
-            dataSource={data.products}
-            columns={columns}
-            rowKey="_id"
-            className="overflow-hidden rounded-2xl border border-gray-200"
-            rowSelection={{ type: "checkbox"}}
-            scroll={{x:1000}}
-            pagination={{
-                position: ["bottomCenter"],
-                current: Number(data.pagination.page || 1),
-                pageSize: Number(data.pagination.limit || 4),
-                total: data.pagination.total,
-                onChange: (page) => {
-                    updateQuery({
-                        page: Number(page)
-                    });
-                }
-            }} 
-        />
+        <>
+            <Table 
+                dataSource={data.products}
+                columns={columns}
+                rowKey="_id"
+                className="overflow-hidden rounded-2xl border border-gray-200"
+                rowSelection={{ type: "checkbox"}}
+                scroll={{x:1000}}
+                pagination={{
+                    placement: ["bottomCenter"],
+                    current: Number(data.pagination.page || 1),
+                    pageSize: Number(data.pagination.limit || 4),
+                    total: data.pagination.total,
+                    onChange: (page) => {
+                        updateQuery({
+                            page: Number(page)
+                        });
+                    }
+                }} 
+            />
+        </>
     )
 };
 

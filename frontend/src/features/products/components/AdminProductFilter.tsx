@@ -16,9 +16,9 @@ const AdminProductFilter = ({query, updateQuery}: Props) => {
     const {data: categories} = useAdminCategoriesTree();
     return (
         <Card
-            bordered={false}
+            variant="borderless"
             className="rounded-2xl shadow-sm"
-            bodyStyle={{ padding: 0 }}
+            styles={{body: { padding: 16 }}}
         >
             <div className="grid grid-cols-1 lg:grid-cols-3 overflow-hidden rounded-2xl">
                 <div className="lg:col-span-2 grid grid-cols-3 sm:grid-cols-7 gap-y-2 border-b border-gray-200">

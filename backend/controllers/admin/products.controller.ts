@@ -1,5 +1,6 @@
 import { Request,Response } from "express";
 import { getProducts, updateProductService } from "../../services/admin/products.service";
+import { AppError } from "../../utils/AppError";
 export const index = async (req: Request, res: Response) => {
     try {
         const result = await getProducts(req.query);
@@ -10,7 +11,14 @@ export const index = async (req: Request, res: Response) => {
 }
 export const updateProduct = async (req:Request, res: Response) => {
     try {
-        const result = await updateProductService(req);
+        const { productID } = req.params;
+        if (
+            typeof productID !== "string" ||
+            productID.trim() === ""
+        ) {
+            throw new AppError("Invalid product id", 400);
+        }
+        const result = await updateProductService(productID, req.body);
         return res.status(200).json(result);
     } catch (error: any) {
         if(error.statusCode){

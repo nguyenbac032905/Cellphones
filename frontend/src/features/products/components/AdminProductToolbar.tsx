@@ -20,9 +20,9 @@ const AdminProductToolbar = ({query, updateQuery}: Props) => {
     const [keyword, setKeyword] = useState(query.search || "");
     return (
         <Card
-            bordered={false}
+            variant="borderless"
             className="rounded-2xl shadow-sm"
-            bodyStyle={{ padding: 0 }}
+            styles={{body: { padding: 16 }}}
         >
             <div className="flex flex-col xl:flex-row xl:items-center overflow-hidden rounded-2xl">
                 <div className="flex items-center gap-3 border-b xl:border-b-0 xl:border-r border-gray-200 px-4 py-4">
