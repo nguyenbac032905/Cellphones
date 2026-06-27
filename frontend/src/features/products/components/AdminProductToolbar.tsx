@@ -49,7 +49,6 @@ const AdminProductToolbar = ({query, updateQuery, selectedRows, refetch}: Props)
                         options={[
                             { value: "active", label: "Active" },
                             { value: "inactive", label: "Inactive" },
-                            { value: "position", label: "Change position" },
                             { value: "delete", label: "Delete" }
                         ]}
                     />
@@ -84,15 +83,8 @@ const AdminProductToolbar = ({query, updateQuery, selectedRows, refetch}: Props)
                                 );
                                 message.success("Xóa sản phẩm thành công!")
                             }
-                            if(action === "position") {
-                                await Promise.all(
-                                    selectedRows.map(product =>
-                                        updateProduct({ position: product.position }, String(product._id))
-                                    )
-                                );
-                                message.success("Cập nhật vị trí thành công!")
-                            }
                             setAction(undefined);
+                            await refetch();
                         }}
                     >
                         Apply

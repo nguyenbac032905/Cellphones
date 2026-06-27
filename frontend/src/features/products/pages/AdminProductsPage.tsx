@@ -1,34 +1,28 @@
 import ProductTable from "../components/AdminProductTable";
 import AdminProductFilter from "../components/AdminProductFilter";
 import AdminProductToolbar from "../components/AdminProductToolbar";
-import { Alert, message, Spin } from "antd";
+import { message, Spin } from "antd";
 import { useAdminProductQuery } from "../hooks/useAdminProductQuery";
 import { useAdminProducts } from "../hooks/useAdminProducts";
 import { useEffect, useState } from "react";
 import type { Product } from "../types/products.type";
+import LoadingScreen from "../../../shared/components/LoadingScreen";
+import CustomAlert from "../../../shared/components/CustomAlert";
 
 const AdminProductsPage = () => {
     const {query, updateQuery} = useAdminProductQuery();
     const {data, loading, error, refetch} = useAdminProducts(query);
-    const [messageApi, contextHolder] = message.useMessage();
     const [selectedRows, setSelectedRows] = useState<Product[]>([]);
-    
-    useEffect(() => {
-        if (error) {
-            messageApi.error(error);
-        }
-    }, [error, messageApi]);
 
     if (loading) {
-        return (
-            <div className="flex min-h-[300px] items-center justify-center">
-                <Spin size="large" />
-            </div>
-        );
+        return <LoadingScreen/>
+    }
+
+    if(error){
+        return <CustomAlert error={error}/>
     }
     return (
         <>
-            {contextHolder}
             <div className="flex flex-col gap-5">
                 <div>
                     <h1 className="text-3xl font-bold text-gray-900">

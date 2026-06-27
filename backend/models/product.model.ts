@@ -43,12 +43,13 @@ const productSchema = new mongoose.Schema(
             default: 0,
             min: 0
         },
-        thumbnail: {
-            type: String,
-            default: ""
-        },
         images: {
-            type: [String],
+            type: [
+                {
+                    url: { type: String, required: true },
+                    isMain: { type: Boolean, default: false }
+                }
+            ],
             default: []
         },
         status: {

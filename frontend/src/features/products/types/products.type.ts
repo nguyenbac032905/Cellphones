@@ -1,15 +1,22 @@
+export interface ProductImage {
+    url: string;
+    isMain?: boolean;
+}
+export interface Category {
+    _id: string;
+    title?: string;
+}
 export interface Product {
     _id: string;
     title: string;
-    product_category_id?: string | null;
+    product_category_id?: Category | null;
     description: string;
     content: string;
     price: number;
     discountPercentage: number;
     stock: number;
     sold: number;
-    thumbnail: string;
-    images: string[];
+    images: ProductImage[];
     status: "active" | "inactive";
     position: number;
     featured: boolean;
@@ -48,8 +55,7 @@ export interface PatchProductBody {
     price?: number;
     discountPercentage?: number;
     stock?: number;
-    thumbnail?: string;
-    images?: string[];
+    images?: ProductImage[];
     status?: "active" | "inactive";
     position?: number;
     featured?: boolean;

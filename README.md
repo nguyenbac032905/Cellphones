@@ -49,3 +49,16 @@
     1. bắt sự kiện onblur cho ô input position, khi người dùng click ra ngoài thì sẽ update lại vị trí sản phẩm nếu nó thay đổi
     2. thêm disable cho ô input khi người dùng gửi lên
     3. thêm các thông báo
+10. Tính năng bulk actions
+    1. tạo api delete bên backend
+    2. tạo service delete bên frontend
+    3. tạo hook delete bên frontend
+    4. bắt sự kiện khi người dùng tích chọn dòng thì lấy ra từng row để lấy ra ids sản phẩm cần cập nhật
+    5. khi người dùng click apply trên toolbar thì cập nhật lại tất cả sản phẩm bằng promise.all
+    6. vấn đề gặp phải là khi cập nhật xong chọn refetch mà hook không chạy lại làm dữ liệu không đổi.
+11. làm trang chi tiết sản phẩm
+    1. tạo api get product
+    2. tách riêng component loading và custom alert vào shared
+    3. tạo service call api và tạo hook call service, không cần throw error trong hook vì đã xử lí UI rồi.
+    4. tạo page detail product bên frontend
+

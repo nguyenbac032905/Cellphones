@@ -43,11 +43,23 @@ const ProductTable = ({ data,updateQuery, refetch, setSelectedRows}: Props) => {
         },
         {
             title: "Image",
-            dataIndex: "thumbnail",
-            key: "thumbnail",
-            render: (thumbnail: string) => (
-                <Image src={thumbnail} width={100} />
-            ),
+            dataIndex: "images",
+            key: "images",
+            render: (_: any, record: any) => {
+                const mainImage = record.images?.find((img: any) => img.isMain)?.url || record?.images?.[0];
+                if (!mainImage) {
+                    return (
+                        <div className="h-[100px] w-[100px] rounded bg-gray-200" />
+                    );
+                }
+                return (
+                    <Image
+                        src={mainImage}
+                        width={100}
+                        style={{ objectFit: "cover", borderRadius: 6 }}
+                    />
+                );
+            },
         },
         {
             title: "Title",

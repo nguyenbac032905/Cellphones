@@ -20,7 +20,10 @@ export const productAdminService = {
             products: res.data.products
         };
     },
-
+    get: async (productID: string): Promise<Product> => {
+        const res = await publicClient.get<Product>(`/admin/api/products/${productID}`);
+        return res.data;
+    },
     update: async (
         product: PatchProductBody,
         productID: string

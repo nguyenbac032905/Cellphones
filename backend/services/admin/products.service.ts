@@ -195,3 +195,19 @@ export const deleteProductService = async (productID: string) => {
 
     return product;
 };
+export const getProductByIDService = async (productID: string) => {
+    if (!mongoose.Types.ObjectId.isValid(productID)) {
+        throw new AppError("Invalid product id", 400);
+    }
+
+    const product = await Product.findOne({
+        _id: productID,
+        deleted: false
+    }).populate("product_category_id","_id title");
+    
+    if (!product) {
+        throw new AppError("Product not found", 404);
+    }
+
+    return product;
+};

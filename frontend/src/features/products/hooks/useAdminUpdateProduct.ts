@@ -20,7 +20,6 @@ export const useAdminUpdateProduct = () => {
         } catch (error) {
             const message = getErrorMessage(error);
             setError(message);
-            throw error;
         } finally {
             setLoading(false);
         }
