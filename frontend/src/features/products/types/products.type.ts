@@ -60,3 +60,16 @@ export interface PatchProductBody {
     position?: number;
     featured?: boolean;
 }
+export interface PostProductBody {
+    title: string;
+    product_category_id?: string | null;
+    description?: string;
+    content?: string;
+    price: number;
+    discountPercentage?: number;
+    stock?: number;
+    images?: ProductImage[];
+    status?: "active" | "inactive";
+    position?: number;
+    featured?: boolean;
+}

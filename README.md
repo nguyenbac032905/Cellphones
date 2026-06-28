@@ -61,4 +61,5 @@
     2. tách riêng component loading và custom alert vào shared
     3. tạo service call api và tạo hook call service, không cần throw error trong hook vì đã xử lí UI rồi.
     4. tạo page detail product bên frontend
+12. làm giao diện trang tạo mới sản phẩm
 

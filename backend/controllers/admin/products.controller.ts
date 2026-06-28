@@ -1,5 +1,5 @@
 import { Request,Response } from "express";
-import { deleteProductService, getProductByIDService, getProducts, updateProductService } from "../../services/admin/products.service";
+import { createProductService, deleteProductService, getProductByIDService, getProducts, updateProductService } from "../../services/admin/products.service";
 import { AppError } from "../../utils/AppError";
 export const index = async (req: Request, res: Response) => {
     try {
@@ -61,5 +61,16 @@ export const detail = async (req: Request, res: Response) => {
             return res.status(error.statusCode).json({error: error.message});
         }
         return res.status(500).json({error: "Server error"})
+    }
+}
+export const createProduct = async (req:Request, res: Response) => {
+    try {
+        const result = await createProductService(req.body);
+        return res.status(201).json(result);
+    } catch (error) {
+        if(error instanceof AppError){
+            return res.status(error.statusCode).json({error: error.message});
+        }
+        return res.status(500).json({error: "Server error"});
     }
 }

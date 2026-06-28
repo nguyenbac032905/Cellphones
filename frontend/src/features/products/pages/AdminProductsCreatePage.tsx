@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
     Card,
     Form,
@@ -8,21 +8,33 @@ import {
     Image,
     Button,
     TreeSelect,
+    message,
+    Tag,
 } from "antd";
 import { Editor } from "@tinymce/tinymce-react";
-import { PlusOutlined } from "@ant-design/icons";
+import { PlusOutlined, StarFilled } from "@ant-design/icons";
 import { useAdminCategoriesTree } from "../../productCategories/hooks/useAdminCategoriesTree";
 import AdminTitle from "../../../shared/components/AdminTitle";
+import { useAdminCreateProduct } from "../hooks/useAdminCreateProduct";
 
 const AdminProductsCreatePage = () => {
     const [form] = Form.useForm();
 
     const editorRef = useRef<any>(null);
-    const {data: categories} = useAdminCategoriesTree();
+    const { data: categories } = useAdminCategoriesTree();
     //ảnh
     const [fileList, setFileList] = useState<any[]>([]);
+    const [mainImageId, setMainImageId] = useState<string | null>(null);
     const [previewImage, setPreviewImage] = useState("");
     const [previewOpen, setPreviewOpen] = useState(false);
+    const {data,loading, error, createProduct} = useAdminCreateProduct();
+    
+    useEffect(() => {
+        if(error){
+            message.error(error);
+        }
+    },[])
+
     const uploadButton = (
         <div className="flex flex-col items-center justify-center text-gray-500">
             <PlusOutlined />
@@ -31,7 +43,25 @@ const AdminProductsCreatePage = () => {
     );
 
     const handleChange = ({ fileList: newFileList }: any) => {
-        setFileList(newFileList);
+        const errorFile = newFileList.find(
+            (file: any) => file.status === "error"
+        );
+        if (errorFile) {
+            message.error(
+                errorFile.response?.message || "Upload thất bại, vui lòng chọn ảnh nhỏ hơn 9MB."
+            );
+        }
+        const updatedList = newFileList.map((file: any) => {
+            if (file.response) {
+                return {
+                    ...file,
+                    uid: file.uid,
+                    url: file.response.urls,
+                };
+            }
+            return file;
+        });
+        setFileList(updatedList.slice(0, 10));
     };
 
     const handlePreview = async (file: any) => {
@@ -39,16 +69,34 @@ const AdminProductsCreatePage = () => {
         setPreviewOpen(true);
     };
 
-    //submit form
-    const onFinish = (values: any) => {
+    const handleSelectMain = (file: any) => {
+        setMainImageId(file.uid);
+    };
+
+    const onFinish = async (values: any) => {
+        const images = fileList
+                        .filter((f) => f.status === "done")
+                        .map((f) => ({
+                            url: Array.isArray(f.url)
+                                ? f.url[0]
+                                : f.url || f.response?.url,
+                            isMain: f.uid === mainImageId,
+                        }));
         const payload = {
             ...values,
             description: editorRef.current?.getContent() || "",
             content: editorRef.current?.getContent() || "",
-            images: fileList,
+            images: images,
         };
+        console.log(payload)
+        const result = await createProduct(payload);
 
-        console.log("SUBMIT DATA:", payload);
+        if(result){
+            message.success("Product created");
+            form.resetFields();
+            setFileList([]);
+            setMainImageId(null);
+        }
     };
 
     return (
@@ -92,7 +140,7 @@ const AdminProductsCreatePage = () => {
                                             children: "children"
                                         }}
                                     />
-                                            </Form.Item>
+                                </Form.Item>
                                 <Form.Item label="Price:" name="price">
                                     <Input type="number" />
                                 </Form.Item>
@@ -152,13 +200,46 @@ const AdminProductsCreatePage = () => {
                             <Card className="rounded-xl">
                                 <Form.Item label="Images:">
                                     <Upload
-                                        action="http://localhost:3000/admin/images/upload"
+                                        name="images"
+                                        action="http://localhost:3000/admin/api/uploads/images"
                                         listType="picture-card"
+                                        multiple
                                         fileList={fileList}
                                         onChange={handleChange}
                                         onPreview={handlePreview}
+                                        itemRender={(originNode, file) => {
+                                            const isMain = file.uid === mainImageId;
+
+                                            return (
+                                                <div
+                                                    className="relative group cursor-pointer rounded-lg overflow-hidden"
+                                                    onClick={() => handleSelectMain(file)}
+                                                >
+                                                    {isMain && (
+                                                        <Tag
+                                                            color="gold"
+                                                            className="!absolute !top-2 !right-2 !z-20 m-0 flex items-center gap-1"
+                                                        >
+                                                            <StarFilled />
+                                                            MAIN
+                                                        </Tag>
+                                                    )}
+                                                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all z-10" />
+                                                    <div className="relative">
+                                                        {originNode}
+                                                    </div>
+                                                    {!isMain && (
+                                                        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition z-20">
+                                                            <span className="bg-black/70 text-white text-xs px-3 py-1 rounded">
+                                                                Set as main
+                                                            </span>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            );
+                                        }}
                                     >
-                                        {fileList.length >= 8 ? null : uploadButton}
+                                        {fileList.length >= 10 ? null : uploadButton}
                                     </Upload>
                                     {previewImage && (
                                         <Image
@@ -185,6 +266,7 @@ const AdminProductsCreatePage = () => {
                                 </Form.Item>
                             </Card>
                             <Button
+                                loading={loading}
                                 type="primary"
                                 htmlType="submit"
                                 className="w-full h-11"

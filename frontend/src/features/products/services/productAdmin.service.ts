@@ -1,6 +1,7 @@
 import { publicClient } from "../../../shared/api/publicClient";
 import type {
     PatchProductBody,
+    PostProductBody,
     Product,
     ProductListResponse,
     ProductQuery
@@ -35,12 +36,21 @@ export const productAdminService = {
 
         return res.data;
     },
-
     delete: async (
         productID: string
     ): Promise<Product> => {
         const res = await publicClient.delete<Product>(
             `/admin/api/products/${productID}`
+        );
+
+        return res.data;
+    },
+    create: async (
+        product: PostProductBody
+    ): Promise<Product> => {
+        const res = await publicClient.post<Product>(
+            `/admin/api/products`,
+            product
         );
 
         return res.data;
