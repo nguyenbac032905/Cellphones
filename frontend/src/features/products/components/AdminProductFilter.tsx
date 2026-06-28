@@ -49,7 +49,7 @@ const AdminProductFilter = ({query, updateQuery}: Props) => {
                             treeData={categories}
                             allowClear
                             onChange={(value) => updateQuery({ category: value, page:1 })}
-                                treeDefaultExpandedKeys={
+                            treeDefaultExpandedKeys={
                                 categories[0]?._id ? [categories[0]._id] : []
                             }
                             fieldNames={{

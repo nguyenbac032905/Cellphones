@@ -16,6 +16,7 @@ const AdminLayout = () => {
                     style={{
                         margin: '24px 16px',
                         padding: 24,
+                        paddingTop:10,
                         minHeight: 280
                     }}
                 >

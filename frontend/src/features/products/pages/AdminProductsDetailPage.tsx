@@ -15,6 +15,7 @@ import { useMemo, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import { LeftOutlined, RightOutlined } from "@ant-design/icons";
+import AdminTitle from "../../../shared/components/AdminTitle";
 
 const { Title, Text } = Typography;
 
@@ -51,7 +52,8 @@ const AdminProductsDetailPage = () => {
     }
 
     return (
-        <div className="p-5">
+        <div className="flex flex-col gap-5">
+            <AdminTitle title="Product Detail" description="View detailed information of a product" />
             <Card className="rounded-2xl shadow-sm">
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
                     {/* LEFT */}

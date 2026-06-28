@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import type { Product } from "../types/products.type";
 import LoadingScreen from "../../../shared/components/LoadingScreen";
 import CustomAlert from "../../../shared/components/CustomAlert";
+import AdminTitle from "../../../shared/components/AdminTitle";
 
 const AdminProductsPage = () => {
     const {query, updateQuery} = useAdminProductQuery();
@@ -24,14 +25,7 @@ const AdminProductsPage = () => {
     return (
         <>
             <div className="flex flex-col gap-5">
-                <div>
-                    <h1 className="text-3xl font-bold text-gray-900">
-                        Products
-                    </h1>
-                    <p className="mt-1 text-sm text-gray-500">
-                        Manage all products in your store
-                    </p>
-                </div>
+                <AdminTitle title="Products List" description="Manage all products in your store" />
                 <AdminProductFilter query={query} updateQuery={updateQuery}/>
                 <AdminProductToolbar query={query} updateQuery={updateQuery} selectedRows={selectedRows} refetch={refetch}/>
                 <ProductTable data={data} updateQuery={updateQuery} refetch={refetch} setSelectedRows={setSelectedRows}/>
