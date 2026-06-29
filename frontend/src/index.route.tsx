@@ -4,12 +4,13 @@ import AdminLayout from "./layouts/AdminLayout";
 import ClientLayout from "./layouts/ClientLayout";
 import NotFoundPage from "./shared/pages/NotFoundPage";
 import { adminProductRoutes,productRoutes } from "./features/products/product.route";
+import { adminRecycleBinRoutes } from "./features/recycleBin/recycleBin.route";
 
 export const routes = [
     {
         path: "/admin",
         element: <AdminLayout />,
-        children: [...dashboardRoutes,...adminProductRoutes]
+        children: [...dashboardRoutes,...adminProductRoutes,...adminRecycleBinRoutes]
     },
     {
         path: "/",

@@ -124,7 +124,7 @@ const AdminProductToolbar = ({query, updateQuery, selectedRows, refetch}: Props)
                     />
                 </div>
                 <div className="flex items-center gap-2 p-4">
-                    <Link to="/admin/products/recycle-bin">
+                    <Link to="/admin/recycle-bin/products">
                         <Button
                             icon={<DeleteOutlined />}
                             size="large"

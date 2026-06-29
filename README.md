@@ -72,3 +72,5 @@
     7. khi người dùng chọn file thì hàm onChange được kích hoạt, hàm này nhận được filelist và kiểm tra xem có ảnh nào không upload được không (do cloudinary free chỉ cho phép upload ảnh <10mb). lọc qua từng phần tử của filelist và lấy ra url, id của upload.
     8. tạo itemsRender cho upload để hiển thị tag ảnh main, khi người dùng click vào 1 ảnh thì sẽ chạy đến hàm selectMain và set lại state mainImageId là ảnh vừa chọn.
     9. khi submit mình chạy qua các phần tử của filelist và chuẩn hóa nó về dạng lưu trong db. gọi đến hàm createProdut và gửi dữ liệu lên. sau khi gửi xong nếu có product trả về thì reset lại form và thông báo tạo thành công
+14. làm tính năng sửa sản phẩm ( tương tự tạo mới sản phẩm )
+15. 
