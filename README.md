@@ -62,4 +62,13 @@
     3. tạo service call api và tạo hook call service, không cần throw error trong hook vì đã xử lí UI rồi.
     4. tạo page detail product bên frontend
 12. làm giao diện trang tạo mới sản phẩm
-
+13. làm tính năng tạo mới sản phẩm và upload ảnh
+    1. cài multer để upload file và cloudinary để upload file lên cloud
+    3. tạo middleware upload ảnh, khai báo thêm kiểu file và files cho express.d.ts vì express không hiểu kiểu req.file của multer gắn vào.
+    4. tạo api upload ảnh, cho nó chạy qua middleware uploadCloud và trả về key dạng {url: ""}
+    5. tạo api upload product 
+    6. tạo service post product, và hook tương ứng
+    7. set action cho Upload của ant, khi người dùng chọn file sẽ post ảnh lên api đó
+    7. khi người dùng chọn file thì hàm onChange được kích hoạt, hàm này nhận được filelist và kiểm tra xem có ảnh nào không upload được không (do cloudinary free chỉ cho phép upload ảnh <10mb). lọc qua từng phần tử của filelist và lấy ra url, id của upload.
+    8. tạo itemsRender cho upload để hiển thị tag ảnh main, khi người dùng click vào 1 ảnh thì sẽ chạy đến hàm selectMain và set lại state mainImageId là ảnh vừa chọn.
+    9. khi submit mình chạy qua các phần tử của filelist và chuẩn hóa nó về dạng lưu trong db. gọi đến hàm createProdut và gửi dữ liệu lên. sau khi gửi xong nếu có product trả về thì reset lại form và thông báo tạo thành công

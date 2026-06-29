@@ -4,7 +4,7 @@ import {
     PlusOutlined,
     EditOutlined
 } from "@ant-design/icons";
-import { Card, Select, Input, Button, message } from "antd";
+import { Card, Select, Input, Button, message, Popconfirm } from "antd";
 import { Link } from "react-router-dom";
 import type { Product,  ProductQuery } from "../types/products.type";
 import { useState} from "react";
@@ -26,6 +26,37 @@ const AdminProductToolbar = ({query, updateQuery, selectedRows, refetch}: Props)
     const {updateProduct} = useAdminUpdateProduct();
     const {deleteProduct} = useAdminDeleteProduct();
     const [action, setAction] = useState<string>();
+    
+    const handleApply = async () => {
+        if (!action) return;
+        if (action === "active") {
+            await Promise.all(
+                selectedRows.map(product =>
+                    updateProduct({ status: "active" }, String(product._id))
+                )
+            );
+            message.success("Cập nhật trạng thái hoạt động thành công!")
+        }
+        if (action === "inactive") {
+            await Promise.all(
+                selectedRows.map(product =>
+                    updateProduct({ status: "inactive" }, String(product._id))
+                )
+            );
+            message.success("Cập nhật trạng thái dừng hoạt động thành công!")
+        }
+        if (action === "delete") {
+            // gọi API delete bulk hoặc từng item
+            await Promise.all(
+                selectedRows.map(product =>
+                    deleteProduct(String(product._id))
+                )
+            );
+            message.success("Xóa sản phẩm thành công!")
+        }
+        setAction(undefined);
+        await refetch();
+    }
     return (
         <Card
             variant="borderless"
@@ -52,43 +83,35 @@ const AdminProductToolbar = ({query, updateQuery, selectedRows, refetch}: Props)
                             { value: "delete", label: "Delete" }
                         ]}
                     />
-                    <Button
-                        size="large"
-                        className="min-w-[90px]"
-                        disabled={!action || selectedRows.length === 0}
-                        onClick={async () => {
-                            if (!action) return;
-                            if (action === "active") {
-                                await Promise.all(
-                                    selectedRows.map(product =>
-                                        updateProduct({ status: "active" }, String(product._id))
-                                    )
-                                );
-                                message.success("Cập nhật trạng thái hoạt động thành công!")
-                            }
-                            if (action === "inactive") {
-                                await Promise.all(
-                                    selectedRows.map(product =>
-                                        updateProduct({ status: "inactive" }, String(product._id))
-                                    )
-                                );
-                                message.success("Cập nhật trạng thái dừng hoạt động thành công!")
-                            }
-                            if (action === "delete") {
-                                // gọi API delete bulk hoặc từng item
-                                await Promise.all(
-                                    selectedRows.map(product =>
-                                        deleteProduct(String(product._id))
-                                    )
-                                );
-                                message.success("Xóa sản phẩm thành công!")
-                            }
-                            setAction(undefined);
-                            await refetch();
-                        }}
-                    >
-                        Apply
-                    </Button>
+                    {action === "delete" ? (
+                        <Popconfirm
+                            title="Xóa sản phẩm"
+                            description={`Bạn có chắc muốn xóa ${selectedRows.length} sản phẩm?`}
+                            okText="Xóa"
+                            cancelText="Hủy"
+                            okButtonProps={{ danger: true }}
+                            onConfirm={handleApply}
+                        >
+                            <Button
+                                danger
+                                ghost
+                                size="large"
+                                className="min-w-[90px]"
+                                disabled={selectedRows.length === 0}
+                            >
+                                Apply
+                            </Button>
+                        </Popconfirm>
+                    ) : (
+                        <Button
+                            size="large"
+                            className="min-w-[90px]"
+                            disabled={!action || selectedRows.length === 0}
+                            onClick={handleApply}
+                        >
+                            Apply
+                        </Button>
+                    )}
                 </div>
                 <div className="flex-1 border-b xl:border-b-0 xl:border-r border-gray-200 p-4">
                     <Search

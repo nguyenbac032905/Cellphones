@@ -1,9 +1,10 @@
-import { Button, Image, Input, message, Space, Switch, Table } from "antd";
+import { Button, Image, Input, message, Popconfirm, Space, Switch, Table } from "antd";
 import type { Product, ProductListResponse, ProductQuery } from "../types/products.type";
 import { Link } from "react-router-dom";
 import { useAdminUpdateProduct } from "../hooks/useAdminUpdateProduct";
 import { useState } from "react";
 import { getErrorMessage } from "../../../shared/utils/errorHandler";
+import { useAdminDeleteProduct } from "../hooks/useAdminDeleteProduct";
 type Props = {
     updateQuery: (values: Partial<ProductQuery>) => void,
     data: ProductListResponse,
@@ -13,6 +14,7 @@ type Props = {
 const ProductTable = ({ data,updateQuery, refetch, setSelectedRows}: Props) => {
     const {updateProduct,error: errorUpdate} = useAdminUpdateProduct();
     const [updatingId, setUpdatingId] = useState("");
+    const {deleteProduct, error: errorDelete} = useAdminDeleteProduct();
 
     const columns = [
         {
@@ -91,7 +93,7 @@ const ProductTable = ({ data,updateQuery, refetch, setSelectedRows}: Props) => {
                         try {
                             setUpdatingId(record._id);
                             await updateProduct({status: checked ? "active" : "inactive"},record._id);
-                            message.success("Cập nhật trạng thái thành công!");
+                            message.success("Product updated successfully!");
                             await refetch();
                         } catch (error) {
                             message.error(getErrorMessage(errorUpdate));
@@ -109,17 +111,45 @@ const ProductTable = ({ data,updateQuery, refetch, setSelectedRows}: Props) => {
                 <Space>
                     <Link to={`/admin/products/details/${record._id}`}>
                         <Button color="default" variant="outlined" style={{ width: 65 }}>
-                            Chi tiết
+                            Detail
                         </Button>
                     </Link>
                     <Link to={`/admin/products/edit/${record._id}`}>
                         <Button color="primary" variant="outlined" style={{ width: 65 }}>
-                            Sửa
+                            Update
                         </Button>
                     </Link>
-                    <Button color="danger" variant="outlined" style={{ width: 65 }}>
-                        Xóa
-                    </Button>
+                    <Popconfirm
+                        title="Delete Product"
+                        description="Are you sure you want to delete this product?"
+                        okText="Delete"
+                        cancelText="Cancel"
+                        okButtonProps={{ danger: true, loading: updatingId === record._id }}
+                        onConfirm={async () => {
+                            try {
+                                setUpdatingId(record._id);
+
+                                await deleteProduct(record._id);
+
+                                message.success("Product deleted successfully!");
+
+                                await refetch();
+                            } catch (error) {
+                                message.error(getErrorMessage(error));
+                            } finally {
+                                setUpdatingId("");
+                            }
+                        }}
+                    >
+                        <Button
+                            color="danger"
+                            variant="outlined"
+                            style={{ width: 65 }}
+                            loading={updatingId === record._id}
+                        >
+                            Xóa
+                        </Button>
+                    </Popconfirm>
                 </Space>
             ),
         },

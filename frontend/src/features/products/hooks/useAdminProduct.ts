@@ -17,7 +17,7 @@ export const useAdminProduct = (productID?: string) => {
                 setError("");
 
                 const data = await productAdminService.get(productID);
-
+                console.log(data)
                 setData(data);
             } catch (error) {
                 const message = getErrorMessage(error);
