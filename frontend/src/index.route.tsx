@@ -5,8 +5,13 @@ import ClientLayout from "./layouts/ClientLayout";
 import NotFoundPage from "./shared/pages/NotFoundPage";
 import { adminProductRoutes,productRoutes } from "./features/products/product.route";
 import { adminRecycleBinRoutes } from "./features/recycleBin/recycleBin.route";
+import { adminAuthRoutes } from "./features/auth/auth.route";
 
 export const routes = [
+    {
+        path: "/admin",
+        children: [...adminAuthRoutes]
+    },
     {
         path: "/admin",
         element: <AdminLayout />,

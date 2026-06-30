@@ -73,4 +73,13 @@
     8. tạo itemsRender cho upload để hiển thị tag ảnh main, khi người dùng click vào 1 ảnh thì sẽ chạy đến hàm selectMain và set lại state mainImageId là ảnh vừa chọn.
     9. khi submit mình chạy qua các phần tử của filelist và chuẩn hóa nó về dạng lưu trong db. gọi đến hàm createProdut và gửi dữ liệu lên. sau khi gửi xong nếu có product trả về thì reset lại form và thông báo tạo thành công
 14. làm tính năng sửa sản phẩm ( tương tự tạo mới sản phẩm )
-15. 
+15. làm tính năng thùng rác
+    1. tạo api product deleted bên backend
+    2. tạo service, type, hook cho api đó
+    3. tạo giao diện trang thùng rác và gọi hook và đổ data ra
+    4. tạo api product restore bên backend
+    5. tạo service, type, hook cho api đó
+    6. bắt sự kiện cho nút restore và xử lí thông báo lỗi,thành công, call api
+    7. tạo api force delete product bên backend
+    8. tạo service, type, hook cho api đó
+    9. bắt sự kiện cho nút force delete và xử lí thông báo lỗi,thành công, call api

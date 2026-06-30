@@ -1,6 +1,5 @@
 import { Request, Response, NextFunction } from "express";
 import { uploadToCloudinary } from "../../helpers/uploadCloud";
-import { AppError } from "../../utils/AppError";
 export const uploadSingle = async (
     req: Request,
     res: Response,
@@ -25,7 +24,6 @@ export const uploadSingle = async (
         next(err);
     }
 };
-
 export const uploadFields = async (
     req: Request,
     res: Response,

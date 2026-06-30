@@ -2,7 +2,7 @@ import DashboardPage from "./pages/DashboardPage";
 
 export const dashboardRoutes = [
     {
-        path: "dashboard",
+        index: true,
         element: <DashboardPage />
     }
 ];

@@ -1,4 +1,4 @@
-import { publicClient } from "../../../shared/api/publicClient";
+import { privateClient } from "../../../shared/api/privateClient";
 import type {
     PatchProductBody,
     PostProductBody,
@@ -11,7 +11,7 @@ export const productAdminService = {
     getAll: async (
         query: ProductQuery
     ): Promise<ProductListResponse> => {
-        const res = await publicClient.get<ProductListResponse>(
+        const res = await privateClient.get<ProductListResponse>(
             "/admin/api/products",
             { params: query }
         );
@@ -22,14 +22,14 @@ export const productAdminService = {
         };
     },
     get: async (productID: string): Promise<Product> => {
-        const res = await publicClient.get<Product>(`/admin/api/products/${productID}`);
+        const res = await privateClient.get<Product>(`/admin/api/products/${productID}`);
         return res.data;
     },
     update: async (
         product: PatchProductBody,
         productID: string
     ): Promise<Product> => {
-        const res = await publicClient.patch<Product>(
+        const res = await privateClient.patch<Product>(
             `/admin/api/products/${productID}`,
             product
         );
@@ -39,7 +39,7 @@ export const productAdminService = {
     delete: async (
         productID: string
     ): Promise<Product> => {
-        const res = await publicClient.delete<Product>(
+        const res = await privateClient.delete<Product>(
             `/admin/api/products/${productID}`
         );
 
@@ -48,7 +48,7 @@ export const productAdminService = {
     create: async (
         product: PostProductBody
     ): Promise<Product> => {
-        const res = await publicClient.post<Product>(
+        const res = await privateClient.post<Product>(
             `/admin/api/products`,
             product
         );
