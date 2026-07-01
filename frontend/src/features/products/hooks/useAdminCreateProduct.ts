@@ -1,10 +1,9 @@
 import { useState } from "react";
-import type { PostProductBody, Product } from "../types/products.type";
+import type { PostProductBody} from "../types/products.type";
 import { productAdminService } from "../services/productAdmin.service";
 import { getErrorMessage } from "../../../shared/utils/errorHandler";
 
 export const useAdminCreateProduct = () => {
-    const [data, setData] = useState<Product>();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
@@ -14,7 +13,6 @@ export const useAdminCreateProduct = () => {
             setError("");
 
             const data = await productAdminService.create(product);
-            setData(data);
 
             return data;
         } catch (error) {
@@ -25,5 +23,5 @@ export const useAdminCreateProduct = () => {
         }
     };
 
-    return { data, loading, error, createProduct };
+    return { loading, error, createProduct };
 };

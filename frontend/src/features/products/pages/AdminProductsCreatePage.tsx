@@ -16,18 +16,21 @@ import { PlusOutlined, StarFilled } from "@ant-design/icons";
 import { useAdminCategoriesTree } from "../../productCategories/hooks/useAdminCategoriesTree";
 import AdminTitle from "../../../shared/components/AdminTitle";
 import { useAdminCreateProduct } from "../hooks/useAdminCreateProduct";
+import { privateClient } from "../../../shared/api/privateClient";
+import { useNavigate } from "react-router-dom";
 
 const AdminProductsCreatePage = () => {
     const [form] = Form.useForm();
 
     const editorRef = useRef<any>(null);
+    const navigate = useNavigate();
     const { data: categories } = useAdminCategoriesTree();
     //ảnh
     const [fileList, setFileList] = useState<any[]>([]);
     const [mainImageId, setMainImageId] = useState<string | null>(null);
     const [previewImage, setPreviewImage] = useState("");
     const [previewOpen, setPreviewOpen] = useState(false);
-    const {data,loading, error, createProduct} = useAdminCreateProduct();
+    const {loading, error, createProduct} = useAdminCreateProduct();
     
     useEffect(() => {
         if(error){
@@ -88,11 +91,11 @@ const AdminProductsCreatePage = () => {
             content: editorRef.current?.getContent() || "",
             images: images,
         };
-        console.log(payload)
         const result = await createProduct(payload);
 
         if(result){
             message.success("Product created");
+            navigate("/admin/products");
             form.resetFields();
             setFileList([]);
             setMainImageId(null);
@@ -124,7 +127,7 @@ const AdminProductsCreatePage = () => {
                                 <Form.Item label="Title:" name="title">
                                     <Input placeholder="Product title" />
                                 </Form.Item>
-                                <Form.Item label="Category:" name="category">
+                                <Form.Item label="Category:" name="product_category_id">
                                     <TreeSelect
                                         variant="borderless"
                                         placeholder="Filter category"
@@ -201,7 +204,24 @@ const AdminProductsCreatePage = () => {
                                 <Form.Item label="Images:">
                                     <Upload
                                         name="images"
-                                        action="http://localhost:3000/admin/api/uploads/images"
+                                        customRequest={async ({ file, onSuccess, onError }) => {
+                                        try {
+                                            const formData = new FormData();
+                                            formData.append("images", file as Blob);
+                                            const res = await privateClient.post(
+                                                "/admin/api/uploads/images",
+                                                formData,
+                                                {
+                                                    headers: {
+                                                        "Content-Type": "multipart/form-data"
+                                                    }
+                                                }
+                                            );
+                                            onSuccess?.(res.data);
+                                        } catch (error) {
+                                            onError?.(error as Error);
+                                        }
+                                    }}
                                         listType="picture-card"
                                         multiple
                                         fileList={fileList}
