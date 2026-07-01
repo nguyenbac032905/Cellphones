@@ -101,3 +101,7 @@
     15. sửa lại các service products, products category bên admin phải dùng privateClient.
     17. luồng tổng: Người dùng đăng nhập => server trả về accessToken và lưu refreshToken vào HTTP Only Cookie => mỗi request client sẽ gửi kèm accessToken => server verify token, nếu hợp lệ thì xử lí request, nếu hết hạn sẽ trả 401 Unauthorized => client tự động gọi API refresh-token để lấy accessToken mới và retry request cũ => nếu refreshToken hết hạn thì logout và chuyển về trang login.
     16. vấn đề đặt ra là khi F5 trang web sẽ xóa state auth đi và bị đẩy ra login dù token chưa hết hạn.
+17. Xử lí vấn đề f5 sẽ xóa state auth đi và bị đẩy ra login
+    1. viết api /auth/me để trả về thông tin user 
+    2. tạo bootstrap auth, hàm này sẽ chạy mỗi khi reload trang. trong hàm này sẽ gọi đến hàm refresh-token để lấy accessToken mới, dùng accessToken đó để gọi đến /auth/me để lấy thông tin user. sau đó setStateAuth bằng user và accessToken đó.
+    3. nhúng hàm vào main.tsx

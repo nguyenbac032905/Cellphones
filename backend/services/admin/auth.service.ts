@@ -38,7 +38,7 @@ export const loginService = async (
     const newRefreshToken = generateRefreshToken(payload);
     await User.findByIdAndUpdate(user._id, {
         refreshToken: newRefreshToken,
-        refreshTokenExpiredAt:new Date(Date.now() + 1000 * 60 * 3)
+        refreshTokenExpiredAt:new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
     });
 
     return {
@@ -85,7 +85,7 @@ export const registerService = async (
     await User.findByIdAndUpdate(newUser._id, {
         refreshToken: newRefreshToken,
         refreshTokenExpiredAt:
-            new Date(Date.now() + 1000 * 60 * 3)
+            new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
     });
 
     return {

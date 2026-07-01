@@ -38,7 +38,7 @@ privateClient.interceptors.response.use(
             }
             isRefreshing = true;
             try {
-                const result = await publicClient.post("/admin/api/auth/refresh-token");
+                const result = await publicClient.get("/admin/api/auth/refresh-token");
                 const newAccessToken = result.data.accessToken;
                 const state = store.getState().auth;
                 if (!state.user) {

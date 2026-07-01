@@ -10,7 +10,7 @@ export const login = async (req: Request, res: Response) => {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
             sameSite: "lax",
-            maxAge: 1000 * 60 * 3,
+            maxAge: 30 * 24 * 60 * 60 * 1000,
         });
         return res.json({
             message: result.message,
@@ -38,7 +38,7 @@ export const register = async (
                 httpOnly: true,
                 secure: process.env.NODE_ENV === "production",
                 sameSite: "lax",
-                maxAge: 1000 * 60 * 3
+                maxAge: 30 * 24 * 60 * 60 * 1000
             }
         );
 
@@ -74,7 +74,6 @@ export const refreshToken = async (
 export const getMe = async (req: Request, res: Response) => {
     try{
         const user = (req as any).user;
-        console.log(user);
         return res.status(200).json(user);
     }catch(error){
         if (error instanceof AppError) {
