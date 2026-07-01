@@ -105,3 +105,8 @@
     1. viết api /auth/me để trả về thông tin user 
     2. tạo bootstrap auth, hàm này sẽ chạy mỗi khi reload trang. trong hàm này sẽ gọi đến hàm refresh-token để lấy accessToken mới, dùng accessToken đó để gọi đến /auth/me để lấy thông tin user. sau đó setStateAuth bằng user và accessToken đó.
     3. nhúng hàm vào main.tsx
+19. validate backend bằng zod
+    1. tạo file product.validation và createProductSchema, updateProductSchema
+    2. tạo file validate middleware để đọc schema validate
+    3. nhúng vào route
+    4. xử lí bên create product, khi upload ảnh phải custom request để có thể gửi lên accessToken trong header

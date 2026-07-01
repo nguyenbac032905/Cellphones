@@ -22,6 +22,9 @@ import { useAdminProduct } from "../hooks/useAdminProduct";
 import LoadingScreen from "../../../shared/components/LoadingScreen";
 import CustomAlert from "../../../shared/components/CustomAlert";
 import { useAdminUpdateProduct } from "../hooks/useAdminUpdateProduct";
+import { privateClient } from "../../../shared/api/privateClient";
+import { updateProductSchema } from "../validations/product.validation";
+import { zodToAntFormErrors } from "../../../shared/utils/zodToAntFormErrors";
 
 const AdminProductsUpdatePage = () => {
     const [form] = Form.useForm();
@@ -170,12 +173,26 @@ const AdminProductsUpdatePage = () => {
 
         const payload = {
             ...values,
-            description: description,
-            content: content,
+            price: Number(values.price),
+            discountPercentage: Number(values.discountPercentage),
+            stock: Number(values.stock),
+            position: Number(values.position),
+            description,
+            content,
             images,
         };
-
-        const result = await updateProduct(payload, productID);
+        const parsed = updateProductSchema.safeParse(payload);
+        if (!parsed.success) {
+            const formErrors = zodToAntFormErrors(parsed.error);
+            form.setFields(
+                Object.keys(formErrors).map((key) => ({
+                    name: key,
+                    errors: formErrors[key],
+                }))
+            );
+            return;
+        }
+        const result = await updateProduct(parsed.data, productID);
 
         if (result) {
             message.success("Cập nhật sản phẩm thành công!");
@@ -372,7 +389,24 @@ const AdminProductsUpdatePage = () => {
                                 <Form.Item label="Images:">
                                     <Upload
                                         name="images"
-                                        action="http://localhost:3000/admin/api/uploads/images"
+                                        customRequest={async ({ file, onSuccess, onError }) => {
+                                            try {
+                                                const formData = new FormData();
+                                                formData.append("images", file as Blob);
+                                                const res = await privateClient.post(
+                                                    "/admin/api/uploads/images",
+                                                    formData,
+                                                    {
+                                                        headers: {
+                                                            "Content-Type": "multipart/form-data"
+                                                        }
+                                                    }
+                                                );
+                                                onSuccess?.(res.data);
+                                            } catch (error) {
+                                                onError?.(error as Error);
+                                            }
+                                        }}
                                         listType="picture-card"
                                         multiple
                                         fileList={fileList}

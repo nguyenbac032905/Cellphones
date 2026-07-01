@@ -18,6 +18,7 @@ import AdminTitle from "../../../shared/components/AdminTitle";
 import { useAdminCreateProduct } from "../hooks/useAdminCreateProduct";
 import { privateClient } from "../../../shared/api/privateClient";
 import { useNavigate } from "react-router-dom";
+import { createProductSchema } from "../validations/product.validation";
 
 const AdminProductsCreatePage = () => {
     const [form] = Form.useForm();
@@ -36,7 +37,7 @@ const AdminProductsCreatePage = () => {
         if(error){
             message.error(error);
         }
-    },[])
+    },[error]);
 
     const uploadButton = (
         <div className="flex flex-col items-center justify-center text-gray-500">
@@ -87,11 +88,28 @@ const AdminProductsCreatePage = () => {
                         }));
         const payload = {
             ...values,
+            price: Number(values.price),
+            stock: Number(values.stock),
+            discountPercentage: Number(values.discountPercentage),
             description: editorRef.current?.getContent() || "",
             content: editorRef.current?.getContent() || "",
-            images: images,
+            images,
         };
-        const result = await createProduct(payload);
+        //validate payload with zod schema
+        const parsed = createProductSchema.safeParse(payload);
+
+        if (!parsed.success) {
+            const formErrors = parsed.error.flatten().fieldErrors;
+            form.setFields(
+                Object.keys(formErrors).map((key) => ({
+                    name: key,
+                    errors: formErrors[key as keyof typeof formErrors]
+                }))
+            );
+            return;
+        }
+
+        const result = await createProduct(parsed.data);
 
         if(result){
             message.success("Product created");
@@ -205,23 +223,23 @@ const AdminProductsCreatePage = () => {
                                     <Upload
                                         name="images"
                                         customRequest={async ({ file, onSuccess, onError }) => {
-                                        try {
-                                            const formData = new FormData();
-                                            formData.append("images", file as Blob);
-                                            const res = await privateClient.post(
-                                                "/admin/api/uploads/images",
-                                                formData,
-                                                {
-                                                    headers: {
-                                                        "Content-Type": "multipart/form-data"
+                                            try {
+                                                const formData = new FormData();
+                                                formData.append("images", file as Blob);
+                                                const res = await privateClient.post(
+                                                    "/admin/api/uploads/images",
+                                                    formData,
+                                                    {
+                                                        headers: {
+                                                            "Content-Type": "multipart/form-data"
+                                                        }
                                                     }
-                                                }
-                                            );
-                                            onSuccess?.(res.data);
-                                        } catch (error) {
-                                            onError?.(error as Error);
-                                        }
-                                    }}
+                                                );
+                                                onSuccess?.(res.data);
+                                            } catch (error) {
+                                                onError?.(error as Error);
+                                            }
+                                        }}
                                         listType="picture-card"
                                         multiple
                                         fileList={fileList}

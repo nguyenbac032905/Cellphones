@@ -1,7 +1,10 @@
-export interface ProductImage {
-    url: string;
-    isMain?: boolean;
-}
+import z from "zod";
+import { createProductSchema, imageSchema, updateProductSchema } from "../validations/product.validation";
+
+export type ProductImage = z.infer<typeof imageSchema>;
+export type PatchProductBody = z.infer<typeof updateProductSchema>;
+export type PostProductBody = z.infer<typeof createProductSchema>;
+
 export interface Category {
     _id: string;
     title?: string;
@@ -46,30 +49,3 @@ export interface ProductQuery{
     page?: number;
     limit?: number;
 };
-
-export interface PatchProductBody {
-    title?: string;
-    product_category_id?: string | null;
-    description?: string;
-    content?: string;
-    price?: number;
-    discountPercentage?: number;
-    stock?: number;
-    images?: ProductImage[];
-    status?: "active" | "inactive";
-    position?: number;
-    featured?: boolean;
-}
-export interface PostProductBody {
-    title: string;
-    product_category_id?: string | null;
-    description?: string;
-    content?: string;
-    price: number;
-    discountPercentage?: number;
-    stock?: number;
-    images?: ProductImage[];
-    status?: "active" | "inactive";
-    position?: number;
-    featured?: boolean;
-}
