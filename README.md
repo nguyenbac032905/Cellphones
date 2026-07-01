@@ -83,3 +83,21 @@
     7. tạo api force delete product bên backend
     8. tạo service, type, hook cho api đó
     9. bắt sự kiện cho nút force delete và xử lí thông báo lỗi,thành công, call api
+16. Tính năng đăng nhập, đăng kí admin, auth bằng accessToken và refreshToken
+    1. tạo model user, sửa cấu hình cors có credentials: true để client có thể gửi cookie lên
+    2. tạo các hàm generate accesstoken và refreshToken trong utils/jwt, khi gọi thì sẽ truyền vào payload và hàm sẽ sign bằng payload và secret key.
+    3. tạo route register, controller register, service register. khi người dùng gửi thông tin lên thì bên service sẽ tạo tài khoản mới, tạo access token và refresh token và lưu refreshToken vào db. sau đó trả lại res cho controller, controller sẽ lưu refreshToken vào trong cookie với httpOnly, và trả về cho client {message, accessToken, user}
+    4. tạo api login tương tự register
+    5. tạo route refresh-token, khi client gọi đến route này thì controller sẽ gửi refreshToken trong cookie sang service(phải cải thư viện cookie-parse để đọc được cookie trong req). bên service sẽ decoded refreshToken, nếu refreshToken hết hạn hoặc sai thì nó sẽ ném ra lỗi 401, service sẽ gọi đến user có userID mình đã decoded ra và generateAccessToken mới và trả về cho controller.controller trả {accessToken} về cho client.
+    6. tạo authMiddleware cho nhưng route private, ở đây sẽ check xem những request của người dùng có gửi accessToken lên không (tức là đã đăng nhập chưa) và nó có đúng không bằng cách verify accessToken và secretKey. nếu lỗi thì ném ra lỗi 401 tương ứng.
+    7. Bên Frontend sẽ cài react-redux và redux tool kit để quản lí state auth
+    8. tạo store.ts để để lưu state tổng. tạo authSlice để cấu hình state auth bao gồm state, các hàm reducers(clearAuth và setAuth). bọc Provider bên ngoài App để dùng store cho cả app.
+    9. tạo privateClient để cấu hình instance private cho axios. mỗi request sẽ lấy ra accessToken trong store và gửi kèm lên headers. 
+    10. mỗi response trả về sẽ bắt lỗi, nếu là lỗi 401(Unauthorization) thì sẽ kiểm tra xem request này đã gửi yêu cầu tạo accessToken mới chưa, nếu chưa thì call đến api /admin/api/auth/refresh-token để yêu cầu tạo accessToken mới, nếu mà server tạo thành công và trả về thì mình sẽ lưu lại accessToken mới vào state và gọi lại request bị lỗi với accessToken mới. còn nếu server không trả về accessToken mới tức là refreshToken đã hết hạn nên mình sẽ clearAuth đi và redirect về trang login để người dùng đăng nhập, từ đó tạo refreshToken mới.
+    11. xử lí vấn đề nhiều request A,B,C cung lúc gây ra tạo nhiều accessTOken lại bằng cách tạo hàng đợi, mỗi response lỗi trả về sẽ check xem request A đó có yêu cầu tạo mới chưa, nếu có rồi thì sẽ đẩy vào hàng đợi, khi nào reqquest A tạo mới accessToken xong sẽ trả về cho từng request BCD và gọi lại các request đó với accessToken mới.
+    12. tạo service login và hook login, route auth 
+    13. tạo trang login, bắt sự kiện cho nút login, khi người dùng đăng nhập sẽ call hook login và gửi lên email, mật khẩu và nhận data trả về, gọi đến hàm dispatch để gửi action lên (tạo app/hooks để tạo hàm dispatch vì dùng typescript).
+    14. tạo AminPrivateRoute để bọc những route private vào.
+    15. sửa lại các service products, products category bên admin phải dùng privateClient.
+    17. luồng tổng: Người dùng đăng nhập => server trả về accessToken và lưu refreshToken vào HTTP Only Cookie => mỗi request client sẽ gửi kèm accessToken => server verify token, nếu hợp lệ thì xử lí request, nếu hết hạn sẽ trả 401 Unauthorized => client tự động gọi API refresh-token để lấy accessToken mới và retry request cũ => nếu refreshToken hết hạn thì logout và chuyển về trang login.
+    16. vấn đề đặt ra là khi F5 trang web sẽ xóa state auth đi và bị đẩy ra login dù token chưa hết hạn.

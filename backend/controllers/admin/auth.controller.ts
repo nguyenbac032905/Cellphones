@@ -59,10 +59,8 @@ export const refreshToken = async (
     res: Response
 ) => {
     try {
-        console.log("da refresh")
         const refreshToken = req.cookies?.refreshToken;
         const result = await refreshTokenService(refreshToken);
-        console.log(refreshToken);
         return res.status(200).json({
             accessToken: result.accessToken
         });
@@ -73,3 +71,15 @@ export const refreshToken = async (
         return res.status(500).json({error: "server error"});
     }
 };
+export const getMe = async (req: Request, res: Response) => {
+    try{
+        const user = (req as any).user;
+        console.log(user);
+        return res.status(200).json(user);
+    }catch(error){
+        if (error instanceof AppError) {
+            return res.status(error.statusCode).json({error: error.message});
+        }
+        return res.status(500).json({error: "server error"});
+    }
+}

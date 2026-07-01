@@ -31,8 +31,6 @@ const AdminLoginPage = () => {
             if(data){
                 message.success(data.message);
                 dispatch(setAuth(data));
-                const state = store.getState().auth;
-                console.log(state);
                 navigate("/admin/");
             }else{
                 message.error(error || "Login failed");

@@ -6,6 +6,7 @@ import NotFoundPage from "./shared/pages/NotFoundPage";
 import { adminProductRoutes,productRoutes } from "./features/products/product.route";
 import { adminRecycleBinRoutes } from "./features/recycleBin/recycleBin.route";
 import { adminAuthRoutes } from "./features/auth/auth.route";
+import AdminPrivateRoute from "./features/auth/components/AdminPrivateRoute";
 
 export const routes = [
     {
@@ -14,8 +15,13 @@ export const routes = [
     },
     {
         path: "/admin",
-        element: <AdminLayout />,
-        children: [...dashboardRoutes,...adminProductRoutes,...adminRecycleBinRoutes]
+        element: <AdminPrivateRoute />,
+        children: [
+            {
+                element: <AdminLayout />,
+                children: [...dashboardRoutes,...adminProductRoutes,...adminRecycleBinRoutes]
+            }
+        ]
     },
     {
         path: "/",
