@@ -122,3 +122,4 @@
     5. sửa lại hook actions create, update, delete không cần trả về data,error nữa, và bỏ try catch vì chỉ cần try catch ở UI và xử lí dựa vào success và message trả về thôi
     6. sửa lại hook fetch như products, product detail trả về đúng key products chứ không để raw nữa
     7. sửa lại các file giao diện tương ứng
+22. chuẩn hóa response cho productcategory, auth, upload

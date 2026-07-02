@@ -1,8 +1,9 @@
-
+import { z } from "zod";
 import mongoose from "mongoose";
 import Product from "../../models/product.model";
 import { getAllChildCategoryIds } from "./productCategories.service";
 import { AppError } from "../../utils/AppError";
+import { createProductSchema, updateProductSchema } from "../../validations/admin/product.validation";
 
 type Query = {
     status?: string;
@@ -13,6 +14,22 @@ type Query = {
     page?: string;
     limit?: string;
 };
+type CreateProductDTO = z.infer<typeof createProductSchema>["body"];
+type UpdateProductDTO = z.infer<typeof updateProductSchema>["body"];
+
+const PRODUCT_WHITELIST = [
+    "title",
+    "product_category_id",
+    "description",
+    "content",
+    "price",
+    "discountPercentage",
+    "stock",
+    "images",
+    "status",
+    "position",
+    "featured"
+] as const;
 
 export const getProducts = async (query: Query = {}) => {
     const { status, category, stock, search, sort, page = "1", limit = "4" } = query;
@@ -135,28 +152,11 @@ export const getProducts = async (query: Query = {}) => {
         }
     }
 }
-export const updateProductService = async (productID: string, body: Record<string, any>) => {
-    if (!mongoose.Types.ObjectId.isValid(productID)) {
-        throw new AppError("Invalid product id", 400);
-    }
-    const productUpdateWhiteList = [
-        "title",
-        "product_category_id",
-        "description",
-        "content",
-        "price",
-        "discountPercentage",
-        "stock",
-        "thumbnail",
-        "images",
-        "status",
-        "position",
-        "featured"
-    ];
+export const updateProductService = async (productID: string, body: UpdateProductDTO) => {
 
     const updateFields: Record<string, any> = {};
 
-    productUpdateWhiteList.forEach((field) => {
+    PRODUCT_WHITELIST.forEach((field) => {
         if (body[field] !== undefined) {
             updateFields[field] = body[field];
         }
@@ -180,10 +180,6 @@ export const updateProductService = async (productID: string, body: Record<strin
     };
 };
 export const deleteProductService = async (productID: string) => {
-    if (!mongoose.Types.ObjectId.isValid(productID)) {
-        throw new AppError("Invalid product id", 400);
-    }
-
     const product = await Product.findByIdAndUpdate(
         productID,
         { deleted: true },
@@ -199,10 +195,6 @@ export const deleteProductService = async (productID: string) => {
     };
 };
 export const getProductByIDService = async (productID: string) => {
-    if (!mongoose.Types.ObjectId.isValid(productID)) {
-        throw new AppError("Invalid product id", 400);
-    }
-
     const product = await Product.findOne({
         _id: productID,
         deleted: false
@@ -216,37 +208,14 @@ export const getProductByIDService = async (productID: string) => {
         data: product
     };
 }
-export const createProductService = async (
-    body: Record<string, any>
-) => {
-    const productCreateWhiteList = [
-        "title",
-        "product_category_id",
-        "description",
-        "content",
-        "price",
-        "discountPercentage",
-        "stock",
-        "images",
-        "status",
-        "position",
-        "featured",
-    ];
-
+export const createProductService = async ( body: CreateProductDTO ) => {
     const createFields: Record<string, any> = {};
 
-    productCreateWhiteList.forEach((field) => {
+    PRODUCT_WHITELIST.forEach((field) => {
         if (body[field] !== undefined) {
             createFields[field] = body[field];
         }
     });
-
-    if (createFields.product_category_id) {
-        createFields.product_category_id =
-            new mongoose.Types.ObjectId(
-                createFields.product_category_id
-            );
-    }
 
     if (
         createFields.position === undefined ||
@@ -263,7 +232,7 @@ export const createProductService = async (
     }
 
     const product = await Product.create(createFields);
-    if(!product){
+    if (!product) {
         throw new AppError("Failed to create product", 500);
     }
     return {

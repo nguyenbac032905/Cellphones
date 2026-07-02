@@ -6,6 +6,7 @@ import clientRoutes from "./routes/client/index.route";
 import adminRoutes from "./routes/admin/index.route";
 import database from "./config/database";
 import cookieParser from "cookie-parser";
+import { errorHandlerMiddleware } from "./middlewares/admin/errorHandler.middleware";
 database();
 
 const app: Express = express();
@@ -21,6 +22,8 @@ app.use(cookieParser());
 
 clientRoutes(app);
 adminRoutes(app);
+
+app.use(errorHandlerMiddleware);
 
 app.listen(port, () => {
     console.log(`App listen on port ${port}`);
