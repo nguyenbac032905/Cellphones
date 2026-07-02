@@ -10,6 +10,7 @@ import type { Product,  ProductQuery } from "../types/products.type";
 import { useState} from "react";
 import { useAdminUpdateProduct } from "../hooks/useAdminUpdateProduct";
 import { useAdminDeleteProduct } from "../hooks/useAdminDeleteProduct";
+import { getErrorMessage } from "../../../shared/utils/errorHandler";
 
 const { Search } = Input;
 
@@ -29,33 +30,37 @@ const AdminProductToolbar = ({query, updateQuery, selectedRows, refetch}: Props)
     
     const handleApply = async () => {
         if (!action) return;
-        if (action === "active") {
-            await Promise.all(
-                selectedRows.map(product =>
-                    updateProduct({ status: "active" }, String(product._id))
-                )
-            );
-            message.success("Cập nhật trạng thái hoạt động thành công!")
+        try{
+            if (action === "active") {
+                await Promise.all(
+                    selectedRows.map(product =>
+                        updateProduct({ status: "active" }, String(product._id))
+                    )
+                );
+                message.success("Cập nhật trạng thái hoạt động thành công!")
+            }
+            if (action === "inactive") {
+                await Promise.all(
+                    selectedRows.map(product =>
+                        updateProduct({ status: "inactive" }, String(product._id))
+                    )
+                );
+                message.success("Cập nhật trạng thái dừng hoạt động thành công!")
+            }
+            if (action === "delete") {
+                // gọi API delete bulk hoặc từng item
+                await Promise.all(
+                    selectedRows.map(product =>
+                        deleteProduct(String(product._id))
+                    )
+                );
+                message.success("Xóa sản phẩm thành công!")
+            }
+            setAction(undefined);
+            await refetch();
+        }catch(error){
+            message.error(getErrorMessage(error));
         }
-        if (action === "inactive") {
-            await Promise.all(
-                selectedRows.map(product =>
-                    updateProduct({ status: "inactive" }, String(product._id))
-                )
-            );
-            message.success("Cập nhật trạng thái dừng hoạt động thành công!")
-        }
-        if (action === "delete") {
-            // gọi API delete bulk hoặc từng item
-            await Promise.all(
-                selectedRows.map(product =>
-                    deleteProduct(String(product._id))
-                )
-            );
-            message.success("Xóa sản phẩm thành công!")
-        }
-        setAction(undefined);
-        await refetch();
     }
     return (
         <Card

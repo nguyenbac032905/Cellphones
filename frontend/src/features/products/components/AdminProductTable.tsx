@@ -1,28 +1,29 @@
 import { Button, Image, Input, message, Popconfirm, Space, Switch, Table } from "antd";
-import type { Product, ProductListResponse, ProductQuery } from "../types/products.type";
+import type { PaginationMeta, Product, ProductQuery } from "../types/products.type";
 import { Link } from "react-router-dom";
 import { useAdminUpdateProduct } from "../hooks/useAdminUpdateProduct";
 import { useState } from "react";
 import { getErrorMessage } from "../../../shared/utils/errorHandler";
 import { useAdminDeleteProduct } from "../hooks/useAdminDeleteProduct";
 type Props = {
+    products: Product[],
+    meta: PaginationMeta,
     updateQuery: (values: Partial<ProductQuery>) => void,
-    data: ProductListResponse,
     refetch: () => Promise<void>,
     setSelectedRows: React.Dispatch<React.SetStateAction<Product[]>>
 }
-const ProductTable = ({ data,updateQuery, refetch, setSelectedRows}: Props) => {
-    const {updateProduct,error: errorUpdate} = useAdminUpdateProduct();
+const ProductTable = ({ products, meta, updateQuery, refetch, setSelectedRows }: Props) => {
+    const { updateProduct } = useAdminUpdateProduct();
     const [updatingId, setUpdatingId] = useState("");
-    const {deleteProduct, error: errorDelete} = useAdminDeleteProduct();
+    const { deleteProduct } = useAdminDeleteProduct();
 
     const columns = [
         {
             title: "Position",
             dataIndex: "position",
             key: "position",
-            render: (position: number,record: Product) => (
-                <Input 
+            render: (position: number, record: Product) => (
+                <Input
                     defaultValue={position}
                     disabled={record._id === updatingId}
                     style={{ width: 60, textAlign: "center" }}
@@ -32,8 +33,8 @@ const ProductTable = ({ data,updateQuery, refetch, setSelectedRows}: Props) => {
 
                         try {
                             setUpdatingId(record._id);
-                            await updateProduct({ position: newPosition }, record._id);
-                            message.success("Cập nhật vị trí thành công!");
+                            const result = await updateProduct({ position: newPosition }, record._id);
+                            message.success(result.message);
                         } catch (error) {
                             message.error(getErrorMessage(error));
                         } finally {
@@ -92,11 +93,12 @@ const ProductTable = ({ data,updateQuery, refetch, setSelectedRows}: Props) => {
                     onChange={async (checked) => {
                         try {
                             setUpdatingId(record._id);
-                            await updateProduct({status: checked ? "active" : "inactive"},record._id);
-                            message.success("Product updated successfully!");
+                            const result = await updateProduct({ status: checked ? "active" : "inactive" }, record._id);
+                            console.log(result);
+                            message.success(result.message);
                             await refetch();
                         } catch (error) {
-                            message.error(getErrorMessage(errorUpdate));
+                            message.error(getErrorMessage(error));
                         } finally {
                             setUpdatingId("");
                         }
@@ -129,9 +131,8 @@ const ProductTable = ({ data,updateQuery, refetch, setSelectedRows}: Props) => {
                             try {
                                 setUpdatingId(record._id);
 
-                                await deleteProduct(record._id);
-
-                                message.success("Product deleted successfully!");
+                                const result = await deleteProduct(record._id);
+                                message.success(result.message);
 
                                 await refetch();
                             } catch (error) {
@@ -157,29 +158,29 @@ const ProductTable = ({ data,updateQuery, refetch, setSelectedRows}: Props) => {
 
     return (
         <>
-            <Table 
-                dataSource={data.products}
+            <Table
+                dataSource={products}
                 columns={columns}
                 rowKey="_id"
                 className="overflow-hidden rounded-2xl border border-gray-200"
-                rowSelection={{ 
+                rowSelection={{
                     type: "checkbox",
                     onChange: (_, selectedRows) => {
                         setSelectedRows(selectedRows);
                     }
                 }}
-                scroll={{x:1000}}
+                scroll={{ x: 1000 }}
                 pagination={{
                     placement: ["bottomCenter"],
-                    current: Number(data.pagination.page || 1),
-                    pageSize: Number(data.pagination.limit || 4),
-                    total: data.pagination.total,
+                    current: Number(meta.page || 1),
+                    pageSize: Number(meta.limit || 4),
+                    total: meta.total,
                     onChange: (page) => {
                         updateQuery({
                             page: Number(page)
                         });
                     }
-                }} 
+                }}
             />
         </>
     )

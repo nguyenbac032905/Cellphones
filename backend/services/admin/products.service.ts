@@ -126,8 +126,8 @@ export const getProducts = async (query: Query = {}) => {
     const total = result[0].total[0]?.count || 0;
 
     return {
-        products: products,
-        pagination: {
+        data: products,
+        meta: {
             total,
             page: pageNum,
             limit: limitNum,
@@ -135,7 +135,6 @@ export const getProducts = async (query: Query = {}) => {
         }
     }
 }
-
 export const updateProductService = async (productID: string, body: Record<string, any>) => {
     if (!mongoose.Types.ObjectId.isValid(productID)) {
         throw new AppError("Invalid product id", 400);
@@ -176,7 +175,9 @@ export const updateProductService = async (productID: string, body: Record<strin
         throw new AppError("Product not found", 404);
     }
 
-    return product;
+    return {
+        message: "Product updated successfully"
+    };
 };
 export const deleteProductService = async (productID: string) => {
     if (!mongoose.Types.ObjectId.isValid(productID)) {
@@ -193,7 +194,9 @@ export const deleteProductService = async (productID: string) => {
         throw new AppError("Product not found", 404);
     }
 
-    return product;
+    return {
+        message: "Product deleted successfully"
+    };
 };
 export const getProductByIDService = async (productID: string) => {
     if (!mongoose.Types.ObjectId.isValid(productID)) {
@@ -209,7 +212,9 @@ export const getProductByIDService = async (productID: string) => {
         throw new AppError("Product not found", 404);
     }
 
-    return product;
+    return {
+        data: product
+    };
 }
 export const createProductService = async (
     body: Record<string, any>
@@ -258,6 +263,10 @@ export const createProductService = async (
     }
 
     const product = await Product.create(createFields);
-
-    return product;
+    if(!product){
+        throw new AppError("Failed to create product", 500);
+    }
+    return {
+        message: "Product created successfully"
+    };
 };

@@ -4,7 +4,7 @@ import { productAdminService } from "../services/productAdmin.service";
 import { getErrorMessage } from "../../../shared/utils/errorHandler";
 
 export const useAdminProduct = (productID?: string) => {
-    const [data, setData] = useState<Product>();
+    const [product, setProduct] = useState<Product>();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
@@ -16,17 +16,16 @@ export const useAdminProduct = (productID?: string) => {
                 setLoading(true);
                 setError("");
 
-                const data = await productAdminService.get(productID);
+                const result = await productAdminService.get(productID);
                 
-                setData(data);
+                setProduct(result.data);
             } catch (error) {
-                const message = getErrorMessage(error);
-                setError(message);
+                setError(getErrorMessage(error));
             } finally {
                 setLoading(false);
             }
         };
         fetchApi();
     }, [productID]);
-    return {data, loading, error};
+    return {product, loading, error};
 };

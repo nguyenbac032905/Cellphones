@@ -25,36 +25,14 @@ import { useAdminUpdateProduct } from "../hooks/useAdminUpdateProduct";
 import { privateClient } from "../../../shared/api/privateClient";
 import { updateProductSchema } from "../validations/product.validation";
 import { zodToAntFormErrors } from "../../../shared/utils/zodToAntFormErrors";
+import { getErrorMessage } from "../../../shared/utils/errorHandler";
 
 const AdminProductsUpdatePage = () => {
     const [form] = Form.useForm();
     const navigate = useNavigate();
-    
-    const [description, setDescription] = useState("");
-    const [content, setContent] = useState("");
 
     const { productID } = useParams();
-    // check productID
     const isValidProductID = typeof productID === "string" && productID.trim() !== "";
-
-    const { data: categories = [] } = useAdminCategoriesTree();
-    const {
-        data: product,
-        loading: loadingProduct,
-        error: errorProduct,
-    } = useAdminProduct(isValidProductID ? productID : "");
-    const {
-        loading: loadingUpdate,
-        error: errorUpdate,
-        updateProduct,
-    } = useAdminUpdateProduct();
-
-    // images
-    const [fileList, setFileList] = useState<any[]>([]);
-    const [mainImageId, setMainImageId] = useState<string | null>(null);
-    // preview
-    const [previewImage, setPreviewImage] = useState("");
-    const [previewOpen, setPreviewOpen] = useState(false);
     // invalid id
     useEffect(() => {
         if (!isValidProductID) {
@@ -62,18 +40,25 @@ const AdminProductsUpdatePage = () => {
             navigate("/admin/products");
         }
     }, [isValidProductID, navigate]);
+    const { data: categories = [] } = useAdminCategoriesTree();
+    const {product, loading: loadingProduct, error: errorProduct} = useAdminProduct(isValidProductID ? productID : "");
+    const {loading: loadingUpdate,updateProduct} = useAdminUpdateProduct();
 
-    // update error
-    useEffect(() => {
-        if (errorUpdate) {
-            message.error(errorUpdate);
-        }
-    }, [errorUpdate]);
+    
+    //tini-mce
+    const [description, setDescription] = useState("");
+    const [content, setContent] = useState("");
+    // images
+    const [fileList, setFileList] = useState<any[]>([]);
+    const [mainImageId, setMainImageId] = useState<string | null>(null);
+    // preview
+    const [previewImage, setPreviewImage] = useState("");
+    const [previewOpen, setPreviewOpen] = useState(false);
 
     // fill form data
     useEffect(() => {
         if (!product) return;
-
+        // set form values
         form.setFieldsValue({
             title: product.title,
             product_category_id: product.product_category_id?._id,
@@ -84,7 +69,7 @@ const AdminProductsUpdatePage = () => {
             status: product.status,
             featured: product.featured,
         });
-        
+        // set tiny-mce
         setDescription(product.description || "");
         setContent(product.content || "");
         // set images
@@ -114,14 +99,14 @@ const AdminProductsUpdatePage = () => {
             }
         }
     }, [product, form]);
-
+    //button upload
     const uploadButton = (
         <div className="flex flex-col items-center justify-center text-gray-500">
             <PlusOutlined />
             <span className="mt-2 text-xs">Upload</span>
         </div>
     );
-
+    // handle kiểm tra lỗi ảnh và thông báo, và update lại ảnh khi người dùng thay đổi ảnh
     const handleChange = ({ fileList: newFileList }: any) => {
         const errorFile = newFileList.find(
             (file: any) => file.status === "error"
@@ -147,21 +132,21 @@ const AdminProductsUpdatePage = () => {
 
         setFileList(updatedList.slice(0, 10));
     };
-
+    // Hàm preview ảnh
     const handlePreview = async (file: any) => {
         setPreviewImage(file.url || file.thumbUrl);
         setPreviewOpen(true);
     };
-
+    // hàm chọn ảnh main
     const handleSelectMain = (file: any) => {
         setMainImageId(file.uid);
     };
-
+    // hàm submit form
     const onFinish = async (values: any) => {
         if (!isValidProductID) {
             return message.error("ID sản phẩm không hợp lệ!");
         }
-
+        // lấy ra danh sách ảnh chuẩn format để gửi lên server
         const images = fileList
             .filter((file) => file.status === "done")
             .map((file) => ({
@@ -170,7 +155,7 @@ const AdminProductsUpdatePage = () => {
                     : file.url || file.response?.urls?.[0],
                 isMain: file.uid === mainImageId,
             }));
-
+        // lấy ra payload để validate với zod
         const payload = {
             ...values,
             price: Number(values.price),
@@ -181,8 +166,10 @@ const AdminProductsUpdatePage = () => {
             content,
             images,
         };
+        // validate payload với zod
         const parsed = updateProductSchema.safeParse(payload);
         if (!parsed.success) {
+            // chuyển lỗi từ zod sang format của Ant Design Form và set lỗi lên form
             const formErrors = zodToAntFormErrors(parsed.error);
             form.setFields(
                 Object.keys(formErrors).map((key) => ({
@@ -192,11 +179,12 @@ const AdminProductsUpdatePage = () => {
             );
             return;
         }
-        const result = await updateProduct(parsed.data, productID);
-
-        if (result) {
-            message.success("Cập nhật sản phẩm thành công!");
+        try{
+            const result = await updateProduct(parsed.data, productID);
+            message.success(result.message);
             navigate("/admin/products");
+        }catch(error){
+            message.error(getErrorMessage(error))
         }
     };
 

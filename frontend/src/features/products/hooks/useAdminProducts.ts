@@ -1,35 +1,32 @@
 import { useCallback, useEffect, useState } from "react";
 import { productAdminService } from "../services/productAdmin.service";
-import type {
-    ProductListResponse,
-    ProductQuery
-} from "../types/products.type";
+import type {PaginationMeta,Product,ProductQuery} from "../types/products.type";
 import { getErrorMessage } from "../../../shared/utils/errorHandler";
 
 export const useAdminProducts = (query: ProductQuery) => {
-    const [data, setData] = useState<ProductListResponse>({
-        products: [],
-        pagination: {
-            total: 0,
-            page: 1,
-            limit: 1,
-            totalPages: 0,
-        },
+    const [products, setProducts] = useState<Product[]>([]);
+    const [meta, setMeta] = useState<PaginationMeta>({
+        total: 0,
+        page: 1,
+        limit: 4,
+        totalPages: 0
     });
-
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState("");
+    const [error, setError] = useState<string>("");
 
     const fetchProducts = useCallback(async () => {
         try {
             setLoading(true);
             setError("");
 
-            const data = await productAdminService.getAll(query);
+            const res = await productAdminService.getAll(query);
 
-            setData(data);
-        } catch (error) {
-            setError(getErrorMessage(error));
+            if (res.success) {
+                setProducts(res.data);
+                setMeta(res.meta);
+            }
+        } catch (err) {
+            setError(getErrorMessage(err));
         } finally {
             setLoading(false);
         }
@@ -47,5 +44,11 @@ export const useAdminProducts = (query: ProductQuery) => {
         fetchProducts();
     }, [fetchProducts]);
 
-    return {data,loading,error,refetch: fetchProducts};
+    return {
+        products,
+        meta,
+        loading,
+        error,
+        refetch: fetchProducts
+    };
 };

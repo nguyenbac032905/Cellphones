@@ -110,3 +110,7 @@
     2. tạo file validate middleware để đọc schema validate
     3. nhúng vào route
     4. xử lí bên create product, khi upload ảnh phải custom request để có thể gửi lên accessToken trong header
+20. validate frontend bàng zod
+    1. tạo product.validation và createProductSchema, updateProductSchema
+    2. sửa lại type của PostProductBody và PatchProductBody bằng infer type của zod cho đồng bộ type
+    3. parse  dữ liệu trước khi gửi gọi service post,patch. khi lỗi thì chuyển lỗi sang format của ant bằng cách tạo hàm zodToAntFormErrors. sau đó truyền lỗi vào form.

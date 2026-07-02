@@ -1,10 +1,9 @@
 import ProductTable from "../components/AdminProductTable";
 import AdminProductFilter from "../components/AdminProductFilter";
 import AdminProductToolbar from "../components/AdminProductToolbar";
-import { message, Spin } from "antd";
 import { useAdminProductQuery } from "../hooks/useAdminProductQuery";
 import { useAdminProducts } from "../hooks/useAdminProducts";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import type { Product } from "../types/products.type";
 import LoadingScreen from "../../../shared/components/LoadingScreen";
 import CustomAlert from "../../../shared/components/CustomAlert";
@@ -12,7 +11,7 @@ import AdminTitle from "../../../shared/components/AdminTitle";
 
 const AdminProductsPage = () => {
     const {query, updateQuery} = useAdminProductQuery();
-    const {data, loading, error, refetch} = useAdminProducts(query);
+    const {products,meta, loading, error, refetch} = useAdminProducts(query);
     const [selectedRows, setSelectedRows] = useState<Product[]>([]);
 
     if (loading) {
@@ -28,7 +27,7 @@ const AdminProductsPage = () => {
                 <AdminTitle title="Products List" description="Manage all products in your store" />
                 <AdminProductFilter query={query} updateQuery={updateQuery}/>
                 <AdminProductToolbar query={query} updateQuery={updateQuery} selectedRows={selectedRows} refetch={refetch}/>
-                <ProductTable data={data} updateQuery={updateQuery} refetch={refetch} setSelectedRows={setSelectedRows}/>
+                <ProductTable products={products} meta={meta} updateQuery={updateQuery} refetch={refetch} setSelectedRows={setSelectedRows}/>
             </div>
         </>
     )

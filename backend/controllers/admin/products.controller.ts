@@ -4,7 +4,10 @@ import { AppError } from "../../utils/AppError";
 export const index = async (req: Request, res: Response) => {
     try {
         const result = await getProducts(req.query);
-        return res.status(200).json(result);
+        return res.status(200).json({
+            success: true,
+            ...result
+        });
     } catch (error: any) {
         if(error instanceof AppError){
             return res.status(error.statusCode).json({error: error.message});
@@ -22,7 +25,10 @@ export const updateProduct = async (req:Request, res: Response) => {
             throw new AppError("Invalid product id", 400);
         }
         const result = await updateProductService(productID, req.body);
-        return res.status(200).json(result);
+        return res.status(200).json({
+            success: true,
+            ...result
+        });
     } catch (error: any) {
         if(error instanceof AppError){
             return res.status(error.statusCode).json({error: error.message});
@@ -40,7 +46,10 @@ export const deleteProduct = async (req:Request, res: Response) => {
             throw new AppError("Invalid product id", 400);
         }
         const result = await deleteProductService(productID);
-        return res.status(200).json(result);
+        return res.status(200).json({
+            success: true,
+            ...result
+        });
     } catch (error: any) {
         if(error instanceof AppError){
             return res.status(error.statusCode).json({error: error.message});
@@ -55,7 +64,10 @@ export const detail = async (req: Request, res: Response) => {
             throw new AppError("Invalid product id", 400);
         }
         const result = await getProductByIDService(productID);
-        return res.status(200).json(result);
+        return res.status(200).json({
+            success: true,
+            ...result
+        });
     } catch (error: any) {
         if(error instanceof AppError){
             return res.status(error.statusCode).json({error: error.message});
@@ -66,7 +78,10 @@ export const detail = async (req: Request, res: Response) => {
 export const createProduct = async (req:Request, res: Response) => {
     try {
         const result = await createProductService(req.body);
-        return res.status(201).json(result);
+        return res.status(201).json({
+            success: true,
+            ...result
+        });
     } catch (error) {
         if(error instanceof AppError){
             return res.status(error.statusCode).json({error: error.message});

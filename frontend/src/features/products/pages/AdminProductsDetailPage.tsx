@@ -21,10 +21,11 @@ const { Title, Text } = Typography;
 
 const AdminProductsDetailPage = () => {
     const { productID } = useParams();
-    const { data, loading, error } = useAdminProduct(productID);
+    const { product, loading, error } = useAdminProduct(productID);
 
     const [mainImage, setMainImage] = useState<string>("");
-    const images = data?.images || [];
+    
+    const images = product?.images || [];
     const resolvedMainImage = useMemo(() => {
         if (!images.length) return "";
 
@@ -45,7 +46,7 @@ const AdminProductsDetailPage = () => {
         return <CustomAlert error={error} />;
     }
 
-    if (!data) {
+    if (!product) {
         return (
             <CustomAlert error="Product not found" />
         );
@@ -62,15 +63,15 @@ const AdminProductsDetailPage = () => {
                         <div className="mb-6 flex flex-col gap-4 border-b border-gray-200 pb-5 md:flex-row md:items-start md:justify-between">
                             <div>
                                 <Title level={2} className="!mb-1">
-                                    {data.title}
+                                    {product.title}
                                 </Title>
                                 <Text type="secondary">
                                     Category:
                                     <Link
-                                        to={`/admin/products?category=${data.product_category_id?._id}`}
+                                        to={`/admin/products?category=${product.product_category_id?._id}`}
                                         className="ml-2 inline-flex items-center !underline rounded-md bg-gray-200 px-3 text-sm font-medium text-gray-700 transition hover:bg-gray-300 hover:text-black"
                                     >
-                                        {data.product_category_id?.title}
+                                        {product.product_category_id?.title}
                                     </Link>
                                 </Text>
                             </div>
@@ -92,28 +93,28 @@ const AdminProductsDetailPage = () => {
                         >
                             <Descriptions.Item label="Price">
                                 <Tag color="gold" className="px-3 py-1 text-sm font-medium">
-                                    {data.price.toLocaleString("vi-VN")} đ
+                                    {product.price.toLocaleString("vi-VN")} đ
                                 </Tag>
                             </Descriptions.Item>
                             <Descriptions.Item label="Discount Percentage">
                                 <Tag color="volcano" className="px-3 py-1 text-sm font-medium">
-                                    -{data.discountPercentage}%
+                                    -{product.discountPercentage}%
                                 </Tag>
                             </Descriptions.Item>
                             <Descriptions.Item label="Status">
                                 <Tag
-                                    color={data.status === "active" ? "success" : "error"}
+                                    color={product.status === "active" ? "success" : "error"}
                                     className="px-3 py-1 text-sm font-medium capitalize"
                                 >
-                                    {data.status}
+                                    {product.status}
                                 </Tag>
                             </Descriptions.Item>
                             <Descriptions.Item label="Sold">
                                 <Tag color="geekblue" className="px-3 py-1 text-sm font-medium">
-                                    {data.sold} sold
+                                    {product.sold} sold
                                 </Tag>
                             </Descriptions.Item>
-                            {data.featured && (
+                            {product.featured && (
                                 <Descriptions.Item label="Featured">
                                     <Tag color="magenta" className="px-3 py-1 text-sm font-medium">
                                         Featured
@@ -122,20 +123,20 @@ const AdminProductsDetailPage = () => {
                             )}
                             <Descriptions.Item label="Created At">
                                 <Tag color="blue" className="px-3 py-1 text-sm">
-                                    {new Date(data.createdAt).toLocaleString("vi-VN")}
+                                    {new Date(product.createdAt).toLocaleString("vi-VN")}
                                 </Tag>
                             </Descriptions.Item>
                             <Descriptions.Item label="Updated At">
                                 <Tag color="cyan" className="px-3 py-1 text-sm">
-                                    {new Date(data.updatedAt).toLocaleString("vi-VN")}
+                                    {new Date(product.updatedAt).toLocaleString("vi-VN")}
                                 </Tag>
                             </Descriptions.Item>
                             <Descriptions.Item label="Deleted">
                                 <Tag
-                                    color={data.deleted ? "error" : "success"}
+                                    color={product.deleted ? "error" : "success"}
                                     className="px-3 py-1 text-sm font-medium"
                                 >
-                                    {data.deleted ? "Deleted" : "Available"}
+                                    {product.deleted ? "Deleted" : "Available"}
                                 </Tag>
                             </Descriptions.Item>
                         </Descriptions>
@@ -150,7 +151,7 @@ const AdminProductsDetailPage = () => {
                                         <div
                                             className="prose max-w-none"
                                             dangerouslySetInnerHTML={{
-                                                __html: data.description
+                                                __html: product.description
                                             }}
                                         />
                                     )
@@ -162,7 +163,7 @@ const AdminProductsDetailPage = () => {
                                         <div
                                             className="prose max-w-none"
                                             dangerouslySetInnerHTML={{
-                                                __html: data.content
+                                                __html: product.content
                                             }}
                                         />
                                     )
@@ -178,7 +179,7 @@ const AdminProductsDetailPage = () => {
                                 {displayMain ? (
                                     <Image
                                         src={displayMain}
-                                        alt={data.title}
+                                        alt={product.title}
                                         className="rounded-xl object-cover"
                                         width={400}
                                     />

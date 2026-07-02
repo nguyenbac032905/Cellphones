@@ -19,6 +19,8 @@ import { useAdminCreateProduct } from "../hooks/useAdminCreateProduct";
 import { privateClient } from "../../../shared/api/privateClient";
 import { useNavigate } from "react-router-dom";
 import { createProductSchema } from "../validations/product.validation";
+import { zodToAntFormErrors } from "../../../shared/utils/zodToAntFormErrors";
+import { getErrorMessage } from "../../../shared/utils/errorHandler";
 
 const AdminProductsCreatePage = () => {
     const [form] = Form.useForm();
@@ -31,13 +33,7 @@ const AdminProductsCreatePage = () => {
     const [mainImageId, setMainImageId] = useState<string | null>(null);
     const [previewImage, setPreviewImage] = useState("");
     const [previewOpen, setPreviewOpen] = useState(false);
-    const {loading, error, createProduct} = useAdminCreateProduct();
-    
-    useEffect(() => {
-        if(error){
-            message.error(error);
-        }
-    },[error]);
+    const {loading, createProduct} = useAdminCreateProduct();
 
     const uploadButton = (
         <div className="flex flex-col items-center justify-center text-gray-500">
@@ -99,24 +95,26 @@ const AdminProductsCreatePage = () => {
         const parsed = createProductSchema.safeParse(payload);
 
         if (!parsed.success) {
-            const formErrors = parsed.error.flatten().fieldErrors;
+            const formErrors = zodToAntFormErrors(parsed.error);
             form.setFields(
                 Object.keys(formErrors).map((key) => ({
                     name: key,
-                    errors: formErrors[key as keyof typeof formErrors]
+                    errors: formErrors[key],
                 }))
             );
             return;
         }
 
-        const result = await createProduct(parsed.data);
+        try {
+            const result = await createProduct(parsed.data);
 
-        if(result){
-            message.success("Product created");
-            navigate("/admin/products");
+            message.success(result.message);
             form.resetFields();
             setFileList([]);
             setMainImageId(null);
+            navigate("/admin/products");
+        }catch (error) {
+            message.error(getErrorMessage(error));
         }
     };
 
