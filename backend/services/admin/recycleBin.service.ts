@@ -2,14 +2,12 @@ import mongoose from "mongoose";
 import Product from "../../models/product.model"
 import { AppError } from "../../utils/AppError";
 
-
 export const getProductDeleted = async () => {
     const products = await Product.find({deleted: true}).select("-content -description -product_category_id");
     return {
-        products: products
+        data: products
     }
 }
-// service
 export const restoreProductService = async (productID: string) => {
     if (!mongoose.Types.ObjectId.isValid(productID)) {
         throw new AppError("Invalid product id", 400);
@@ -28,11 +26,9 @@ export const restoreProductService = async (productID: string) => {
         throw new AppError("Product not found", 404);
     }
     return {
-        success: true,
         message: "Product restored successfully",
     };
 };
-// service
 export const forceProductService = async (productID: string) => {
     if (!mongoose.Types.ObjectId.isValid(productID)) {
         throw new AppError("Invalid product id", 400);
@@ -45,7 +41,6 @@ export const forceProductService = async (productID: string) => {
         throw new AppError("Product not found", 404);
     }
     return {
-        success: true,
         message: "Product deleted permanently successfully"
     };
 };

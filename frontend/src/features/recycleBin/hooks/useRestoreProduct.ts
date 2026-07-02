@@ -1,23 +1,20 @@
 import { useCallback, useState } from "react";
-import { getErrorMessage } from "../../../shared/utils/errorHandler";
 import { recycleBinAdminService } from "../services/recycleBinAdmin.service";
 
 export const useRestoreProduct = () => {
-    const [error, setError] = useState("");
+    const [loadingId, setLoadingId] = useState("");
 
     const restoreProduct = useCallback(async (productID: string) => {
         try {
-            setError("");
+            setLoadingId(productID);
 
             const result = await recycleBinAdminService.restoreProduct(productID);
+
             return result;
-        } catch (error) {
-            const message = getErrorMessage(error);
-            setError(message);
+        } finally {
+            setLoadingId("");
         }
     }, []);
-    return {
-        restoreProduct,
-        error
-    };
+
+    return { restoreProduct, loadingId };
 };

@@ -27,7 +27,7 @@ const AdminProductsCreatePage = () => {
 
     const editorRef = useRef<any>(null);
     const navigate = useNavigate();
-    const { data: categories } = useAdminCategoriesTree();
+    const { categoriesTree } = useAdminCategoriesTree();
     //ảnh
     const [fileList, setFileList] = useState<any[]>([]);
     const [mainImageId, setMainImageId] = useState<string | null>(null);
@@ -148,10 +148,10 @@ const AdminProductsCreatePage = () => {
                                         variant="borderless"
                                         placeholder="Filter category"
                                         className="w-full !border !border-gray-300"
-                                        treeData={categories}
+                                        treeData={categoriesTree}
                                         allowClear
                                         treeDefaultExpandedKeys={
-                                            categories[0]?._id ? [categories[0]._id] : []
+                                            categoriesTree[0]?._id ? [categoriesTree[0]._id] : []
                                         }
                                         fieldNames={{
                                             label: "title",
@@ -233,7 +233,7 @@ const AdminProductsCreatePage = () => {
                                                         }
                                                     }
                                                 );
-                                                onSuccess?.(res.data);
+                                                onSuccess?.(res.data.data);
                                             } catch (error) {
                                                 onError?.(error as Error);
                                             }

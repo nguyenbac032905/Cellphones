@@ -1,13 +1,13 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response } from "express";
 import { AppError } from "../../utils/AppError";
 
-export const uploadImages = async (
-    req: Request,
-    res: Response,
-) => {
+export const uploadImages = async ( req: Request, res: Response ) => {
     try {
         const files = req.body.images;
-        return res.status(200).json({ urls: files });
+        return res.status(200).json({
+            success: true,
+            data: { urls: files }
+        });
     } catch (error) {
         if (error instanceof AppError) {
             return res.status(error.statusCode).json({ error: error.message });

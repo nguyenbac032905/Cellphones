@@ -114,3 +114,11 @@
     1. tạo product.validation và createProductSchema, updateProductSchema
     2. sửa lại type của PostProductBody và PatchProductBody bằng infer type của zod cho đồng bộ type
     3. parse  dữ liệu trước khi gửi gọi service post,patch. khi lỗi thì chuyển lỗi sang format của ant bằng cách tạo hàm zodToAntFormErrors. sau đó truyền lỗi vào form.
+21. chuẩn hóa response product bên backend và xử lí bên frontend
+    1. sửa lại service bên backend trả về dữ liệu chỉ gồm các raw key {data, meta,message}
+    2. sửa lại controller, bổ sung thêm status success mỗi khi trả dữ liệu về
+    3. sửa lại type của product response
+    4. sửa lại service chỉ trả về raw data
+    5. sửa lại hook actions create, update, delete không cần trả về data,error nữa, và bỏ try catch vì chỉ cần try catch ở UI và xử lí dựa vào success và message trả về thôi
+    6. sửa lại hook fetch như products, product detail trả về đúng key products chứ không để raw nữa
+    7. sửa lại các file giao diện tương ứng

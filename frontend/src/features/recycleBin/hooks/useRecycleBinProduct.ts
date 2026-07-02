@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
-import type { ProductDeletedResponse } from "../types/products.type";
+import type { ProductDeleted } from "../types/products.type";
 import { recycleBinAdminService } from "../services/recycleBinAdmin.service";
 import { getErrorMessage } from "../../../shared/utils/errorHandler";
 
 export const useRecycleBinProduct = () => {
-    const [products, setProducts] = useState<ProductDeletedResponse["products"]>([]);
+    const [products, setProducts] = useState<ProductDeleted[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
@@ -14,7 +14,9 @@ export const useRecycleBinProduct = () => {
 
             const res = await recycleBinAdminService.getProducts();
 
-            setProducts(res.products);
+            if(res.success){
+                setProducts(res.data);
+            }
         } catch (error: any) {
             setError(getErrorMessage(error));
         } finally {

@@ -13,9 +13,12 @@ export const login = async (req: Request, res: Response) => {
             maxAge: 30 * 24 * 60 * 60 * 1000,
         });
         return res.json({
+            success: true,
             message: result.message,
-            accessToken: result.newAccessToken,
-            user: result.user,
+            data: {
+                accessToken: result.newAccessToken,
+                user: result.user,
+            }
         });
     } catch (error) {
         if (error instanceof AppError) {
@@ -43,9 +46,12 @@ export const register = async (
         );
 
         return res.status(201).json({
+            success: true,
             message: result.message,
-            accessToken:result.newAccessToken,
-            user: result.user
+            data: {
+                accessToken:result.newAccessToken,
+                user: result.user
+            }
         });
     } catch (error) {
         if (error instanceof AppError) {
@@ -62,7 +68,10 @@ export const refreshToken = async (
         const refreshToken = req.cookies?.refreshToken;
         const result = await refreshTokenService(refreshToken);
         return res.status(200).json({
-            accessToken: result.accessToken
+            success: true,
+            data: {
+                accessToken: result.accessToken
+            }
         });
     } catch (error) {
         if (error instanceof AppError) {
@@ -74,11 +83,16 @@ export const refreshToken = async (
 export const getMe = async (req: Request, res: Response) => {
     try{
         const user = (req as any).user;
-        return res.status(200).json(user);
+        return res.status(200).json({
+            success: true,
+            data: {
+                user: user
+            }
+        });
     }catch(error){
         if (error instanceof AppError) {
             return res.status(error.statusCode).json({error: error.message});
         }
         return res.status(500).json({error: "server error"});
     }
-}
+};

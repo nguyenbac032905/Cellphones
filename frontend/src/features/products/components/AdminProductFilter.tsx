@@ -13,7 +13,7 @@ type Props = {
 }
 
 const AdminProductFilter = ({query, updateQuery}: Props) => {
-    const {data: categories} = useAdminCategoriesTree();
+    const {categoriesTree} = useAdminCategoriesTree();
     return (
         <Card
             variant="borderless"
@@ -46,11 +46,11 @@ const AdminProductFilter = ({query, updateQuery}: Props) => {
                             variant="borderless"
                             className="w-full"
                             placeholder="Filter category"
-                            treeData={categories}
+                            treeData={categoriesTree}
                             allowClear
                             onChange={(value) => updateQuery({ category: value, page:1 })}
                             treeDefaultExpandedKeys={
-                                categories[0]?._id ? [categories[0]._id] : []
+                                categoriesTree[0]?._id ? [categoriesTree[0]._id] : []
                             }
                             fieldNames={{
                                 label: "title",

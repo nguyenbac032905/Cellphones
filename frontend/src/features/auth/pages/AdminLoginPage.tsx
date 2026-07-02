@@ -1,42 +1,30 @@
-import {
-    Button,
-    Checkbox,
-    Form,
-    Input,
-    message,
-    Typography
-} from "antd";
+import {Button,Checkbox,Form,Input,message,Typography} from "antd";
 
-import {
-    LockOutlined,
-    MailOutlined
-} from "@ant-design/icons";
+import {LockOutlined, MailOutlined } from "@ant-design/icons";
 import { useAdminLogin } from "../hooks/useAdminLogin";
 import { useNavigate } from "react-router-dom";
 import { setAuth } from "../auth.slice";
 import { useAppDispatch } from "../../../app/hooks";
-import { store } from "../../../app/store";
+import { getErrorMessage } from "../../../shared/utils/errorHandler";
 
 const { Title, Text } = Typography;
 
 const AdminLoginPage = () => {
     const [form] = Form.useForm();
-    const {error, loading, login} = useAdminLogin();
+    const {loading, login} = useAdminLogin();
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
 
     const onSubmit = async (values: {email: string, password: string}) => {
         try {
-            const data = await login(values.email, values.password);
-            if(data){
-                message.success(data.message);
-                dispatch(setAuth(data));
+            const result = await login(values.email, values.password);
+            if(result.success){
+                message.success(result.message);
+                dispatch(setAuth(result.data));
                 navigate("/admin/");
-            }else{
-                message.error(error || "Login failed");
             }
         } catch (error) {
-            message.error("Login fail");
+            message.error(getErrorMessage(error));
         }
     }
     return (

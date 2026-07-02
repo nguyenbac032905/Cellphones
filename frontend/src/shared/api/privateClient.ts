@@ -43,16 +43,10 @@ privateClient.interceptors.response.use(
                 const state = store.getState().auth;
                 if (!state.user) {
                     throw new Error("Frontend no user found");
-                }
-
-                if (!state.message) {
-                    throw new Error("message not found");
-                }
-                
+                }     
                 store.dispatch(setAuth({
                     accessToken: newAccessToken,
-                    user: state.user,
-                    message: state.message
+                    user: state.user
                 }))
                 // lặp qua từng phần tử của hàng đợi và gửi newAccessToken cho nó để nó request
                 refreshQueue.forEach((cb) => cb(newAccessToken));

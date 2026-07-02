@@ -6,23 +6,17 @@ type Category = {
   _id: mongoose.Types.ObjectId;
   parent_id?: mongoose.Types.ObjectId;
 };
-//hàm tạo cây
+//service tạo cây
 export const getCategoryTreeService = async () => {
     const categories = await ProductCategory.find({deleted: false}).lean();
     const categoryTree = createTree(categories);
-    return categoryTree;
+    return {
+      data: categoryTree
+    };
 }
-//hàm lấy ra tất cả category con
-export const getAllChildCategoryIds = async (
-  parentId: string
-): Promise<mongoose.Types.ObjectId[]> => {
-
-  const categories = await ProductCategory.find()
-    .select("_id parent_id")
-    .lean<Category[]>();
-
-  return findChildCategoryIds(
-    categories,
-    parentId
-  );
+//service lấy ra tất cả category con, service này được product service gọi để lấy danh sách category con nên không cần chuẩn hóa
+export const getAllChildCategoryIds = async (parentId: string): Promise<mongoose.Types.ObjectId[]> => {
+    const categories = await ProductCategory.find({deleted: false}).select("_id parent_id").lean<Category[]>();
+    const childCategoryIds = findChildCategoryIds(categories,parentId);
+    return childCategoryIds;
 };

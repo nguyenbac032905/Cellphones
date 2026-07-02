@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import type { CategoryTreeResponse } from "../../products/types/categories.type";
+import type { CategoryTree } from "../types/categories.type";
 import { getErrorMessage } from "../../../shared/utils/errorHandler";
 import { productCategoryAdminService } from "../services/productCategoryAdmin.service";
 
 export const useAdminCategoriesTree = () => {
-    const [data, setData] = useState<CategoryTreeResponse>([]);
+    const [categoriesTree, setCategoriesTree] = useState<CategoryTree[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
@@ -16,7 +16,9 @@ export const useAdminCategoriesTree = () => {
 
                 const result = await productCategoryAdminService.getCategoryTree();
 
-                setData(result);
+               if(result.success){
+                    setCategoriesTree(result.data);
+               }
             } catch (error) {
                 setError(getErrorMessage(error));
             } finally {
@@ -27,5 +29,5 @@ export const useAdminCategoriesTree = () => {
         fetchCategories();
     }, []);
 
-    return { data, loading, error };
+    return { categoriesTree, loading, error };
 };

@@ -20,7 +20,8 @@ export interface ProductDeleted {
     updatedAt: string;
 }
 export interface ProductDeletedResponse {
-    products: ProductDeleted[];
+    success: boolean;
+    data: ProductDeleted[];
 }
 export interface BaseProductResponse {
     success: boolean;

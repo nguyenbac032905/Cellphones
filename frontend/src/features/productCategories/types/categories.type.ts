@@ -17,4 +17,7 @@ export type CategoryTree = ProductCategory & {
     children: CategoryTree[];
 };
 
-export type CategoryTreeResponse = CategoryTree[];
+export type CategoryTreeResponse = {
+    success: boolean;
+    data: CategoryTree[];
+};

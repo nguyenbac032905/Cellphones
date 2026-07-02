@@ -40,7 +40,7 @@ const AdminProductsUpdatePage = () => {
             navigate("/admin/products");
         }
     }, [isValidProductID, navigate]);
-    const { data: categories = [] } = useAdminCategoriesTree();
+    const { categoriesTree } = useAdminCategoriesTree();
     const {product, loading: loadingProduct, error: errorProduct} = useAdminProduct(isValidProductID ? productID : "");
     const {loading: loadingUpdate,updateProduct} = useAdminUpdateProduct();
 
@@ -246,11 +246,11 @@ const AdminProductsUpdatePage = () => {
                                         variant="borderless"
                                         placeholder="Select category"
                                         className="w-full !border !border-gray-300"
-                                        treeData={categories}
+                                        treeData={categoriesTree}
                                         allowClear
                                         treeDefaultExpandedKeys={
-                                            categories?.[0]?._id
-                                                ? [categories[0]._id]
+                                            categoriesTree?.[0]?._id
+                                                ? [categoriesTree[0]._id]
                                                 : []
                                         }
                                         fieldNames={{

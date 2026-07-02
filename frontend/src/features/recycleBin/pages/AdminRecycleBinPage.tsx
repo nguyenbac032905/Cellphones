@@ -18,49 +18,38 @@ import { useRecycleBinProduct } from "../hooks/useRecycleBinProduct";
 import type { ProductDeleted } from "../types/products.type";
 import { useRestoreProduct } from "../hooks/useRestoreProduct";
 import { useForceProduct } from "../hooks/useForceProduct";
+import { getErrorMessage } from "../../../shared/utils/errorHandler";
+import CustomAlert from "../../../shared/components/CustomAlert";
 
 const { Text } = Typography;
 
 
 const AdminRecycleBinPage = () => {
-    const { products, loading, refetch } = useRecycleBinProduct();
-    const [loadingId, setLoadingId] = useState<string | null>(null);
-    const { restoreProduct, error: errorRestore } = useRestoreProduct();
-    const { forceProduct, error: errorForce } = useForceProduct();
-
+    const { products, loading, error, refetch } = useRecycleBinProduct();
+    const { restoreProduct, loadingId: loadingRestore } = useRestoreProduct();
+    const { forceProduct, loadingId: loadingForce } = useForceProduct();
+    console.log(products)
     const handleRestore = async (id: string) => {
         try {
-            setLoadingId(id);
             const result = await restoreProduct(id);
             if (result?.success) {
                 message.success(result.message);
                 await refetch();
-            } else {
-                message.error(errorRestore);
-            }
-
+            } 
         } catch (error) {
-            message.error("Restore product failed");
-        } finally {
-            setLoadingId(null);
+            message.error(getErrorMessage(error));
         }
     };
 
     const handleForceDelete = async (id: string) => {
         try {
-            setLoadingId(id);
             const result = await forceProduct(id);
-
             if (result?.success) {
                 message.success(result.message);
                 await refetch();
-            } else {
-                message.error(errorForce);
             }
         } catch (error) {
-            message.error("Force delete product failed");
-        } finally {
-            setLoadingId(null);
+            message.error(getErrorMessage(error));
         }
     };
 
@@ -169,7 +158,7 @@ const AdminRecycleBinPage = () => {
                         >
                             <Button
                                 icon={<ReloadOutlined />}
-                                loading={loadingId === record._id}
+                                loading={loadingRestore === record._id}
                                 className="border-green-500 text-green-600 hover:!border-green-600 hover:!text-green-700"
                                 variant="outlined"
                             >
@@ -188,7 +177,7 @@ const AdminRecycleBinPage = () => {
                             <Button
                                 danger
                                 icon={<DeleteOutlined />}
-                                loading={loadingId === record._id}
+                                loading={loadingForce === record._id}
                                 variant="outlined"
                             >
                                 Delete
@@ -198,11 +187,15 @@ const AdminRecycleBinPage = () => {
                 ),
             }
         ],
-        [loadingId]
+        [loadingRestore, loadingForce]
     );
 
     if (loading) {
         return <LoadingScreen />;
+    }
+
+    if(error){
+        <CustomAlert error={error}/>
     }
 
     return (
