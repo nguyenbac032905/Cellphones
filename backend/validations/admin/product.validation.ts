@@ -104,7 +104,7 @@ export const createProductSchema = z.object({
 export const updateProductSchema = z.object({
     params: z.object({
         productID: objectIdSchema
-    }),
-    body: productBodySchema.partial()
+    }).strict(),
+    body: productBodySchema.partial().strict()
 
-}).strict();
+});

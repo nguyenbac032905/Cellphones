@@ -11,8 +11,9 @@ export const validateMiddlware = (schema: ZodObject<any>) => async (req: Request
         });
 
         req.body = parsed.body;
-        req.params = parsed.params as Request["params"];
-        req.query = parsed.query as Request["query"];
+        //params và query là geter của Exxpress nên không thể gán bằng toán tử =
+        Object.assign(req.params, parsed.params);
+        Object.assign(req.query, parsed.query);
         
         next();
     } catch (error) {

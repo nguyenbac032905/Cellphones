@@ -123,3 +123,9 @@
     6. sửa lại hook fetch như products, product detail trả về đúng key products chứ không để raw nữa
     7. sửa lại các file giao diện tương ứng
 22. chuẩn hóa response cho productcategory, auth, upload
+23. chuẩn hóa lỗi phía backend, validate cả params bằng zod cho productID, clean controller và service products
+    1. Sửa lại App Error để nhận cả chi tiết error nữa
+    2. tạo middleware errorHandler để xử lí lỗi khi người dùng truyền next(error) và nhúng vào cuối của index.ts
+    3. tạo asyncHandler để bọc controller, tự động throw lỗi mà mình không cần try catch cho các controller
+    4. sửa lại product.validation, tạo thêm schema để validate productID, sửa validateMiddleware giúp validate cả params và query, truyền các schema validate tương ứng vào route
+    5. clean controller và service products

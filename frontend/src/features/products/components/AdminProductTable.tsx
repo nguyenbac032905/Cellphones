@@ -94,7 +94,6 @@ const ProductTable = ({ products, meta, updateQuery, refetch, setSelectedRows }:
                         try {
                             setUpdatingId(record._id);
                             const result = await updateProduct({ status: checked ? "active" : "inactive" }, record._id);
-                            console.log(result);
                             message.success(result.message);
                             await refetch();
                         } catch (error) {

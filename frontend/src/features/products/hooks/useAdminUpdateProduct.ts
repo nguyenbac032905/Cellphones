@@ -8,7 +8,7 @@ export const useAdminUpdateProduct = () => {
     const updateProduct = async ( product: PatchProductBody, productID: string) => {
         try {
             setLoading(true);
-
+            console.log(product)
             const res = await productAdminService.update(product, productID);
 
             return res;

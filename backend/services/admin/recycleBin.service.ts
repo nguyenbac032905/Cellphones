@@ -9,9 +9,6 @@ export const getProductDeleted = async () => {
     }
 }
 export const restoreProductService = async (productID: string) => {
-    if (!mongoose.Types.ObjectId.isValid(productID)) {
-        throw new AppError("Invalid product id", 400);
-    }
     const product = await Product.findByIdAndUpdate(
         productID,
         {
@@ -30,9 +27,6 @@ export const restoreProductService = async (productID: string) => {
     };
 };
 export const forceProductService = async (productID: string) => {
-    if (!mongoose.Types.ObjectId.isValid(productID)) {
-        throw new AppError("Invalid product id", 400);
-    }
     const result = await Product.deleteOne({
         _id: productID
     });
