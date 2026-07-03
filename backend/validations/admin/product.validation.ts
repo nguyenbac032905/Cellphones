@@ -21,17 +21,14 @@ export const imageSchema = z.object({
     isMain: z.boolean().optional()
 }).strict();
 const productBodySchema = z.object({
-
     title: z
         .string()
         .trim()
         .min(3, "Title must be at least 3 characters")
         .max(200, "Title must not exceed 200 characters"),
-
     product_category_id: objectIdSchema
         .nullable()
         .optional(),
-
     description: z
         .string()
         .trim()
@@ -40,19 +37,16 @@ const productBodySchema = z.object({
             "Description must not exceed 2000 characters"
         )
         .optional(),
-
     content: z
         .string()
         .trim()
         .optional(),
-
     price: z.coerce
         .number()
         .min(
             0,
             "Price must be greater than or equal to 0"
         ),
-
     discountPercentage: z.coerce
         .number()
         .min(
@@ -64,7 +58,6 @@ const productBodySchema = z.object({
             "Discount percentage must not exceed 100"
         )
         .optional(),
-
     stock: z.coerce
         .number()
         .int("Stock must be an integer")
@@ -73,16 +66,13 @@ const productBodySchema = z.object({
             "Stock must be greater than or equal to 0"
         )
         .optional(),
-
     images: z
         .array(imageSchema)
         .max(10, "Maximum 10 images allowed")
         .optional(),
-
     status: z
         .enum(["active", "inactive"])
         .optional(),
-
     position: z.coerce
         .number()
         .int("Position must be an integer")
@@ -91,10 +81,50 @@ const productBodySchema = z.object({
             "Position must be greater than or equal to 0"
         )
         .optional(),
-
     featured: z.boolean().optional()
-
 }).strict();
+//query
+const sortEnum = [
+    "stock-asc",
+    "stock-desc",
+    "created-asc",
+    "created-desc",
+    "position-asc",
+    "price-asc",
+    "price-desc"
+] as const;
+export const getProductsQuerySchema = z.object({
+    query: z.object({
+        status: z
+            .enum(["active", "inactive"])
+            .optional(),
+        stock: z
+            .enum(["instock", "outstock"])
+            .optional(),
+        category: objectIdSchema.optional(),
+        search: z
+            .string()
+            .trim()
+            .max(100)
+            .optional(),
+        sort: z
+            .enum(sortEnum)
+            .optional(),
+        page: z
+            .coerce
+            .number()
+            .int()
+            .min(1)
+            .default(1),
+        limit: z
+            .coerce
+            .number()
+            .int()
+            .min(1)
+            .max(20)
+            .default(4)
+    })
+});
 
 // create
 export const createProductSchema = z.object({

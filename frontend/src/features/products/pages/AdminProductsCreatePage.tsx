@@ -47,8 +47,9 @@ const AdminProductsCreatePage = () => {
             (file: any) => file.status === "error"
         );
         if (errorFile) {
+            console.log(errorFile)
             message.error(
-                errorFile.response?.message || "Upload thất bại, vui lòng chọn ảnh nhỏ hơn 9MB."
+                errorFile.error.response.data.message || "Upload thất bại, vui lòng chọn ảnh nhỏ hơn 5MB."
             );
         }
         const updatedList = newFileList.map((file: any) => {

@@ -1,5 +1,4 @@
 import { z } from "zod";
-import mongoose from "mongoose";
 import Product from "../../models/product.model";
 import { getAllChildCategoryIds } from "./productCategories.service";
 import { AppError } from "../../utils/AppError";

@@ -1,10 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { uploadToCloudinary } from "../../helpers/uploadCloud";
-export const uploadSingle = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-) => {
+export const uploadSingle = async ( req: Request, res: Response, next: NextFunction ) => {
     try {
         const file = req.file;
 
@@ -24,11 +20,7 @@ export const uploadSingle = async (
         next(err);
     }
 };
-export const uploadFields = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-) => {
+export const uploadFields = async ( req: Request, res: Response, next: NextFunction ) => {
     try {
         const files = req.files as | Record<string, Express.Multer.File[]> | undefined;
         

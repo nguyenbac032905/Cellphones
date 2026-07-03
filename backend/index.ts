@@ -15,11 +15,9 @@ database();
 const app: Express = express();
 const port = Number(process.env.PORT);
 // trust proxy để app biết request chạy qua proxy trước nên lấy ip của người dùng chứ không lấy của proxy
-// app.set("trust proxy", 1);
+// app.set("trust proxy", true);
 //sử dụng helmet để thêm bảo mật vào headers
 app.use(helmet());
-//sử dụng hpp để chuẩn hóa query
-app.use(hpp());
 // cau hinh domain gui request
 app.use(cors({
     origin: "http://localhost:3002",
@@ -28,10 +26,10 @@ app.use(cors({
 //cấu hình ratelimit tổng
 app.use(globalRateLimitMiddleware);
 // cau hinh de doc dữ liệu json và cookie người dùng gửi lên
-app.use(express.json({
-    limit: "100kb"
-}));
+app.use(express.json({limit: "100kb"}));
 app.use(cookieParser());
+//sử dụng hpp để chuẩn hóa query
+app.use(hpp());
 
 clientRoutes(app);
 adminRoutes(app);

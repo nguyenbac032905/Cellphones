@@ -130,3 +130,8 @@
     4. sửa lại product.validation, tạo thêm schema để validate productID, sửa validateMiddleware giúp validate cả params và query, truyền các schema validate tương ứng vào route
     5. clean controller và service products
 24. clean controller categories, auth, upload, recycle-bin và validate cho auth, recycle-bin
+25. thêm global, login rate limit và security middleware
+    1. tạo global rateLimiterMiddleware để rateLimit tổng, mỗi người có tối đa 300 request trong 15p
+    2. tạo loginLimiterMiddleware, mỗi người được phép login sai 5 lần trong 15p
+    3. sử dụng helmet() trong index.ts để thêm bảo mật cho header, hpp để chuẩn hóa query, sử dụng globalRateLimiter
+    4. sử dụng loginRateLimiter trong auth route
