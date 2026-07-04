@@ -16,6 +16,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import { LeftOutlined, RightOutlined } from "@ant-design/icons";
 import AdminTitle from "../../../shared/components/AdminTitle";
+import { sanitizeHtml } from "../../../shared/utils/sanitizeHtml";
 
 const { Title, Text } = Typography;
 
@@ -151,7 +152,7 @@ const AdminProductsDetailPage = () => {
                                         <div
                                             className="prose max-w-none"
                                             dangerouslySetInnerHTML={{
-                                                __html: product.description
+                                                __html: sanitizeHtml(product.description)
                                             }}
                                         />
                                     )
@@ -163,7 +164,7 @@ const AdminProductsDetailPage = () => {
                                         <div
                                             className="prose max-w-none"
                                             dangerouslySetInnerHTML={{
-                                                __html: product.content
+                                                __html: sanitizeHtml(product.content)
                                             }}
                                         />
                                     )

@@ -169,7 +169,6 @@ export const updateProductService = async (productID: string, body: UpdateProduc
     if("content" in updateFields){
         updateFields.content = sanitizeEditorContent(updateFields.content);
     }
-    console.log(updateFields)
     const product = await Product.findByIdAndUpdate(
         productID,
         updateFields,

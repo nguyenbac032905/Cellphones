@@ -139,3 +139,6 @@
     1. rate limit cho register, upload, force delete
     2. rate limit size file <1mb và giới hạn loại file có thể upload là jpeg, png, webp
     3. bổ sung validattion cho query
+27. triển khai anti xss phía backend
+    1. tạo hàm sanitizeHTMLS để whitelisst cho các thẻ được phép chứa trong desc,content
+    2.  sử dụng để lọc desc,content trước khi lưu vào db
