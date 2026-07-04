@@ -96,7 +96,10 @@ export const getProducts = async (query: Query = {}) => {
         })
     }
     //filter
-    pipeline.push({ $match: match });
+    pipeline.push(
+        { $match: match },
+        { $sort: sortOption },
+    );
     //join
     pipeline.push(
         {
@@ -112,19 +115,50 @@ export const getProducts = async (query: Query = {}) => {
                 path: "$category",
                 preserveNullAndEmptyArrays: true,
             }
-        },
-        {
-            $set: {
-                category: {
-                    _id: "$category._id",
-                    name: "$category.title"
-                }
-            }
         }
     )
     //sort, pagination
     pipeline.push(
-        { $sort: sortOption },
+        {
+            $project: {
+                position: 1,
+                title: 1,
+                price: 1,
+                stock: 1,
+                status: 1,
+                mainImage: {
+                    $let: {
+                        vars: {
+                            image: {
+                                $arrayElemAt: [
+                                    {
+                                        $filter: {
+                                            input: "$images",
+                                            as: "img",
+                                            cond: {
+                                                $eq: ["$$img.isMain", true]
+                                            }
+                                        }
+                                    },
+                                    0
+                                ]
+                            }
+                        },
+                        in: "$$image.url"
+                    }
+                },
+                category: {
+                    $cond: {
+                        if: "$category",
+                        then: {
+                            _id: "$category._id",
+                            title: "$category.title"
+                        },
+                        else: null
+                    }
+                }
+            }
+        },
         {
             $facet: {
                 products: [
@@ -141,7 +175,7 @@ export const getProducts = async (query: Query = {}) => {
     const result = await Product.aggregate(pipeline);
     const products = result[0].products;
     const total = result[0].total[0]?.count || 0;
-
+    
     return {
         data: products,
         meta: {
@@ -205,7 +239,7 @@ export const getProductByIDService = async (productID: string) => {
     const product = await Product.findOne({
         _id: productID,
         deleted: false
-    }).populate("product_category_id", "_id title");
+    }).populate("product_category_id", "_id title").lean();
 
     if (!product) {
         throw new AppError("Product not found", 404);

@@ -13,7 +13,7 @@ const objectIdSchema = z
 export const productIDSchema = z.object({
     params: z.object({
         productID: objectIdSchema
-    })
+    }).strict()
 });
 //body
 export const imageSchema = z.object({
@@ -90,6 +90,7 @@ const sortEnum = [
     "created-asc",
     "created-desc",
     "position-asc",
+    "position-desc",
     "price-asc",
     "price-desc"
 ] as const;
@@ -99,7 +100,7 @@ export const getProductsQuerySchema = z.object({
             .enum(["active", "inactive"])
             .optional(),
         stock: z
-            .enum(["instock", "outstock"])
+            .enum(["instock", "outofstock"])
             .optional(),
         category: objectIdSchema.optional(),
         search: z
@@ -123,7 +124,7 @@ export const getProductsQuerySchema = z.object({
             .min(1)
             .max(20)
             .default(4)
-    })
+    }).strict()
 });
 
 // create
@@ -134,7 +135,7 @@ export const createProductSchema = z.object({
 export const updateProductSchema = z.object({
     params: z.object({
         productID: objectIdSchema
-    }).strict(),
-    body: productBodySchema.partial().strict()
+    }),
+    body: productBodySchema.partial()
 
 });

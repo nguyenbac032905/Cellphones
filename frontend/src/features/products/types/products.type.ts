@@ -17,7 +17,7 @@ export interface ProductQuery{
 
 export interface Category {
     _id: string;
-    title?: string;
+    title: string;
 };
 
 export interface Product {
@@ -48,9 +48,19 @@ export type PaginationMeta = {
     limit: number;
     totalPages: number;
 };
+export interface ProductListItem {
+    _id: string;
+    title: string;
+    price: number;
+    stock: number;
+    status: "active" | "inactive";
+    position: number;
+    category: Category | null;
+    mainImage: string | null;
+}
 export type ProductListResponse = {
     success: boolean;
-    data: Product[];
+    data: ProductListItem[];
     meta: PaginationMeta;
 };
 
@@ -58,7 +68,6 @@ export type MessageResponse = {
     success: boolean;
     message: string;
 };
-
 export type ProductResponse = {
     success: boolean;
     data: Product;

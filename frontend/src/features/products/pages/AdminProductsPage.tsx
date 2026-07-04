@@ -13,7 +13,7 @@ const AdminProductsPage = () => {
     const {query, updateQuery} = useAdminProductQuery();
     const {products,meta, loading, error, refetch} = useAdminProducts(query);
     const [selectedRows, setSelectedRows] = useState<Product[]>([]);
-
+    console.log(products)
     if (loading) {
         return <LoadingScreen/>
     }

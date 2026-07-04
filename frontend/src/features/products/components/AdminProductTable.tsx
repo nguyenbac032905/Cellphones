@@ -49,7 +49,7 @@ const ProductTable = ({ products, meta, updateQuery, refetch, setSelectedRows }:
             dataIndex: "images",
             key: "images",
             render: (_: any, record: any) => {
-                const mainImage = record.images?.find((img: any) => img.isMain)?.url || record?.images?.[0];
+                const mainImage = record.mainImage;
                 if (!mainImage) {
                     return (
                         <div className="h-[100px] w-[100px] rounded bg-gray-200" />

@@ -142,3 +142,7 @@
 27. triển khai anti xss phía backend
     1. tạo hàm sanitizeHTMLS để whitelisst cho các thẻ được phép chứa trong desc,content
     2.  sử dụng để lọc desc,content trước khi lưu vào db
+28. triển khai anti xss phía frontend
+    1. tạo sanitizeHTMLs để xóa các tag, attribute nguy hiểm
+    2. bọc sanitize trước khi dùng dangerouslySetInnerHTML
+    3. không cần sanitize form trước khi submit vì tiny-mce đã tự làm rồi
