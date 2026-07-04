@@ -3,6 +3,7 @@ import Product from "../../models/product.model";
 import { getAllChildCategoryIds } from "./productCategories.service";
 import { AppError } from "../../utils/AppError";
 import { createProductSchema, updateProductSchema } from "../../validations/admin/product.validation";
+import { sanitizeEditorContent } from "../../utils/sanitizeHtml";
 
 type Query = {
     status?: string;
@@ -160,7 +161,15 @@ export const updateProductService = async (productID: string, body: UpdateProduc
             updateFields[field] = body[field];
         }
     });
-
+    if ("description" in updateFields) {
+        updateFields.description = sanitizeEditorContent(
+            updateFields.description!
+        );
+    }
+    if("content" in updateFields){
+        updateFields.content = sanitizeEditorContent(updateFields.content);
+    }
+    console.log(updateFields)
     const product = await Product.findByIdAndUpdate(
         productID,
         updateFields,
@@ -229,7 +238,14 @@ export const createProductService = async ( body: CreateProductDTO ) => {
             ? maxProduct.position + 1
             : 1;
     }
-
+    if ("description" in createFields) {
+        createFields.description = sanitizeEditorContent(
+            createFields.description!
+        );
+    }
+    if("content" in createFields){
+        createFields.content = sanitizeEditorContent(createFields.content);
+    }
     const product = await Product.create(createFields);
     if (!product) {
         throw new AppError("Failed to create product", 500);

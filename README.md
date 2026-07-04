@@ -135,3 +135,7 @@
     2. tạo loginLimiterMiddleware, mỗi người được phép login sai 5 lần trong 15p
     3. sử dụng helmet() trong index.ts để thêm bảo mật cho header, hpp để chuẩn hóa query, sử dụng globalRateLimiter
     4. sử dụng loginRateLimiter trong auth route
+26. bổ sung ratelimit cho register,upload, ratelimit size file. validate cho query product
+    1. rate limit cho register, upload, force delete
+    2. rate limit size file <1mb và giới hạn loại file có thể upload là jpeg, png, webp
+    3. bổ sung validattion cho query
