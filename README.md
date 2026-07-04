@@ -146,3 +146,9 @@
     1. tạo sanitizeHTMLs để xóa các tag, attribute nguy hiểm
     2. bọc sanitize trước khi dùng dangerouslySetInnerHTML
     3. không cần sanitize form trước khi submit vì tiny-mce đã tự làm rồi
+29. Tối ưu query phía backend
+    1. sử dụng toán tử $project để lấy những trường cần thiết, loại bỏ những trường nặng như desc, content
+    2. chuyển mảng images thành chỉ lấy ra mainImage
+    3. chỉ lấy ra _id và title của category
+    4. tạo type productItemList bên frontend
+    5. sửa lại phía giao diện hiển thị đúng mainImage

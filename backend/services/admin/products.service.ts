@@ -83,7 +83,7 @@ export const getProducts = async (query: Query = {}) => {
     }
 
     const pipeline: any[] = [];
-    //search
+    //search đầu tiên vì nó lọc sản phẩm mạnh
     if (search) {
         pipeline.push({
             $search: {
@@ -95,84 +95,84 @@ export const getProducts = async (query: Query = {}) => {
             }
         })
     }
-    //filter
+    // tương tự filter cũng lọc sản phẩm mạnh
     pipeline.push(
         { $match: match },
-        { $sort: sortOption },
     );
-    //join
+    // sort, phân trang, join, select column
     pipeline.push(
-        {
-            $lookup: {
-                from: "product-category",
-                localField: "product_category_id",
-                foreignField: "_id",
-                as: "category"
-            }
-        },
-        {
-            $unwind: {
-                path: "$category",
-                preserveNullAndEmptyArrays: true,
-            }
-        }
-    )
-    //sort, pagination
-    pipeline.push(
-        {
-            $project: {
-                position: 1,
-                title: 1,
-                price: 1,
-                stock: 1,
-                status: 1,
-                mainImage: {
-                    $let: {
-                        vars: {
-                            image: {
-                                $arrayElemAt: [
-                                    {
-                                        $filter: {
-                                            input: "$images",
-                                            as: "img",
-                                            cond: {
-                                                $eq: ["$$img.isMain", true]
-                                            }
-                                        }
-                                    },
-                                    0
-                                ]
-                            }
-                        },
-                        in: "$$image.url"
-                    }
-                },
-                category: {
-                    $cond: {
-                        if: "$category",
-                        then: {
-                            _id: "$category._id",
-                            title: "$category.title"
-                        },
-                        else: null
-                    }
-                }
-            }
-        },
         {
             $facet: {
                 products: [
+                    // phải sort trước vì nếu phân trang trước thì sẽ bị sort trong 4 sản phẩm mình lấy ra thôi
+                    { $sort: sortOption },
                     { $skip: skip },
-                    { $limit: limitNum }
+                    { $limit: limitNum },
+                    //phải lookup trong nhánh products vì $facet trả về {products: [], total:}
+                    {
+                        $lookup: {
+                            from: "product-category",
+                            localField: "product_category_id",
+                            foreignField: "_id",
+                            as: "category"
+                        }
+                    },
+                    {
+                        $unwind: {
+                            path: "$category",
+                            preserveNullAndEmptyArrays: true,
+                        }
+                    },
+                    // chỉ lấy ra những trường cần thiết
+                    {
+                        $project: {
+                            position: 1,
+                            title: 1,
+                            price: 1,
+                            stock: 1,
+                            status: 1,
+                            mainImage: {
+                                $let: {
+                                    vars: {
+                                        image: {
+                                            $arrayElemAt: [
+                                                {
+                                                    $filter: {
+                                                        input: "$images",
+                                                        as: "img",
+                                                        cond: {
+                                                            $eq: ["$$img.isMain", true]
+                                                        }
+                                                    }
+                                                },
+                                                0
+                                            ]
+                                        }
+                                    },
+                                    in: "$$image.url"
+                                }
+                            },
+                            category: {
+                                $cond: {
+                                    if: "$category",
+                                    then: {
+                                        _id: "$category._id",
+                                        title: "$category.title"
+                                    },
+                                    else: null
+                                }
+                            }
+                        }
+                    }
                 ],
                 total: [
                     { $count: "count" }
                 ]
             }
-        },
-    )
+        }
+    );
 
-    const result = await Product.aggregate(pipeline);
+    const result = await Product.aggregate(pipeline).allowDiskUse(true);
     const products = result[0].products;
     const total = result[0].total[0]?.count || 0;
     
