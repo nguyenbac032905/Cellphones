@@ -169,3 +169,4 @@
     7. tạo test pagination vì nó là (test business rule). test case 1 mình sẽ test truyền page và limit vào thì có toán tử skip, limit tương ứng. test case 2 mình là default, không truyền vào query thì sẽ lấy skip=0 và limit=4.
     8. tạo test thứ tự toán tử trong pipeline (test structural rule). ở đây mình sẽ test xem các toán tử có đúng thứ tự để tối ưu query không.
     9. tạo test return value chuẩn (test output). test case 1 là service phải trả về đúng dạng {data: [], meta: {}}.test case 2 khi total trả về rỗng thì total và total page = 0 (Test edge case). case 3: test bắt buộc phải gọi allowDiskUse vì nếu không gọi sẽ có nguy cơ tràn Ram.
+32. xong test unit product service

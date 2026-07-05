@@ -4,10 +4,7 @@ import { AppError } from "../../utils/AppError";
 import { generateAccessToken, generateRefreshToken } from "../../utils/jwt";
 import jwt from "jsonwebtoken";
 
-export const loginService = async (
-    email: string,
-    password: string
-) => {
+export const loginService = async ( email: string, password: string ) => {
     const user = await User.findOne({ email, deleted: false });
     if (!user) {
         throw new AppError("Invalid Email!", 400);
@@ -48,13 +45,7 @@ export const loginService = async (
         user: payload,
     };
 };
-
-export const registerService = async (
-    fullName: string,
-    email: string,
-    password: string,
-    roleID: string
-) => {
+export const registerService = async ( fullName: string, email: string, password: string, roleID: string ) => {
     const existingUser = await User.findOne({ email });
     if (existingUser) {
         throw new AppError("Email already exists!", 400);
@@ -95,14 +86,12 @@ export const registerService = async (
         user: payload
     };
 };
-
 export const refreshTokenService = async (refreshToken: string) => {
     if (!refreshToken) {
         throw new AppError("Refresh token missing", 401);
     }
 
     let decoded: any;
-
     try {
         decoded = jwt.verify(
             refreshToken,
