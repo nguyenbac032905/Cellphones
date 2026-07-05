@@ -263,13 +263,8 @@ export const createProductService = async ( body: CreateProductDTO ) => {
         createFields.position === null ||
         createFields.position === ""
     ) {
-        const maxProduct = await Product.findOne({})
-            .sort({ position: -1 })
-            .select("position");
-
-        createFields.position = maxProduct
-            ? maxProduct.position + 1
-            : 1;
+        const maxProduct = await Product.findOne({}) .sort({ position: -1 }) .select("position");
+        createFields.position = maxProduct ? maxProduct.position + 1 : 1;
     }
     if ("description" in createFields) {
         createFields.description = sanitizeEditorContent(

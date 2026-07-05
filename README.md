@@ -158,3 +158,14 @@
     3. tiếp theo là skip và limit để giảm số sản phẩm.
     4. tiếp theo mới đến lookup để join lấy category, rồi mới sử dụng $project để chọn các trường trả về cho db
     5. phải để count bên ngoài nhánh products vì products trả về {products: []} đã lọc rồi, không phải tổng số products trong sản phẩm
+31. triển khai test unit cho products service, xong getProducts
+    1. npm i -D jest @types/jest ts-jest và sửa lệnh test thì chạy "jest" và thêm "test:watch": "jest --watch". thêm type "jest" vào ts.config
+    2. tạo file product.service.test
+    3. mock model Product vì mình có gọi db trong service, mock aggregate vì có gọi đến hàm đó để truyền pipeline vào
+    4. sử dụng hàm beforeEach để mặc định xóa đi những mock cũ trước khi test, và tạo hàm allowDiskUse trong aggregate và fake dữ liệu trả về cho nó dạng {products: [], total: [{count}: 10]}
+    5. tạo test search vì nó là (test business rule). có 2 test case là truyền search vào query thì phải có toán tử search trong pipeline và khi không truyền search thì không có toán tử search trong pipeline.
+    5. tạo test filter vì nó là (test business rule). test case 1 là khi truyền status, stock, category vào query thì phải build đúng $match, ở đây phải mock getAllCategoryChildIds vì nó gọi đến db. test case 2 là test nhánh logic của stock, khi truyền stock=outofstock thì phải filter stock=0 (test Branch Coverage). test case 3 là default lấy ra những sản phẩm deleted= false
+    6. tạo test sort vì nó là (test business rule). test case 1 mình sẽ test tất cả các nhánh logic switch case của sort bằng test.each (test Branch Coverage). test case mình sẽ test default là position giảm dần khi không truyền vào query.
+    7. tạo test pagination vì nó là (test business rule). test case 1 mình sẽ test truyền page và limit vào thì có toán tử skip, limit tương ứng. test case 2 mình là default, không truyền vào query thì sẽ lấy skip=0 và limit=4.
+    8. tạo test thứ tự toán tử trong pipeline (test structural rule). ở đây mình sẽ test xem các toán tử có đúng thứ tự để tối ưu query không.
+    9. tạo test return value chuẩn (test output). test case 1 là service phải trả về đúng dạng {data: [], meta: {}}.test case 2 khi total trả về rỗng thì total và total page = 0 (Test edge case). case 3: test bắt buộc phải gọi allowDiskUse vì nếu không gọi sẽ có nguy cơ tràn Ram.
