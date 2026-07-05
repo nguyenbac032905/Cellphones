@@ -32,7 +32,7 @@ const PRODUCT_WHITELIST = [
 ] as const;
 
 export const getProducts = async (query: Query = {}) => {
-    const { status, category, stock, search, sort, page = "1", limit = "4" } = query;
+    const { status, category, stock, search, sort, page = 1, limit = 4 } = query;
 
     const pageNum = Number(page);
     const limitNum = Number(limit);

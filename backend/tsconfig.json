@@ -19,7 +19,7 @@
         "./node_modules/@types",
         "./types"
     ],
-    "types": ["node", "mongoose-slug-updater", "express"]
+    "types": ["node", "mongoose-slug-updater", "express", "jest"]
   },
   "include": ["**/*.ts"],
   "exclude": ["node_modules", "dist"]

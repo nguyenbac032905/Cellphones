@@ -152,3 +152,9 @@
     3. chỉ lấy ra _id và title của category
     4. tạo type productItemList bên frontend
     5. sửa lại phía giao diện hiển thị đúng mainImage
+30. sửa lại toán tử để tối ưu query
+    1. đầu tiên phải search trước vì đây là toán tử lọc rất mạnh, tiếp theo là đến match
+    2. phải để sort trước skip và limit vì nếu sort sau thì chỉ sort được 1 số sản phẩm đã limit thôi
+    3. tiếp theo là skip và limit để giảm số sản phẩm.
+    4. tiếp theo mới đến lookup để join lấy category, rồi mới sử dụng $project để chọn các trường trả về cho db
+    5. phải để count bên ngoài nhánh products vì products trả về {products: []} đã lọc rồi, không phải tổng số products trong sản phẩm
