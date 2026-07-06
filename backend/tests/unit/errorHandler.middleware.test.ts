@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 import multer from "multer";
-import { errorHandlerMiddleware } from "../../middlewares/admin/errorHandler.middleware";
+import { errorHandlerMiddleware } from "../../middlewares/shared/errorHandler.middleware";
 import { AppError } from "../../utils/AppError";
 
 describe("errorHandlerMiddleware", () => {

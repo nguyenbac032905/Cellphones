@@ -181,3 +181,4 @@
     3. tạo file setup để cấu hình database ảo (mongodb-memory-server), gồm các hàm connect DB, clear DB sau mỗi test và close DB sau khi test xong
     4. tạo auth.helper để tự động đăng ký/login và trả về accessToken dùng cho các API cần authentication
     5. tạo file integration test cho products. trước khi test sẽ connect DB và lấy accessToken, sau mỗi test sẽ clear DB và cuối cùng close DB. integration test sẽ kiểm tra toàn bộ flow thật của hệ thống: route -> middleware -> controller -> service -> MongoDB
+38. viết test integration cho auth (còn test E2E sẽ để tới khi làm payment sẽ giá trị hơn)

@@ -2,7 +2,7 @@ import express from "express";
 const router = express.Router();
 import * as controller from "../../controllers/admin/uploads.controller";
 import * as middleware from "../../middlewares/admin/uploadCloud.middleware";
-import { uploadRateLimitMiddleware } from "../../middlewares/admin/rateLimit.middleware";
+import { uploadRateLimitMiddleware } from "../../middlewares/shared/rateLimit.middleware";
 import multer = require("multer");
 import { AppError } from "../../utils/AppError";
 const upload = multer({

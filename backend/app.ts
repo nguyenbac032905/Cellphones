@@ -5,12 +5,14 @@ dotenv.config();
 import clientRoutes from "./routes/client/index.route";
 import adminRoutes from "./routes/admin/index.route";
 import cookieParser from "cookie-parser";
-import { errorHandlerMiddleware } from "./middlewares/admin/errorHandler.middleware";
-import { globalRateLimitMiddleware } from "./middlewares/admin/rateLimit.middleware";
+import { errorHandlerMiddleware } from "./middlewares/shared/errorHandler.middleware";
+import { globalRateLimitMiddleware } from "./middlewares/shared/rateLimit.middleware";
 import helmet from "helmet";
 import hpp from "hpp";
+import requestLoggingMiddleware from "./middlewares/shared/requestLogger.middleware";
 
 const app: Express = express();
+app.use(requestLoggingMiddleware);
 // trust proxy để app biết request chạy qua proxy trước nên lấy ip của người dùng chứ không lấy của proxy
 // app.set("trust proxy", true);
 //sử dụng helmet để thêm bảo mật vào headers

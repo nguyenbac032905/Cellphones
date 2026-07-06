@@ -3,7 +3,7 @@ const router = express.Router();
 import * as controller from "../../controllers/admin/recycleBin.controller";
 import { productIDSchema } from "../../validations/admin/product.validation";
 import { validateMiddlware } from "../../middlewares/admin/validate.middleware";
-import { forceDeleteRateLimit } from "../../middlewares/admin/rateLimit.middleware";
+import { forceDeleteRateLimit } from "../../middlewares/shared/rateLimit.middleware";
 
 router.get("/products", controller.products);
 router.patch("/products/:productID/restore",validateMiddlware(productIDSchema), controller.restoreProduct);
