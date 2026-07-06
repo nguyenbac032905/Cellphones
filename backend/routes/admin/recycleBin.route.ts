@@ -2,7 +2,7 @@ import express from "express";
 const router = express.Router();
 import * as controller from "../../controllers/admin/recycleBin.controller";
 import { productIDSchema } from "../../validations/admin/product.validation";
-import { validateMiddlware } from "../../middlewares/admin/validate.middlewate";
+import { validateMiddlware } from "../../middlewares/admin/validate.middleware";
 import { forceDeleteRateLimit } from "../../middlewares/admin/rateLimit.middleware";
 
 router.get("/products", controller.products);

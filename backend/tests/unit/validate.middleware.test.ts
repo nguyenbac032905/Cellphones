@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { z, ZodError } from "zod";
-import { validateMiddlware } from "../../middlewares/admin/validate.middlewate";
+import { validateMiddlware } from "../../middlewares/admin/validate.middleware";
 import { AppError } from "../../utils/AppError";
 
 describe("validateMiddlware", () => {

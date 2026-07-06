@@ -1,7 +1,7 @@
 import express from "express";
 const router = express.Router();
 import * as controller from "../../controllers/admin/products.controller";
-import { validateMiddlware } from "../../middlewares/admin/validate.middlewate";
+import { validateMiddlware } from "../../middlewares/admin/validate.middleware";
 import {createProductSchema, getProductsQuerySchema, productIDSchema, updateProductSchema} from "../../validations/admin/product.validation";
 
 router.get("/",validateMiddlware(getProductsQuerySchema), controller.index);
