@@ -175,3 +175,9 @@
 34. xong test unit validate middleware
 35. xong test unit errorHandler middleware
 36. viết test cho createTree và recycleBin.service
+37. cấu hình test integration và triển khai test integration cho products
+    1. cài các package cần thiết: supertest, @types/supertest, mongodb-memory-server. tạo file jest.integration.config.js và thêm vào include trong `tsconfig` để TypeScript đọc được file config này
+    2. tách riêng app.ts và index.ts để khi test chỉ import app, tránh chạy server thật
+    3. tạo file setup để cấu hình database ảo (mongodb-memory-server), gồm các hàm connect DB, clear DB sau mỗi test và close DB sau khi test xong
+    4. tạo auth.helper để tự động đăng ký/login và trả về accessToken dùng cho các API cần authentication
+    5. tạo file integration test cho products. trước khi test sẽ connect DB và lấy accessToken, sau mỗi test sẽ clear DB và cuối cùng close DB. integration test sẽ kiểm tra toàn bộ flow thật của hệ thống: route -> middleware -> controller -> service -> MongoDB
