@@ -170,3 +170,4 @@
     8. tạo test thứ tự toán tử trong pipeline (test structural rule). ở đây mình sẽ test xem các toán tử có đúng thứ tự để tối ưu query không.
     9. tạo test return value chuẩn (test output). test case 1 là service phải trả về đúng dạng {data: [], meta: {}}.test case 2 khi total trả về rỗng thì total và total page = 0 (Test edge case). case 3: test bắt buộc phải gọi allowDiskUse vì nếu không gọi sẽ có nguy cơ tràn Ram.
 32. xong test unit product service
+33. xong test unit auth service
