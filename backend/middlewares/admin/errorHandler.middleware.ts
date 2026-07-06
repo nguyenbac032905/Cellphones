@@ -14,20 +14,22 @@ export const errorHandlerMiddleware = ( error: any, req: Request, res: Response,
     }
     //multer error
     if (error instanceof multer.MulterError) {
-
         if (error.code === "LIMIT_FILE_SIZE") {
             return res.status(400).json({
                 success: false,
                 message: "Each image must be smaller than 1MB"
             });
         }
-
         if (error.code === "LIMIT_FILE_COUNT") {
             return res.status(400).json({
                 success: false,
                 message: "Maximum 10 images allowed"
             });
         }
+        return res.status(400).json({
+            success: false,
+            message: error.message
+        });
     }
     //server error
     return res.status(500).json({
