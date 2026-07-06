@@ -21,6 +21,6 @@
     ],
     "types": ["node", "mongoose-slug-updater", "express", "jest"]
   },
-  "include": ["**/*.ts"],
+  "include": ["**/*.ts", "jest.integration.config.js"],
   "exclude": ["node_modules", "dist"]
 }

@@ -1,4 +1,3 @@
-import mongoose from "mongoose";
 import Product from "../../models/product.model"
 import { AppError } from "../../utils/AppError";
 
