@@ -45,3 +45,14 @@ export const updateRoleService = async ( roleID: string, body: UpdateRoleBody ) 
         message: "Role updated successfully",
     };
 };
+export const deleteRoleService = async ( roleID: string ) => {
+    const result = await Role.updateOne( { _id: roleID }, { $set: {deleted: true} } );
+
+    if (result.matchedCount === 0) {
+        throw new AppError("Role not found", 404);
+    }
+
+    return {
+        message: "Role deleted successfully",
+    };
+};

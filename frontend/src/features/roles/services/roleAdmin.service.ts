@@ -18,5 +18,9 @@ export const roleAdminService = {
     get: async (roleID: string): Promise<getRoleResponse> => {
         const res = await privateClient.get<getRoleResponse>(`/admin/api/roles/${roleID}`);
         return res.data;
-    }
+    },
+    delete: async (roleID: string): Promise<MessageResponse> => {
+        const res = await privateClient.delete<MessageResponse>(`/admin/api/roles/${roleID}`);
+        return res.data;
+    },
 };

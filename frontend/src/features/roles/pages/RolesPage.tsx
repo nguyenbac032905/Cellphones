@@ -8,7 +8,7 @@ import { Button} from "antd";
 import { Link } from "react-router-dom";
 
 const RolesPage = () => {
-    const { roles, loading, error} = useAdminRoles();
+    const { roles, loading, error, refetch} = useAdminRoles();
     if (loading) {
         return <LoadingScreen />
     }
@@ -37,7 +37,7 @@ const RolesPage = () => {
                         </Button>
                     </Link>
                 </div>
-                <RoleTable roles={roles} />
+                <RoleTable roles={roles} refetch={refetch}/>
             </div>
         </>
     )

@@ -1,13 +1,17 @@
-import { Button, Popconfirm, Space, Table, Tag } from "antd";
+import { Button, message, Popconfirm, Space, Table, Tag } from "antd";
 import { Link } from "react-router-dom";
 import type { ColumnsType } from "antd/es/table";
 import type { Role } from "../types/role.type";
+import { getErrorMessage } from "../../../shared/utils/errorHandler";
+import { useAdminDeleteRole } from "../hooks/useAdminDeleteRole";
 
 type Props = {
     roles: Role[];
+    refetch: () => Promise<void>
 };
 
-const RoleTable = ({ roles }: Props) => {
+const RoleTable = ({ roles, refetch }: Props) => {
+    const { deletingRoleID, deleteRole } = useAdminDeleteRole();
     const columns: ColumnsType<Role> = [
         {
             title: "Title",
@@ -49,11 +53,19 @@ const RoleTable = ({ roles }: Props) => {
                         okText="Delete"
                         cancelText="Cancel"
                         okButtonProps={{ danger: true }}
-                        onConfirm={() => {
-                            // TODO: delete role
+                        onConfirm={async () => {
+                            try {
+                                const resDelete = await deleteRole(record._id);
+                                if(resDelete.success){
+                                    await refetch();
+                                    message.success(resDelete.message);
+                                }
+                            } catch (error) {
+                                message.error(getErrorMessage(error));
+                            }
                         }}
                     >
-                        <Button color="danger" variant="outlined">
+                        <Button color="danger" variant="outlined" loading={deletingRoleID === record._id}>
                             Delete
                         </Button>
                     </Popconfirm>

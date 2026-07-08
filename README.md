@@ -189,3 +189,4 @@
     4. (phần audit logging mình sẽ làm sau)
 40. làm giao diện trang role list
 41. làm tính năng tạo mới role
+42. làm tính năng chi tiết và cập nhật role
