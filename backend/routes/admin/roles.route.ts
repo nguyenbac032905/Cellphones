@@ -2,9 +2,11 @@ import express from "express";
 const router = express.Router();
 import * as controller from "../../controllers/admin/roles.controller";
 import { validateMiddlware } from "../../middlewares/admin/validate.middleware";
-import { createRoleSchema } from "../../validations/admin/role.validation";
+import { createRoleSchema, roleIDSchema, updateRoleSchema } from "../../validations/admin/role.validation";
 
 router.get("/", controller.getRoles);
-router.post("/",validateMiddlware(createRoleSchema), controller.createRole)
+router.post("/",validateMiddlware(createRoleSchema), controller.createRole);
+router.patch("/:roleID", validateMiddlware(updateRoleSchema), controller.updateRole);
+router.get("/:roleID", validateMiddlware(roleIDSchema), controller.getRole);
 
 export default router;

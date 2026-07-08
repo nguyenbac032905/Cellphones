@@ -13,3 +13,5 @@ export const createRoleSchema = z.object({
     
     permissions: z.array(z.string()).default([]),
 }).strict();
+
+export const updateRoleSchema = createRoleSchema.partial();
