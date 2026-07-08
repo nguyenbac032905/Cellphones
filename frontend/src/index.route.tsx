@@ -7,6 +7,7 @@ import { adminProductRoutes,productRoutes } from "./features/products/product.ro
 import { adminRecycleBinRoutes } from "./features/recycleBin/recycleBin.route";
 import { adminAuthRoutes } from "./features/auth/auth.route";
 import AdminPrivateRoute from "./features/auth/components/AdminPrivateRoute";
+import { adminRoleRoutes } from "./features/roles/role.route";
 
 export const routes = [
     {
@@ -19,7 +20,7 @@ export const routes = [
         children: [
             {
                 element: <AdminLayout />,
-                children: [...dashboardRoutes,...adminProductRoutes,...adminRecycleBinRoutes]
+                children: [...dashboardRoutes,...adminProductRoutes,...adminRecycleBinRoutes,...adminRoleRoutes]
             }
         ]
     },

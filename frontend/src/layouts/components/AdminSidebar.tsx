@@ -5,6 +5,9 @@ import {
     ShoppingCartOutlined,
     ShoppingOutlined,
     SettingOutlined,
+    SafetyCertificateOutlined,
+    TeamOutlined,
+    KeyOutlined,
 } from "@ant-design/icons";
 import { Layout, Menu, type MenuProps } from 'antd';
 import type { Dispatch, SetStateAction } from "react";
@@ -47,6 +50,11 @@ const AdminSidebar = ({ collapsed, setCollapsed }: AdminHeaderProps) => {
                     key: "/admin/users",
                     icon: <UserOutlined />,
                     label: "Users",
+                },
+                {
+                    key: "/admin/roles",
+                    icon: <SafetyCertificateOutlined />,
+                    label: "Roles"
                 },
                 {
                     key: "/admin/orders",

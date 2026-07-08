@@ -182,3 +182,8 @@
     4. tạo auth.helper để tự động đăng ký/login và trả về accessToken dùng cho các API cần authentication
     5. tạo file integration test cho products. trước khi test sẽ connect DB và lấy accessToken, sau mỗi test sẽ clear DB và cuối cùng close DB. integration test sẽ kiểm tra toàn bộ flow thật của hệ thống: route -> middleware -> controller -> service -> MongoDB
 38. viết test integration cho auth (còn test E2E sẽ để tới khi làm payment sẽ giá trị hơn)
+39. tạo file request logging và error logging ở môi trường production
+    1. npm i pino pino-http
+    2. tạo file config cho request và error logging
+    3. tạo middleware request và error logging
+    4. (phần audit logging mình sẽ làm sau)
