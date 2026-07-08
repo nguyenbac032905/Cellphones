@@ -3,11 +3,11 @@ import { AppError } from "../../utils/AppError";
 import { CreateRoleBody, UpdateRoleBody } from "../../validations/admin/role.validation";
 
 export const getRolesService = async () => {
-    const roles = await Role.find({deleted: false});
+    const roles = await Role.find({deleted: false}).lean();
     return { data: roles };
 };
 export const getRoleService = async (roleID: string) => {
-    const role = await Role.findOne({_id: roleID,deleted: false});
+    const role = await Role.findOne({_id: roleID,deleted: false}).lean();
     return {data: role};
 }
 export const createRoleService = async (body: CreateRoleBody) => {

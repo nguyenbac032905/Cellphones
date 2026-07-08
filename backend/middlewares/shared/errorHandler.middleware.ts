@@ -4,6 +4,7 @@ import multer from "multer";
 import errorLogger from "../../config/errorLogger";
 
 export const errorHandlerMiddleware = ( error: any, req: Request, res: Response, next: NextFunction ) => {
+    console.log(error)
      // logging error
     if(process.env.NODE_ENV === "production"){
         errorLogger.error({

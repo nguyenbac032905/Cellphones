@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import z from "zod";
+import { PERMISSION_SET } from "../../constants/permission";
 
 const roleBodySchema = z.object({
     title: z.string()
@@ -12,8 +13,12 @@ const roleBodySchema = z.object({
         .max(500, "Description must not exceed 500 characters")
         .optional(),
 
-    permissions: z.array(z.string())
-        .optional(),
+    permissions: z.array(
+        z.string().refine(
+            permission => PERMISSION_SET.has(permission),
+            { message: "Invalid permission" }
+        )
+    ).optional()
 }).strict();
 
 const objectIdSchema = z

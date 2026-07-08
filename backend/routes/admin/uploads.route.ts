@@ -5,6 +5,8 @@ import * as middleware from "../../middlewares/admin/uploadCloud.middleware";
 import { uploadRateLimitMiddleware } from "../../middlewares/shared/rateLimit.middleware";
 import multer = require("multer");
 import { AppError } from "../../utils/AppError";
+import { permissionMiddleware } from "../../middlewares/admin/permissionMiddleware";
+import { PERMISSIONS } from "../../constants/permission";
 const upload = multer({
     limits: {
         fileSize: 1 * 1024 * 1024,
@@ -29,6 +31,6 @@ const upload = multer({
     }
 });
 
-router.post("/images",uploadRateLimitMiddleware,upload.fields([{ name: "images", maxCount: 10 }]),middleware.uploadFields,  controller.uploadImages);
+router.post("/images",uploadRateLimitMiddleware,permissionMiddleware(PERMISSIONS.Uploads.Images),upload.fields([{ name: "images", maxCount: 10 }]),middleware.uploadFields,  controller.uploadImages);
 
 export default router;

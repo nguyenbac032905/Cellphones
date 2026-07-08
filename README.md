@@ -190,3 +190,4 @@
 40. làm giao diện trang role list
 41. làm tính năng tạo mới role
 42. làm tính năng chi tiết và cập nhật role
+43. làm tính năng xóa role
