@@ -1,10 +1,11 @@
 import { Button, Image, Input, message, Popconfirm, Space, Switch, Table } from "antd";
-import type { PaginationMeta, Product, ProductQuery } from "../types/products.type";
+import type { Product, ProductQuery } from "../types/products.type";
 import { Link } from "react-router-dom";
 import { useAdminUpdateProduct } from "../hooks/useAdminUpdateProduct";
 import { useState } from "react";
 import { getErrorMessage } from "../../../shared/utils/errorHandler";
 import { useAdminDeleteProduct } from "../hooks/useAdminDeleteProduct";
+import type { PaginationMeta } from "../../../shared/types/common.type";
 type Props = {
     products: Product[],
     meta: PaginationMeta,

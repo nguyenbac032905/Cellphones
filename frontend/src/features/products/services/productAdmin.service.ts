@@ -1,12 +1,6 @@
 import { privateClient } from "../../../shared/api/privateClient";
-import type {
-    MessageResponse,
-    PatchProductBody,
-    PostProductBody,
-    ProductListResponse,
-    ProductQuery,
-    ProductResponse
-} from "../types/products.type";
+import type { MessageResponse } from "../../../shared/types/common.type";
+import type { PatchProductBody, PostProductBody, ProductListResponse, ProductQuery, ProductResponse } from "../types/products.type";
 
 export const productAdminService = {
     getAll: async (query: ProductQuery): Promise<ProductListResponse> => {

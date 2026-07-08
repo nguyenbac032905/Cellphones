@@ -1,6 +1,7 @@
 import { Request,Response } from "express";
 import { createProductService, deleteProductService, getProductByIDService, getProducts, updateProductService } from "../../services/admin/products.service";
 import { asyncHandler } from "../../utils/asyncHandler";
+
 export const index = asyncHandler(async (req: Request, res: Response) => {
     const result = await getProducts(req.query);
     return res.status(200).json({

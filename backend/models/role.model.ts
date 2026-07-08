@@ -8,7 +8,10 @@ const roleSchema = new mongoose.Schema(
         unique: true
     },
 
-    description: String,
+    description: {
+        type: String,
+        default: ""
+    },
 
     permissions: {
         type: [String],
