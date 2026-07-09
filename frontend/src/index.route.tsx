@@ -8,6 +8,7 @@ import { adminRecycleBinRoutes } from "./features/recycleBin/recycleBin.route";
 import { adminAuthRoutes } from "./features/auth/auth.route";
 import AdminPrivateRoute from "./features/auth/components/AdminPrivateRoute";
 import { adminRoleRoutes } from "./features/roles/role.route";
+import ForbiddenPage from "./shared/pages/ForbiddenPage";
 
 export const routes = [
     {
@@ -28,6 +29,10 @@ export const routes = [
         path: "/",
         element: <ClientLayout />,
         children: [...homeRoutes,...productRoutes]
+    },
+    {
+        path: "/403",
+        element: <ForbiddenPage/>
     },
     {
         path: '*',

@@ -10,6 +10,8 @@ import { useState} from "react";
 import { useAdminUpdateProduct } from "../hooks/useAdminUpdateProduct";
 import { useAdminDeleteProduct } from "../hooks/useAdminDeleteProduct";
 import { getErrorMessage } from "../../../shared/utils/errorHandler";
+import { usePermission } from "../../auth/hooks/usePermission";
+import { PERMISSIONS } from "../../roles/constants/role.const";
 
 const { Search } = Input;
 
@@ -26,6 +28,19 @@ const AdminProductToolbar = ({query, updateQuery, selectedRows, refetch}: Props)
     const {updateProduct} = useAdminUpdateProduct();
     const {deleteProduct} = useAdminDeleteProduct();
     const [action, setAction] = useState<string>();
+
+    const can = usePermission();
+    const canCreate = can(PERMISSIONS.PRODUCTS.CREATE);
+    const canUpdate = can(PERMISSIONS.PRODUCTS.UPDATE);
+    const canDelete = can(PERMISSIONS.PRODUCTS.DELETE);
+    const bulkOptions = [
+        canUpdate && { value: "active", label: "Active" },
+        canUpdate && { value: "inactive", label: "Inactive" },
+        canDelete && { value: "delete", label: "Delete" },
+    ].filter(Boolean) as { value: string; label: string }[];
+
+    const showBulkActions = canUpdate || canDelete;
+    const showRightActions = canCreate || canUpdate;
     
     const handleApply = async () => {
         if (!action) return;
@@ -68,56 +83,54 @@ const AdminProductToolbar = ({query, updateQuery, selectedRows, refetch}: Props)
             styles={{body: { padding: 16 }}}
         >
             <div className="flex flex-col xl:flex-row xl:items-center overflow-hidden rounded-2xl">
-                <div className="flex items-center gap-3 border-b xl:border-b-0 xl:border-r border-gray-200 px-4 py-4">
-                    <div className="flex items-center gap-2 whitespace-nowrap max-sm:hidden">
-                        <EditOutlined className="text-gray-500" />
-                        <span className="text-sm font-medium text-gray-700">
-                            Bulk actions
-                        </span>
-                    </div>
-                    <Select
-                        size="large"
-                        className="min-w-[190px]"
-                        placeholder="Select action"
-                        value={action}
-                        onChange={(value) => setAction(value)}
-                        options={[
-                            { value: "active", label: "Active" },
-                            { value: "inactive", label: "Inactive" },
-                            { value: "delete", label: "Delete" }
-                        ]}
-                    />
-                    {action === "delete" ? (
-                        <Popconfirm
-                            title="Xóa sản phẩm"
-                            description={`Bạn có chắc muốn xóa ${selectedRows.length} sản phẩm?`}
-                            okText="Xóa"
-                            cancelText="Hủy"
-                            okButtonProps={{ danger: true }}
-                            onConfirm={handleApply}
-                        >
+                {showBulkActions && (
+                    <div className="flex items-center gap-3 border-b xl:border-b-0 xl:border-r border-gray-200 px-4 py-4">
+                        <div className="flex items-center gap-2 whitespace-nowrap max-sm:hidden">
+                            <EditOutlined className="text-gray-500" />
+                            <span className="text-sm font-medium text-gray-700">
+                                Bulk actions
+                            </span>
+                        </div>
+                        <Select
+                            size="large"
+                            className="min-w-[190px]"
+                            placeholder="Select action"
+                            value={action}
+                            onChange={(value) => setAction(value)}
+                            options={bulkOptions}
+                        />
+                        {action === "delete" ? (
+                            <Popconfirm
+                                title="Xóa sản phẩm"
+                                description={`Bạn có chắc muốn xóa ${selectedRows.length} sản phẩm?`}
+                                okText="Xóa"
+                                cancelText="Hủy"
+                                okButtonProps={{ danger: true }}
+                                onConfirm={handleApply}
+                            >
+                                <Button
+                                    danger
+                                    ghost
+                                    size="large"
+                                    className="min-w-[90px]"
+                                    disabled={selectedRows.length === 0 && can(PERMISSIONS.PRODUCTS.UPDATE)}
+                                >
+                                    Apply
+                                </Button>
+                            </Popconfirm>
+                        ) : (
                             <Button
-                                danger
-                                ghost
                                 size="large"
                                 className="min-w-[90px]"
-                                disabled={selectedRows.length === 0}
+                                disabled={!action || selectedRows.length === 0}
+                                onClick={handleApply}
                             >
                                 Apply
                             </Button>
-                        </Popconfirm>
-                    ) : (
-                        <Button
-                            size="large"
-                            className="min-w-[90px]"
-                            disabled={!action || selectedRows.length === 0}
-                            onClick={handleApply}
-                        >
-                            Apply
-                        </Button>
-                    )}
-                </div>
-                <div className="flex-1 border-b xl:border-b-0 xl:border-r border-gray-200 p-4">
+                        )}
+                    </div>
+                )}
+                <div className={`flex-1 border-b xl:border-b-0 border-gray-200 p-4`}>
                     <Search
                         placeholder="Search products..."
                         allowClear
@@ -127,32 +140,38 @@ const AdminProductToolbar = ({query, updateQuery, selectedRows, refetch}: Props)
                         onSearch={(value) => updateQuery({search: value, page:1})}
                     />
                 </div>
-                <div className="flex items-center gap-2 p-4">
-                    <Link to="/admin/recycle-bin/products">
-                        <Button
-                            icon={<DeleteOutlined />}
-                            size="large"
-                            danger
-                        >
-                            Trash
-                        </Button>
-                    </Link>
-                    <Link to="/admin/products/create">
-                        <Button
-                            size="large"
-                            icon={<PlusOutlined />}
-                            className="
-                                !border-green-500
-                                !text-green-600
-                                hover:!border-green-500
-                                hover:!text-green-600
-                                hover:!bg-green-50
-                            "
-                        >
-                            New Product
-                        </Button>
-                    </Link>
-                </div>
+                {showRightActions && (
+                    <div className="flex items-center gap-2 p-4 xl:border-l border-gray-200">
+                        {canUpdate && (
+                            <Link to="/admin/recycle-bin/products">
+                                <Button
+                                    icon={<DeleteOutlined />}
+                                    size="large"
+                                    danger
+                                >
+                                    Trash
+                                </Button>
+                            </Link>
+                        )}
+                        {canCreate && (
+                            <Link to="/admin/products/create">
+                                <Button
+                                    size="large"
+                                    icon={<PlusOutlined />}
+                                    className="
+                                        !border-green-500
+                                        !text-green-600
+                                        hover:!border-green-500
+                                        hover:!text-green-600
+                                        hover:!bg-green-50
+                                    "
+                                >
+                                    New Product
+                                </Button>
+                            </Link>
+                        )}
+                    </div>
+                )}
             </div>
         </Card>
     );

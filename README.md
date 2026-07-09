@@ -191,3 +191,9 @@
 41. làm tính năng tạo mới role
 42. làm tính năng chi tiết và cập nhật role
 43. làm tính năng xóa role
+44. triển khai authorization bên backend
+    1. sửa lại authMiddleware lấy ra cả perrmission và gán vào req.user, thêm bắt lỗi cho AppError mà khi check role không tồn tại ném ra phía trên.
+    2. mở rộng type cho express để req.user không bị lỗi, khai báo ts-node {files: true } để đọc toàn bộ file .d.ts
+    3. tạo permissionMiddleware để check role
+    4. tạo file const permission bên backend để tạo enum tránh điền nhầm permission và cũng sử dụng nó để check validate bằng zod
+    5. sử dụng phân quyền trong route

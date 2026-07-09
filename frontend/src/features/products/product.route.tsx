@@ -1,3 +1,5 @@
+import PermissionRoute from "../auth/components/PermissionRoute";
+import { PERMISSIONS } from "../roles/constants/role.const";
 import AdminProductsCreatePage from "./pages/AdminProductsCreatePage";
 import AdminProductsDetailPage from "./pages/AdminProductsDetailPage";
 import AdminProductsPage from "./pages/AdminProductsPage";
@@ -6,20 +8,35 @@ import ProductsPage from "./pages/ProductsPage";
 
 export const adminProductRoutes = [
     {
-        path: "products",
-        element: <AdminProductsPage />
+        element: <PermissionRoute permission={PERMISSIONS.PRODUCTS.READ} />,
+        children: [
+            {
+                path: "products",
+                element: <AdminProductsPage />
+            },
+            {
+                path: "products/details/:productID",
+                element: <AdminProductsDetailPage />
+            }
+        ]
     },
     {
-        path: "products/details/:productID",
-        element: <AdminProductsDetailPage />
+        element: <PermissionRoute permission={PERMISSIONS.PRODUCTS.CREATE} />,
+        children: [
+            {
+                path: "products/create",
+                element: <AdminProductsCreatePage />
+            }
+        ]
     },
     {
-        path: "products/create",
-        element: <AdminProductsCreatePage />
-    },
-    {
-        path: "products/edit/:productID",
-        element: <AdminProductsUpdatePage />
+        element: <PermissionRoute permission={PERMISSIONS.PRODUCTS.UPDATE} />,
+        children: [
+            {
+                path: "products/edit/:productID",
+                element: <AdminProductsUpdatePage />
+            }
+        ]
     }
 ];
 export const productRoutes = [

@@ -5,7 +5,10 @@ export interface User {
     phone: string;
     avatar: string;
     accountType: string;
-    roleID: string;
+    roleID: {
+        _id: string,
+        permissions: string[]
+    };
     status: string;
 }
 export type LoginPayload = {

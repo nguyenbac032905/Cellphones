@@ -5,7 +5,7 @@ import { generateAccessToken, generateRefreshToken } from "../../utils/jwt";
 import jwt from "jsonwebtoken";
 
 export const loginService = async ( email: string, password: string ) => {
-    const user = await User.findOne({ email, deleted: false });
+    const user = await User.findOne({ email, deleted: false }).populate("roleID", "permissions");
     if (!user) {
         throw new AppError("Invalid Email!", 400);
     }
@@ -19,7 +19,7 @@ export const loginService = async ( email: string, password: string ) => {
     if (!isMatch) {
         throw new AppError("Invalid Password!", 400);
     }
-
+    console.log(user)
     const payload = {
         _id: user._id,
         fullName: user.fullName,
@@ -51,14 +51,15 @@ export const registerService = async ( fullName: string, email: string, password
         throw new AppError("Email already exists!", 400);
     }
     const hashedPassword = await bcrypt.hash(password,10);
-    const newUser = await User.create({
+    const newUser = new User({
         fullName,
         email,
         accountType: "admin",
         roleID: roleID,
         password: hashedPassword
     });
-
+    await newUser.save();
+    await newUser.populate("roleID", "permissions");
 
     const payload = {
         _id: newUser._id,

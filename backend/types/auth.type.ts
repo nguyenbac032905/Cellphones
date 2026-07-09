@@ -1,16 +1,31 @@
 import { JwtPayload } from "jsonwebtoken";
+import { Types } from "mongoose";
+
 
 export interface AccessTokenPayload extends JwtPayload {
     _id: string;
     fullName: string;
     email: string;
-    phone: string;
+    phone?: string;
     avatar?: string;
     accountType: string;
-    roleID: string;
+    roleID: {
+        _id: string,
+        permissions: string[]
+    };
     status: string;
 }
 
-export interface AuthUser extends AccessTokenPayload {
-    permissions: string[];
+export interface AuthenticatedUser {
+    _id: Types.ObjectId;
+    fullName: string;
+    email: string;
+    phone?: string | null;
+    avatar?: string | null;
+    accountType: string;
+    roleID: {
+        _id: Types.ObjectId;
+        permissions?: string[];
+    };
+    status: string;
 }

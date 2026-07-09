@@ -37,7 +37,11 @@ const userSchema = new mongoose.Schema(
             default: "user"
         },
 
-        roleID: { type: mongoose.Schema.Types.ObjectId, ref: "Role", default: null },
+        roleID: { 
+            type: mongoose.Schema.Types.ObjectId, 
+            ref: "Role", 
+            required: true
+        },
 
         refreshToken: {
             type: String,

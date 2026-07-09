@@ -12,10 +12,9 @@ export const bootstrapAuth = async () => {
                 Authorization: `Bearer ${accessToken}`
             }
         });
-
         store.dispatch(setAuth({
             accessToken,
-            user: profileRes.data.user,
+            user: profileRes.data.data.user,
         }))
 
     }catch(error){

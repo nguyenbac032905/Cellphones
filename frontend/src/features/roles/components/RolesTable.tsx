@@ -4,6 +4,8 @@ import type { ColumnsType } from "antd/es/table";
 import type { Role } from "../types/role.type";
 import { getErrorMessage } from "../../../shared/utils/errorHandler";
 import { useAdminDeleteRole } from "../hooks/useAdminDeleteRole";
+import { usePermission } from "../../auth/hooks/usePermission";
+import { PERMISSIONS } from "../constants/role.const";
 
 type Props = {
     roles: Role[];
@@ -12,6 +14,9 @@ type Props = {
 
 const RoleTable = ({ roles, refetch }: Props) => {
     const { deletingRoleID, deleteRole } = useAdminDeleteRole();
+    const can = usePermission();
+    const canUpdate = can(PERMISSIONS.ROLES.UPDATE);
+    const canDelete = can(PERMISSIONS.ROLES.DELETE);
     const columns: ColumnsType<Role> = [
         {
             title: "Title",
@@ -40,35 +45,37 @@ const RoleTable = ({ roles, refetch }: Props) => {
                             Detail
                         </Button>
                     </Link>
-
-                    <Link to={`/admin/roles/edit/${record._id}`}>
-                        <Button color="primary" variant="outlined">
-                            Update
-                        </Button>
-                    </Link>
-
-                    <Popconfirm
-                        title="Delete Role"
-                        description="Are you sure you want to delete this role?"
-                        okText="Delete"
-                        cancelText="Cancel"
-                        okButtonProps={{ danger: true }}
-                        onConfirm={async () => {
-                            try {
-                                const resDelete = await deleteRole(record._id);
-                                if(resDelete.success){
-                                    await refetch();
-                                    message.success(resDelete.message);
+                    {canUpdate && (
+                        <Link to={`/admin/roles/edit/${record._id}`}>
+                            <Button color="primary" variant="outlined">
+                                Update
+                            </Button>
+                        </Link>
+                    )}
+                    {canDelete && (
+                        <Popconfirm
+                            title="Delete Role"
+                            description="Are you sure you want to delete this role?"
+                            okText="Delete"
+                            cancelText="Cancel"
+                            okButtonProps={{ danger: true }}
+                            onConfirm={async () => {
+                                try {
+                                    const resDelete = await deleteRole(record._id);
+                                    if(resDelete.success){
+                                        await refetch();
+                                        message.success(resDelete.message);
+                                    }
+                                } catch (error) {
+                                    message.error(getErrorMessage(error));
                                 }
-                            } catch (error) {
-                                message.error(getErrorMessage(error));
-                            }
-                        }}
-                    >
-                        <Button color="danger" variant="outlined" loading={deletingRoleID === record._id}>
-                            Delete
-                        </Button>
-                    </Popconfirm>
+                            }}
+                        >
+                            <Button color="danger" variant="outlined" loading={deletingRoleID === record._id}>
+                                Delete
+                            </Button>
+                        </Popconfirm>
+                    )}
                 </Space>
             ),
         },

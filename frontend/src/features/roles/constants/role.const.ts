@@ -49,3 +49,41 @@ export const permissionGroups = [
         ],
     },
 ];
+export const PERMISSIONS = {
+    PRODUCTS: {
+        READ: "products-read",
+        CREATE: "products-create",
+        UPDATE: "products-update",
+        DELETE: "products-delete",
+    },
+
+    CATEGORIES: {
+        READ: "categories-read",
+        CREATE: "categories-create",
+        UPDATE: "categories-update",
+        DELETE: "categories-delete",
+    },
+
+    ORDERS: {
+        READ: "orders-read",
+        UPDATE: "orders-update",
+    },
+
+    USERS: {
+        READ: "users-read",
+        CREATE: "users-create",
+        UPDATE: "users-update",
+        DELETE: "users-delete",
+    },
+
+    ROLES: {
+        READ: "roles-read",
+        CREATE: "roles-create",
+        UPDATE: "roles-update",
+        DELETE: "roles-delete",
+    },
+    
+    Uploads: {
+        Images: "uploads-images"
+    }
+} as const;

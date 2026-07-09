@@ -12,6 +12,8 @@ import {
 import { Layout, Menu, type MenuProps } from 'antd';
 import type { Dispatch, SetStateAction } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { usePermission } from "../../features/auth/hooks/usePermission";
+import { PERMISSIONS } from "../../features/roles/constants/role.const";
 const { Sider } = Layout;
 
 type MenuItem = Required<MenuProps>["items"][number];
@@ -23,6 +25,8 @@ type AdminHeaderProps = {
 const AdminSidebar = ({ collapsed, setCollapsed }: AdminHeaderProps) => {
     const navigate = useNavigate();
     const location = useLocation();
+    const can = usePermission();
+
     const sidebarItems: MenuItem[] = [
         {
             key: "/admin",
@@ -36,31 +40,36 @@ const AdminSidebar = ({ collapsed, setCollapsed }: AdminHeaderProps) => {
             type: "group",
             label: "MANAGEMENT",
             children: [
-                {
-                    key: "/admin/categories",
-                    icon: <AppstoreOutlined />,
-                    label: "Categories",
-                },
+                can(PERMISSIONS.PRODUCTS.READ) ? 
                 {
                     key: "/admin/products",
                     icon: <ShoppingOutlined />,
                     label: "Products",
-                },
+                }: null,
+                can(PERMISSIONS.CATEGORIES.READ) ? 
+                {
+                    key: "/admin/categories",
+                    icon: <AppstoreOutlined />,
+                    label: "Categories",
+                }: null,
+                can(PERMISSIONS.USERS.READ) ? 
                 {
                     key: "/admin/users",
                     icon: <UserOutlined />,
                     label: "Users",
-                },
+                }: null,
+                can(PERMISSIONS.ROLES.READ) ? 
                 {
                     key: "/admin/roles",
                     icon: <SafetyCertificateOutlined />,
                     label: "Roles"
-                },
+                }: null,
+                can(PERMISSIONS.ORDERS.READ) ? 
                 {
                     key: "/admin/orders",
                     icon: <ShoppingCartOutlined />,
                     label: "Orders",
-                },
+                }: null,
             ],
         },
         {

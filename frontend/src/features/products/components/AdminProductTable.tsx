@@ -6,6 +6,8 @@ import { useState } from "react";
 import { getErrorMessage } from "../../../shared/utils/errorHandler";
 import { useAdminDeleteProduct } from "../hooks/useAdminDeleteProduct";
 import type { PaginationMeta } from "../../../shared/types/common.type";
+import { usePermission } from "../../auth/hooks/usePermission";
+import { PERMISSIONS } from "../../roles/constants/role.const";
 type Props = {
     products: Product[],
     meta: PaginationMeta,
@@ -18,6 +20,10 @@ const ProductTable = ({ products, meta, updateQuery, refetch, setSelectedRows }:
     const [updatingId, setUpdatingId] = useState("");
     const { deleteProduct } = useAdminDeleteProduct();
 
+    const can = usePermission();
+    const canUpdate = can(PERMISSIONS.PRODUCTS.UPDATE);
+    const canDelete = can(PERMISSIONS.PRODUCTS.DELETE);
+
     const columns = [
         {
             title: "Position",
@@ -26,7 +32,7 @@ const ProductTable = ({ products, meta, updateQuery, refetch, setSelectedRows }:
             render: (position: number, record: Product) => (
                 <Input
                     defaultValue={position}
-                    disabled={record._id === updatingId}
+                    disabled={record._id === updatingId || !canUpdate}
                     style={{ width: 60, textAlign: "center" }}
                     onBlur={async (e) => {
                         const newPosition = Number(e.target.value);
@@ -87,6 +93,7 @@ const ProductTable = ({ products, meta, updateQuery, refetch, setSelectedRows }:
             key: "status",
             render: (_: any, record: Product) => (
                 <Switch
+                    disabled={!canUpdate}
                     checked={record.status === "active"}
                     loading={updatingId === record._id}
                     checkedChildren="Active"
@@ -116,41 +123,45 @@ const ProductTable = ({ products, meta, updateQuery, refetch, setSelectedRows }:
                             Detail
                         </Button>
                     </Link>
-                    <Link to={`/admin/products/edit/${record._id}`}>
-                        <Button color="primary" variant="outlined" style={{ width: 65 }}>
-                            Update
-                        </Button>
-                    </Link>
-                    <Popconfirm
-                        title="Delete Product"
-                        description="Are you sure you want to delete this product?"
-                        okText="Delete"
-                        cancelText="Cancel"
-                        okButtonProps={{ danger: true, loading: updatingId === record._id }}
-                        onConfirm={async () => {
-                            try {
-                                setUpdatingId(record._id);
+                    {canUpdate && (
+                        <Link to={`/admin/products/edit/${record._id}`}>
+                            <Button color="primary" variant="outlined" style={{ width: 65 }}>
+                                Update
+                            </Button>
+                        </Link>
+                    )}
+                    {canDelete && (
+                        <Popconfirm
+                            title="Delete Product"
+                            description="Are you sure you want to delete this product?"
+                            okText="Delete"
+                            cancelText="Cancel"
+                            okButtonProps={{ danger: true, loading: updatingId === record._id }}
+                            onConfirm={async () => {
+                                try {
+                                    setUpdatingId(record._id);
 
-                                const result = await deleteProduct(record._id);
-                                message.success(result.message);
+                                    const result = await deleteProduct(record._id);
+                                    message.success(result.message);
 
-                                await refetch();
-                            } catch (error) {
-                                message.error(getErrorMessage(error));
-                            } finally {
-                                setUpdatingId("");
-                            }
-                        }}
-                    >
-                        <Button
-                            color="danger"
-                            variant="outlined"
-                            style={{ width: 65 }}
-                            loading={updatingId === record._id}
+                                    await refetch();
+                                } catch (error) {
+                                    message.error(getErrorMessage(error));
+                                } finally {
+                                    setUpdatingId("");
+                                }
+                            }}
                         >
-                            Xóa
-                        </Button>
-                    </Popconfirm>
+                            <Button
+                                color="danger"
+                                variant="outlined"
+                                style={{ width: 65 }}
+                                loading={updatingId === record._id}
+                            >
+                                Xóa
+                            </Button>
+                        </Popconfirm>
+                    )}
                 </Space>
             ),
         },
