@@ -5,7 +5,7 @@ import {
 } from "@ant-design/icons";
 import { Card, Select, Input, Button, message, Popconfirm } from "antd";
 import { Link } from "react-router-dom";
-import type { Product,  ProductQuery } from "../types/products.type";
+import type { Product,  ProductListItem,  ProductQuery } from "../types/products.type";
 import { useState} from "react";
 import { useAdminUpdateProduct } from "../hooks/useAdminUpdateProduct";
 import { useAdminDeleteProduct } from "../hooks/useAdminDeleteProduct";
@@ -18,7 +18,7 @@ const { Search } = Input;
 type Props = {
     query: ProductQuery,
     updateQuery: (values: Partial<ProductQuery>) => void,
-    selectedRows: Product[],
+    selectedRows: ProductListItem[],
     refetch: () => Promise<void>,
 }
 

@@ -7,6 +7,7 @@ import recycleBinRoutes from "./recycleBin.route";
 import authRoutes from "./auth.route";
 import { authMiddleware } from "../../middlewares/admin/auth.middleware";
 import roleRoutes from "./roles.route";
+import userRoutes from "./users.route";
 
 const routesClient = (app: Express) => {
     const PATH_ADMIN = systemConfig.prefixAdmin;
@@ -16,6 +17,7 @@ const routesClient = (app: Express) => {
     app.use(PATH_ADMIN + "/recycle-bin",authMiddleware, recycleBinRoutes);
     app.use(PATH_ADMIN + "/auth", authRoutes);
     app.use(PATH_ADMIN + "/roles",authMiddleware, roleRoutes);
+    app.use(PATH_ADMIN + "/users",authMiddleware, userRoutes);
 }
 
 export default routesClient;

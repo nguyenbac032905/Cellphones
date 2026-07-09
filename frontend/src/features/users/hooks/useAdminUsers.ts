@@ -1,29 +1,30 @@
 import { useCallback, useEffect, useState } from "react";
-import { productAdminService } from "../services/productAdmin.service";
-import type {ProductListItem,ProductQuery} from "../types/products.type";
+import type { UserListItem, UserQuery } from "../types/users.type";
 import { getErrorMessage } from "../../../shared/utils/errorHandler";
 import type { PaginationMeta } from "../../../shared/types/common.type";
+import { userAdminService } from "../services/usersAdmin.service";
 
-export const useAdminProducts = (query: ProductQuery) => {
-    const [products, setProducts] = useState<ProductListItem[]>([]);
+export const useAdminUsers = (query: UserQuery) => {
+    const [users, setUsers] = useState<UserListItem[]>([]);
     const [meta, setMeta] = useState<PaginationMeta>({
         total: 0,
         page: 1,
         limit: 4,
-        totalPages: 0
+        totalPages: 0,
     });
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string>("");
 
-    const fetchProducts = useCallback(async () => {
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
+
+    const fetchUsers = useCallback(async () => {
         try {
             setLoading(true);
             setError("");
 
-            const res = await productAdminService.getAll(query);
+            const res = await userAdminService.getAll(query);
 
             if (res.success) {
-                setProducts(res.data);
+                setUsers(res.data);
                 setMeta(res.meta);
             }
         } catch (err) {
@@ -33,23 +34,21 @@ export const useAdminProducts = (query: ProductQuery) => {
         }
     }, [
         query.status,
-        query.category,
+        query.accountType,
         query.search,
-        query.sort,
         query.page,
-        query.limit,
-        query.stock
+        query.limit
     ]);
 
     useEffect(() => {
-        fetchProducts();
-    }, [fetchProducts]);
+        fetchUsers();
+    }, [fetchUsers]);
 
     return {
-        products,
+        users,
         meta,
         loading,
         error,
-        refetch: fetchProducts
+        refetch: fetchUsers,
     };
 };

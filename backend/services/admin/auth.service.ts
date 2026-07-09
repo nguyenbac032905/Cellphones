@@ -19,7 +19,7 @@ export const loginService = async ( email: string, password: string ) => {
     if (!isMatch) {
         throw new AppError("Invalid Password!", 400);
     }
-    console.log(user)
+    
     const payload = {
         _id: user._id,
         fullName: user.fullName,

@@ -197,3 +197,12 @@
     3. tạo permissionMiddleware để check role
     4. tạo file const permission bên backend để tạo enum tránh điền nhầm permission và cũng sử dụng nó để check validate bằng zod
     5. sử dụng phân quyền trong route
+45. triển khai authorization bên frontent
+    1. populate lấy ra cả permission vào trong thông tin user khi đăng nhập và đăng kí
+    2. sửa lại authMiddleware lấy ra user kèm permission
+    3. sửa lại type user bên backend, frontend chứa cả permission
+    4. tạo use perrmission để lấy ra danh sách quyền của người dùng
+    5. tạo permission route để xác minh có được vào route đó không
+    6. bọc permission route vào các route
+    7. xác mình quyền để hiển thị ui tương ứng
+    8. tạo trang forbidden

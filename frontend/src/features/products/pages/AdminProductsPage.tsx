@@ -4,7 +4,7 @@ import AdminProductToolbar from "../components/AdminProductToolbar";
 import { useAdminProductQuery } from "../hooks/useAdminProductQuery";
 import { useAdminProducts } from "../hooks/useAdminProducts";
 import { useState } from "react";
-import type { Product } from "../types/products.type";
+import type { ProductListItem } from "../types/products.type";
 import LoadingScreen from "../../../shared/components/LoadingScreen";
 import CustomAlert from "../../../shared/components/CustomAlert";
 import AdminTitle from "../../../shared/components/AdminTitle";
@@ -12,8 +12,8 @@ import AdminTitle from "../../../shared/components/AdminTitle";
 const AdminProductsPage = () => {
     const {query, updateQuery} = useAdminProductQuery();
     const {products,meta, loading, error, refetch} = useAdminProducts(query);
-    const [selectedRows, setSelectedRows] = useState<Product[]>([]);
-    console.log(products)
+    const [selectedRows, setSelectedRows] = useState<ProductListItem[]>([]);
+    
     if (loading) {
         return <LoadingScreen/>
     }

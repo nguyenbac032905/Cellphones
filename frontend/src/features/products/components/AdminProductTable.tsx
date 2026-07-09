@@ -1,5 +1,5 @@
 import { Button, Image, Input, message, Popconfirm, Space, Switch, Table } from "antd";
-import type { Product, ProductQuery } from "../types/products.type";
+import type { ProductListItem, ProductQuery } from "../types/products.type";
 import { Link } from "react-router-dom";
 import { useAdminUpdateProduct } from "../hooks/useAdminUpdateProduct";
 import { useState } from "react";
@@ -9,11 +9,11 @@ import type { PaginationMeta } from "../../../shared/types/common.type";
 import { usePermission } from "../../auth/hooks/usePermission";
 import { PERMISSIONS } from "../../roles/constants/role.const";
 type Props = {
-    products: Product[],
+    products: ProductListItem[],
     meta: PaginationMeta,
     updateQuery: (values: Partial<ProductQuery>) => void,
     refetch: () => Promise<void>,
-    setSelectedRows: React.Dispatch<React.SetStateAction<Product[]>>
+    setSelectedRows: React.Dispatch<React.SetStateAction<ProductListItem[]>>
 }
 const ProductTable = ({ products, meta, updateQuery, refetch, setSelectedRows }: Props) => {
     const { updateProduct } = useAdminUpdateProduct();
@@ -29,7 +29,7 @@ const ProductTable = ({ products, meta, updateQuery, refetch, setSelectedRows }:
             title: "Position",
             dataIndex: "position",
             key: "position",
-            render: (position: number, record: Product) => (
+            render: (position: number, record: ProductListItem) => (
                 <Input
                     defaultValue={position}
                     disabled={record._id === updatingId || !canUpdate}
@@ -91,7 +91,7 @@ const ProductTable = ({ products, meta, updateQuery, refetch, setSelectedRows }:
         {
             title: "Status",
             key: "status",
-            render: (_: any, record: Product) => (
+            render: (_: any, record: ProductListItem) => (
                 <Switch
                     disabled={!canUpdate}
                     checked={record.status === "active"}
@@ -116,7 +116,7 @@ const ProductTable = ({ products, meta, updateQuery, refetch, setSelectedRows }:
         {
             title: "Actions",
             key: "actions",
-            render: (_: any, record: Product) => (
+            render: (_: any, record: ProductListItem) => (
                 <Space>
                     <Link to={`/admin/products/details/${record._id}`}>
                         <Button color="default" variant="outlined" style={{ width: 65 }}>

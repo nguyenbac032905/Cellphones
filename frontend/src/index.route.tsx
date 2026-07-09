@@ -9,6 +9,7 @@ import { adminAuthRoutes } from "./features/auth/auth.route";
 import AdminPrivateRoute from "./features/auth/components/AdminPrivateRoute";
 import { adminRoleRoutes } from "./features/roles/role.route";
 import ForbiddenPage from "./shared/pages/ForbiddenPage";
+import { usersAdminRoutes } from "./features/users/user.route";
 
 export const routes = [
     {
@@ -21,7 +22,7 @@ export const routes = [
         children: [
             {
                 element: <AdminLayout />,
-                children: [...dashboardRoutes,...adminProductRoutes,...adminRecycleBinRoutes,...adminRoleRoutes]
+                children: [...dashboardRoutes,...adminProductRoutes,...adminRecycleBinRoutes,...adminRoleRoutes,...usersAdminRoutes]
             }
         ]
     },

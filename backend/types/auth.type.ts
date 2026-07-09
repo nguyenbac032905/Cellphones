@@ -9,10 +9,10 @@ export interface AccessTokenPayload extends JwtPayload {
     phone?: string;
     avatar?: string;
     accountType: string;
-    roleID: {
+    roleID?: {
         _id: string,
         permissions: string[]
-    };
+    } | null;
     status: string;
 }
 
@@ -23,9 +23,9 @@ export interface AuthenticatedUser {
     phone?: string | null;
     avatar?: string | null;
     accountType: string;
-    roleID: {
+    roleID?: {
         _id: Types.ObjectId;
         permissions?: string[];
-    };
+    } | null;
     status: string;
 }
