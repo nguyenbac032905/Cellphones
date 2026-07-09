@@ -1,4 +1,6 @@
 import User from "../../models/user.model";
+import { AppError } from "../../utils/AppError";
+import bcrypt from "bcrypt";
 
 type Query = {
     status?: string;
@@ -33,10 +35,9 @@ export const getUsersService = async (query: Query = {}) => {
     if (search) {
         pipeline.push({
             $search: {
-                index: "default",
-                text: {
+                autocomplete: {
                     query: search,
-                    path: ["fullName", "email"]
+                    path: "fullName"
                 }
             }
         });
@@ -101,5 +102,24 @@ export const getUsersService = async (query: Query = {}) => {
             limit: limitNum,
             totalPages: Math.ceil(total / limitNum)
         }
+    };
+};
+export const createUserService = async ( fullName: string, email: string, password: string, roleID: string ) => {
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+        throw new AppError("Email already exists!", 400);
+    }
+    const hashedPassword = await bcrypt.hash(password,10);
+    const newUser = new User({
+        fullName,
+        email,
+        accountType: "admin",
+        roleID,
+        password: hashedPassword
+    });
+    await newUser.save();
+
+    return {
+        message: "Created User successfully",
     };
 };

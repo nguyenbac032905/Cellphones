@@ -7,7 +7,7 @@ import { loginSchema,registerSchema } from "../../validations/admin/auth.validat
 import { loginRateLimitMiddleware,rateLimitRegisterMiddleware } from "../../middlewares/shared/rateLimit.middleware";
 
 router.post("/login",loginRateLimitMiddleware,validateMiddlware(loginSchema), controller.login);
-router.post("/register",rateLimitRegisterMiddleware,validateMiddlware(registerSchema), controller.register);
+// router.post("/register",rateLimitRegisterMiddleware,validateMiddlware(registerSchema), controller.register);
 router.get("/refresh-token", controller.refreshToken);
 router.get("/me",authMiddleware, controller.getMe);
 
