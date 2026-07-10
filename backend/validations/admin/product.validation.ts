@@ -116,14 +116,14 @@ export const getProductsQuerySchema = z.object({
             .number()
             .int()
             .min(1)
-            .default(1),
+            .optional(),
         limit: z
             .coerce
             .number()
             .int()
             .min(1)
             .max(20)
-            .default(4)
+            .optional()
     }).strict()
 });
 
@@ -139,3 +139,7 @@ export const updateProductSchema = z.object({
     body: productBodySchema.partial()
 
 });
+
+export type CreateProductDTO = z.infer<typeof createProductSchema>["body"];
+export type UpdateProductDTO = z.infer<typeof updateProductSchema>["body"];
+export type GetProductsQuery = z.infer<typeof getProductsQuerySchema>["query"];

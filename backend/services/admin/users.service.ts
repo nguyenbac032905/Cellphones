@@ -1,16 +1,10 @@
 import User from "../../models/user.model";
 import { AppError } from "../../utils/AppError";
 import bcrypt from "bcrypt";
+import { GetUsersServiceInput, UpdateUserBody } from "../../validations/admin/users.validation";
+import Role from "../../models/role.model";
 
-type Query = {
-    status?: string;
-    accountType?: string;
-    search?: string;
-    page?: string;
-    limit?: string;
-};
-
-export const getUsersService = async (query: Query = {}) => {
+export const getUsersService = async (query: GetUsersServiceInput) => {
     const { status, accountType, search, page = 1, limit = 4} = query;
     const pageNum = Number(page);
     const limitNum = Number(limit);
@@ -123,3 +117,48 @@ export const createUserService = async ( fullName: string, email: string, passwo
         message: "Created User successfully",
     };
 };
+export const getUserService = async (userID: string) => {
+    const user = await User.findOne({_id: userID, deleted: false}).populate("roleID", "title").select("-__v -password -refreshToken -refreshTokenExpiredAt").lean();
+    if(!user){
+        throw new AppError("User not found", 404);
+    }
+    return {
+        data: user
+    }
+};
+export const updateUserService = async ( userID: string, body: UpdateUserBody ) => {
+    if (body.email) {
+        const existEmail = await User.findOne({
+            email: body.email,
+            _id: { $ne: userID },
+        });
+        if (existEmail) {
+            throw new AppError("Email already exists", 409);
+        }
+    }
+    if (body.password) {
+        body.password = await bcrypt.hash(body.password, 10);
+    }
+
+    const result = await User.updateOne(
+        { _id: userID },
+        { $set: body }
+    );
+    if (result.matchedCount === 0) {
+        throw new AppError("User not found", 404);
+    }
+
+    return {
+        message: "Updated user successfully",
+    };
+};
+export const deleteUserService = async  (userID: string) => {
+    const result = await User.updateOne( { _id: userID }, { $set: {deleted: true} } );
+    
+    if (result.matchedCount === 0) {
+        throw new AppError("User not found", 404);
+    }
+    return {
+        message: "Deleted user successfully"
+    }
+}

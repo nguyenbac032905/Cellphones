@@ -1,16 +1,11 @@
-import {
-    Avatar,
-    Button,
-    Popconfirm,
-    Space,
-    Switch,
-    Table,
-    Tag,
-} from "antd";
+import { Avatar, Button, message, Popconfirm, Space, Switch, Table, Tag, } from "antd";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import type { PaginationMeta } from "../../../shared/types/common.type";
 import type { UserListItem, UserQuery } from "../types/users.type";
+import { useDeleteUserAdmin } from "../hooks/useDeleteUserAdmin";
+import { getErrorMessage } from "../../../shared/utils/errorHandler";
+import { useUpdateUserAdmin } from "../hooks/useUpdateUserAdmin";
 
 type Props = {
     users: UserListItem[];
@@ -19,13 +14,10 @@ type Props = {
     refetch: () => Promise<void>;
 };
 
-const UsersTable = ({
-    users,
-    meta,
-    updateQuery,
-    refetch,
-}: Props) => {
+const UsersTable = ({ users, meta, updateQuery, refetch}: Props) => {
     const [updatingId, setUpdatingId] = useState("");
+    const {deleteUser, deletingID} = useDeleteUserAdmin();
+    const {updateUser} = useUpdateUserAdmin();
 
     const columns = [
         {
@@ -76,7 +68,16 @@ const UsersTable = ({
                     unCheckedChildren="Inactive"
                     loading={updatingId === record._id}
                     onChange={async (checked) => {
-                        console.log(checked)
+                        try {
+                            setUpdatingId(record._id);
+                                const result = await updateUser(record._id,{ status: checked ? "active" : "inactive" });
+                                message.success(result.message);
+                                await refetch();
+                            } catch (error) {
+                                message.error(getErrorMessage(error));
+                            } finally {
+                                setUpdatingId("");
+                            }
                     }}
                 />
             ),
@@ -113,17 +114,15 @@ const UsersTable = ({
                         cancelText="Cancel"
                         okButtonProps={{
                             danger: true,
-                            loading: updatingId === record._id,
+                            loading: deletingID === record._id,
                         }}
                         onConfirm={async () => {
                             try {
-                                setUpdatingId(record._id);
-
-                                // TODO:
-                                // await deleteUser(record._id);
-                                // await refetch();
-                            } finally {
-                                setUpdatingId("");
+                                const resDelete = await deleteUser(record._id);
+                                message.success(resDelete.message)
+                                await refetch();
+                            } catch (error){
+                                message.error(getErrorMessage(error));
                             }
                         }}
                     >

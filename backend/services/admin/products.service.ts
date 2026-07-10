@@ -2,20 +2,8 @@ import { z } from "zod";
 import Product from "../../models/product.model";
 import { getAllChildCategoryIds } from "./productCategories.service";
 import { AppError } from "../../utils/AppError";
-import { createProductSchema, updateProductSchema } from "../../validations/admin/product.validation";
+import { CreateProductDTO, createProductSchema, GetProductsQuery, UpdateProductDTO, updateProductSchema } from "../../validations/admin/product.validation";
 import { sanitizeEditorContent } from "../../utils/sanitizeHtml";
-
-type Query = {
-    status?: string;
-    category?: string;
-    stock?: string;
-    search?: string;
-    sort?: string;
-    page?: string;
-    limit?: string;
-};
-type CreateProductDTO = z.infer<typeof createProductSchema>["body"];
-type UpdateProductDTO = z.infer<typeof updateProductSchema>["body"];
 
 const PRODUCT_WHITELIST = [
     "title",
@@ -31,7 +19,7 @@ const PRODUCT_WHITELIST = [
     "featured"
 ] as const;
 
-export const getProducts = async (query: Query = {}) => {
+export const getProducts = async (query: GetProductsQuery) => {
     const { status, category, stock, search, sort, page = 1, limit = 4 } = query;
 
     const pageNum = Number(page);

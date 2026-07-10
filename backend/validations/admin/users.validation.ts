@@ -12,10 +12,24 @@ const emailSchema = z
     .email({ error: "Invalid email address" })
     .max(255, { error: "Email must not exceed 255 characters" });
 
-export const objectIdSchema = z.string().refine(
+const objectIdSchema = z.string().refine(
     (value) => mongoose.Types.ObjectId.isValid(value),"Invalid ObjectId"
 );
 
+const bodySchema = z.object({
+    fullName: z
+        .string()
+        .trim()
+        .min(2, { error: "Full name must be at least 2 characters" })
+        .max(100, { error: "Full name must not exceed 100 characters" }),
+
+    email: emailSchema,
+
+    password: passwordSchema,
+
+    roleID: objectIdSchema
+}).strict();
+//query
 export const getUsersServiceSchema = z.object({
     query: z.object({
         status: z.enum(["active", "inactive"]).optional(),
@@ -42,21 +56,50 @@ export const getUsersServiceSchema = z.object({
             .optional(),
     })
 });
-
+//params
+export const userIDParamsSchema = z.object({
+    params: z.object({
+        userID: objectIdSchema
+    }).strict()
+});
+//create
 export const createUserSchema = z.object({
+    body: bodySchema,
+});
+//update
+export const updateUserSchema = z.object({
+    params: z.object({
+        userID: objectIdSchema
+    }).strict(),
+
     body: z.object({
         fullName: z
             .string()
             .trim()
-            .min(2, { error: "Full name must be at least 2 characters" })
-            .max(100, { error: "Full name must not exceed 100 characters" }),
+            .min(2, "Full name must be at least 2 characters")
+            .max(100, "Full name must not exceed 100 characters").optional(),
 
-        email: emailSchema,
+        email: emailSchema.optional(),
 
-        password: passwordSchema,
+        password: passwordSchema.optional(),
 
-        roleID: objectIdSchema
-    }),
+        roleID: objectIdSchema.optional(),
+
+        phone: z
+            .string()
+            .trim()
+            .length(10, "Phone must be exactly 10 digits")
+            .regex(/^\d+$/, "Phone must contain only digits")
+            .nullable().optional(),
+
+        accountType: z.enum(["user", "admin"]).optional(),
+
+        status: z.enum(["active", "inactive"]).optional(),
+
+        avatar: z.string().url("Avatar must be a valid URL").nullable().optional()
+    }).partial().strict()
 });
 
-export type GetUsersServiceInput = z.infer<typeof getUsersServiceSchema>;
+export type GetUsersServiceInput = z.infer<typeof getUsersServiceSchema>["query"];
+export type CreateUserBody = z.infer<typeof createUserSchema>["body"];
+export type UpdateUserBody = z.infer<typeof updateUserSchema>["body"];

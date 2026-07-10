@@ -207,3 +207,4 @@
     7. xác mình quyền để hiển thị ui tương ứng
     8. tạo trang forbidden
 46. làm giao diện danh sách user và các tính năng lọc, phân trang
+47. xong tính năng tạo mới user

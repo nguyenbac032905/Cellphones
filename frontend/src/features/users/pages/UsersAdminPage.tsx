@@ -12,7 +12,6 @@ import UsersTableAdmin from "../components/UserTableAdmin";
 const UserAdminPage = () => {
     const {query, updateQuery} = useAdminUserQuery();
     const {users, meta, loading, error, refetch} = useAdminUsers(query);
-    console.log(users)
     if(loading){
         return <LoadingScreen />
     }
