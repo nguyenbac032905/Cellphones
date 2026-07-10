@@ -6,9 +6,12 @@ import {
     UserOutlined,
     LogoutOutlined,
 } from '@ant-design/icons';
-import { Badge, Button, Input, Layout, theme, Dropdown} from 'antd';
+import { Badge, Button, Input, Layout, theme, Dropdown, message} from 'antd';
 import type { Dispatch, SetStateAction } from 'react';
 import type { MenuProps } from 'antd';
+import { useAdminLogout } from '../../features/auth/hooks/useAdminLogout';
+import { getErrorMessage } from '../../shared/utils/errorHandler';
+import { useNavigate } from 'react-router-dom';
 
 const { Header } = Layout;
 const { Search } = Input;
@@ -20,6 +23,9 @@ type AdminHeaderProps = {
 
 const AdminHeader = ({ collapsed, setCollapsed }: AdminHeaderProps) => {
     const { token: { colorBgContainer }, } = theme.useToken();
+    const {loading, logout} = useAdminLogout();
+    const navigate = useNavigate();
+
     const items: MenuProps['items'] = [
         {
             key: 'myAccount',
@@ -38,15 +44,25 @@ const AdminHeader = ({ collapsed, setCollapsed }: AdminHeaderProps) => {
             key: 'logout',
             label: 'Logout',
             icon: <LogoutOutlined />,
-            danger: true
+            danger: true,
+            disabled: loading
         }
     ];
-    const handleMenuClick: MenuProps["onClick"] = (e) => {
+    const handleMenuClick: MenuProps["onClick"] = async (e) => {
         if(e.key === "profile"){
             console.log("Link to profile");
+            return;
         }
         if(e.key === "logout"){
-            console.log("Logout");
+            try {
+                const resLogout = await logout(); 
+                if(resLogout.success){
+                    navigate("/admin/login", { replace: true });
+                    message.success(resLogout.message);
+                }
+            } catch (error) {
+                message.error(getErrorMessage(error));
+            }
         }
     }
     return (

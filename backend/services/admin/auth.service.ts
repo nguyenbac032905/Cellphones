@@ -124,3 +124,12 @@ export const refreshTokenService = async (refreshToken: string) => {
         accessToken: newAccessToken,
     };
 };
+export const logoutService = async (userID: string) => {
+    const user = await User.updateOne({_id: userID},{refreshToken: null, refreshTokenExpiredAt: null});
+    if(user.matchedCount == 0){
+        throw new AppError("User not found", 404);
+    }
+    return {
+        message: "Logout successfully"
+    }
+}
