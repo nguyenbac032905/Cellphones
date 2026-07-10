@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import { AppError } from "../../utils/AppError";
 import { generateAccessToken, generateRefreshToken } from "../../utils/jwt";
 import jwt from "jsonwebtoken";
+import { UpdateMeBody } from "../../validations/admin/auth.validation";
 
 export const loginService = async ( email: string, password: string ) => {
     const user = await User.findOne({ email, deleted: false }).populate("roleID", "permissions");
@@ -130,6 +131,28 @@ export const logoutService = async (userID: string) => {
         throw new AppError("User not found", 404);
     }
     return {
-        message: "Logout successfully"
+        message: "Logout successfully!"
     }
-}
+};
+export const updateMeService = async ( userID: string, body: UpdateMeBody ) => {
+    if (body.email) {
+        const existEmail = await User.findOne({ email: body.email, _id: { $ne: userID }, });
+        if (existEmail) {
+            throw new AppError("Email already exists", 409);
+        }
+    }
+
+    if (body.password) {
+        body.password = await bcrypt.hash(body.password, 10);
+    }
+
+    const result = await User.updateOne( { _id: userID }, { $set: body } );
+
+    if (result.matchedCount === 0) {
+        throw new AppError("User not found", 404);
+    }
+
+    return {
+        message: "Updated profile successfully",
+    };
+};

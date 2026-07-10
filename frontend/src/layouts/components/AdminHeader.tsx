@@ -1,17 +1,12 @@
-import {
-    BellFilled,
-    DownOutlined,
-    MenuFoldOutlined,
-    MenuUnfoldOutlined,
-    UserOutlined,
-    LogoutOutlined,
-} from '@ant-design/icons';
-import { Badge, Button, Input, Layout, theme, Dropdown, message} from 'antd';
+import { BellFilled, DownOutlined, MenuFoldOutlined, MenuUnfoldOutlined, UserOutlined, LogoutOutlined, } from '@ant-design/icons';
+import { Badge, Button, Input, Layout, theme, Dropdown, message } from 'antd';
 import type { Dispatch, SetStateAction } from 'react';
 import type { MenuProps } from 'antd';
 import { useAdminLogout } from '../../features/auth/hooks/useAdminLogout';
 import { getErrorMessage } from '../../shared/utils/errorHandler';
 import { useNavigate } from 'react-router-dom';
+import { useAppSelector } from '../../app/hooks';
+import { titleCase } from '../../shared/utils/titleCase';
 
 const { Header } = Layout;
 const { Search } = Input;
@@ -23,8 +18,10 @@ type AdminHeaderProps = {
 
 const AdminHeader = ({ collapsed, setCollapsed }: AdminHeaderProps) => {
     const { token: { colorBgContainer }, } = theme.useToken();
-    const {loading, logout} = useAdminLogout();
+    const { loading, logout } = useAdminLogout();
     const navigate = useNavigate();
+    const user = useAppSelector(state => state.auth.user);
+    const DEFAULT_AVATAR = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSePQrmECqQyT4U2vF38XPiBEyF95GRpEgoTriZ3laX_7ce0_An2KeSQlE&s=10";
 
     const items: MenuProps['items'] = [
         {
@@ -49,14 +46,14 @@ const AdminHeader = ({ collapsed, setCollapsed }: AdminHeaderProps) => {
         }
     ];
     const handleMenuClick: MenuProps["onClick"] = async (e) => {
-        if(e.key === "profile"){
-            console.log("Link to profile");
+        if (e.key === "profile") {
+            navigate("/admin/my-account");
             return;
         }
-        if(e.key === "logout"){
+        if (e.key === "logout") {
             try {
-                const resLogout = await logout(); 
-                if(resLogout.success){
+                const resLogout = await logout();
+                if (resLogout.success) {
                     navigate("/admin/login", { replace: true });
                     message.success(resLogout.message);
                 }
@@ -86,24 +83,27 @@ const AdminHeader = ({ collapsed, setCollapsed }: AdminHeaderProps) => {
                             <BellFilled className="text-xl !text-[#1677ff]" />
                         </Badge>
                     </div>
-                    <Dropdown menu={{items, onClick: handleMenuClick}} trigger={["click"]}>
-                        <div className="flex items-center gap-3 px-3 py-1 rounded-full cursor-pointer hover:bg-gray-100">
-                            <div className="w-9 h-9 rounded-full overflow-hidden border border-gray-200">
+                    <Dropdown menu={{ items, onClick: handleMenuClick }} trigger={["click"]}>
+                        <div className="flex items-center gap-3 rounded-full px-3 py-2 transition-colors hover:bg-gray-100 cursor-pointer">
+                            <div className="w-10 h-10 shrink-0 overflow-hidden rounded-full border-2 border-gray-200 bg-gray-100">
                                 <img
-                                    src="../../../public/avatar.jpg"
-                                    alt="avatar"
+                                    src={user?.avatar || DEFAULT_AVATAR}
+                                    alt="Avatar"
                                     className="w-full h-full object-cover"
+                                    onError={(e) => {
+                                        e.currentTarget.src = DEFAULT_AVATAR;
+                                    }}
                                 />
                             </div>
-                            <div className="leading-tight hidden lg:block">
-                                <p className="font-semibold text-gray-800 text-sm">
-                                    Nguyễn Văn Bắc
+                            <div className="hidden min-w-0 lg:block">
+                                <p className="truncate text-sm font-semibold text-gray-800">
+                                    {titleCase(user?.fullName ?? "")}
                                 </p>
-                                <p className="text-xs text-gray-500">
-                                    Admin
+                                <p className="truncate text-xs text-gray-500">
+                                    {titleCase(user?.accountType ?? "")}
                                 </p>
                             </div>
-                            <DownOutlined className="text-xs text-gray-500" />
+                            <DownOutlined className="text-xs text-gray-400" />
                         </div>
                     </Dropdown>
                 </div>

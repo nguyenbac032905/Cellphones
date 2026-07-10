@@ -1,3 +1,5 @@
+import type { ApiResponse } from "../../../shared/types/common.type";
+
 export interface User {
     _id: string;
     fullName: string;
@@ -23,4 +25,10 @@ export type LoginResponse = {
     success: boolean;
     message: string;
     data: DataResponse;
+}
+export type GetMeResponse = {
+    success: boolean;
+    data: {
+        user: User
+    }
 }

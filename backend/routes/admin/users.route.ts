@@ -12,4 +12,5 @@ router.get("/:userID",validateMiddlware(userIDParamsSchema),permissionMiddleware
 router.patch("/:userID",validateMiddlware(updateUserSchema),permissionMiddleware(PERMISSIONS.USERS.UPDATE), controller.updateUser);
 router.delete("/:userID",validateMiddlware(userIDParamsSchema),permissionMiddleware(PERMISSIONS.USERS.DELETE), controller.deleteUser);
 
+
 export default router;

@@ -1,7 +1,8 @@
 import { privateClient } from "../../../shared/api/privateClient";
 import { publicClient } from "../../../shared/api/publicClient";
 import type { MessageResponse } from "../../../shared/types/common.type";
-import type { LoginResponse } from "../types/auth.types";
+import type { GetMeResponse, LoginResponse, User } from "../types/auth.types";
+import type { UpdateMeBody } from "../validations/auth.validation";
 
 export const adminAuthService = {
     login: async (email: string, password: string): Promise<LoginResponse> => {
@@ -11,5 +12,13 @@ export const adminAuthService = {
     logout: async (): Promise<MessageResponse> => {
         const res = await privateClient.post<MessageResponse>("/admin/api/auth/logout");
         return res.data;
+    },
+    getMe: async (): Promise<GetMeResponse> => {
+        const res = await privateClient.get<GetMeResponse>("/admin/api/auth/me");
+        return res.data;
+    },
+    updateMe: async (body: UpdateMeBody): Promise<MessageResponse> => {
+        const res = await privateClient.patch<MessageResponse>("/admin/api/auth/me", body);
+        return res.data
     }
 };

@@ -40,3 +40,34 @@ export const registerSchema = z.object({
         roleID: objectIdSchema
     }),
 });
+//update me
+export const updateMeSchema = z.object({
+    body: z.object({
+        fullName: z
+            .string()
+            .trim()
+            .min(2, "Full name must be at least 2 characters")
+            .max(100, "Full name must not exceed 100 characters")
+            .optional(),
+
+        email: emailSchema.optional(),
+
+        password: passwordSchema.optional(),
+
+        phone: z
+            .string()
+            .trim()
+            .length(10, "Phone must be exactly 10 digits")
+            .regex(/^\d+$/, "Phone must contain only digits")
+            .nullable()
+            .optional(),
+
+        avatar: z
+            .string()
+            .url("Avatar must be a valid URL")
+            .nullable()
+            .optional(),
+    }).partial().strict(),
+});
+
+export type UpdateMeBody = z.infer<typeof updateMeSchema>["body"];

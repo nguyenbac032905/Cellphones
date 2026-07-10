@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { loginService, logoutService, refreshTokenService, registerService } from "../../services/admin/auth.service";
+import { loginService, logoutService, refreshTokenService, registerService, updateMeService } from "../../services/admin/auth.service";
 import { asyncHandler } from "../../utils/asyncHandler";
 
 export const login = asyncHandler(async (req: Request, res: Response) => {
@@ -70,5 +70,13 @@ export const getMe = asyncHandler(async (req: Request, res: Response) => {
         data: {
             user: user
         }
+    });
+});
+export const updateMe = asyncHandler(async (req: Request, res: Response) => {
+    const user = req.user!;
+    const result = await updateMeService(user._id.toString(), req.body);
+    return res.status(200).json({
+        success: true,
+        message: result.message
     });
 });

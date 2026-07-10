@@ -10,19 +10,31 @@ import AdminPrivateRoute from "./features/auth/components/AdminPrivateRoute";
 import { adminRoleRoutes } from "./features/roles/role.route";
 import ForbiddenPage from "./shared/pages/ForbiddenPage";
 import { usersAdminRoutes } from "./features/users/user.route";
+import MyAccountAdminPage from "./features/auth/pages/MyAccountAdminPage";
 
 export const routes = [
     {
         path: "/admin",
-        children: [...adminAuthRoutes]
-    },
-    {
-        path: "/admin",
-        element: <AdminPrivateRoute />,
         children: [
+            ...adminAuthRoutes,
             {
-                element: <AdminLayout />,
-                children: [...dashboardRoutes,...adminProductRoutes,...adminRecycleBinRoutes,...adminRoleRoutes,...usersAdminRoutes]
+                element: <AdminPrivateRoute />,
+                children: [
+                    {
+                        element: <AdminLayout />,
+                        children: [
+                            ...dashboardRoutes,
+                            ...adminProductRoutes,
+                            ...adminRecycleBinRoutes,
+                            ...adminRoleRoutes,
+                            ...usersAdminRoutes,
+                            {
+                                path: "my-account",
+                                element: <MyAccountAdminPage />
+                            }
+                        ]
+                    }
+                ]
             }
         ]
     },

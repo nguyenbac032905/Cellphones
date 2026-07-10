@@ -18,7 +18,7 @@
                 process.env.JWT_ACCESS_SECRET!
             ) as AccessTokenPayload;
             
-            const user = await User.findOne({_id: decoded._id}).populate("roleID","permissions").lean(); 
+            const user = await User.findOne({_id: decoded._id}).select("-password -refreshToken -refreshTokenExpiredAt").populate("roleID","permissions").lean(); 
             if (!user) {
                 throw new AppError("User not found", 404);
             }
