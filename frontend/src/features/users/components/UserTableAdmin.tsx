@@ -6,6 +6,8 @@ import type { UserListItem, UserQuery } from "../types/users.type";
 import { useDeleteUserAdmin } from "../hooks/useDeleteUserAdmin";
 import { getErrorMessage } from "../../../shared/utils/errorHandler";
 import { useUpdateUserAdmin } from "../hooks/useUpdateUserAdmin";
+import { usePermission } from "../../auth/hooks/usePermission";
+import { PERMISSIONS } from "../../roles/constants/role.const";
 
 type Props = {
     users: UserListItem[];
@@ -18,6 +20,9 @@ const UsersTable = ({ users, meta, updateQuery, refetch}: Props) => {
     const [updatingId, setUpdatingId] = useState("");
     const {deleteUser, deletingID} = useDeleteUserAdmin();
     const {updateUser} = useUpdateUserAdmin();
+    const can = usePermission();
+    const canUpdate = can(PERMISSIONS.USERS.UPDATE);
+    const canDelete = can(PERMISSIONS.USERS.DELETE);
 
     const columns = [
         {
@@ -63,6 +68,7 @@ const UsersTable = ({ users, meta, updateQuery, refetch}: Props) => {
             title: "Status",
             render: (_: any, record: UserListItem) => (
                 <Switch
+                    disabled={!canUpdate}
                     checked={record.status === "active"}
                     checkedChildren="Active"
                     unCheckedChildren="Inactive"
@@ -106,35 +112,36 @@ const UsersTable = ({ users, meta, updateQuery, refetch}: Props) => {
                             Update
                         </Button>
                     </Link>
-
-                    <Popconfirm
-                        title="Delete User"
-                        description="Are you sure you want to delete this user?"
-                        okText="Delete"
-                        cancelText="Cancel"
-                        okButtonProps={{
-                            danger: true,
-                            loading: deletingID === record._id,
-                        }}
-                        onConfirm={async () => {
-                            try {
-                                const resDelete = await deleteUser(record._id);
-                                message.success(resDelete.message)
-                                await refetch();
-                            } catch (error){
-                                message.error(getErrorMessage(error));
-                            }
-                        }}
-                    >
-                        <Button
-                            color="danger"
-                            variant="outlined"
-                            style={{ width: 65 }}
-                            loading={updatingId === record._id}
+                    {canDelete && (
+                        <Popconfirm
+                            title="Delete User"
+                            description="Are you sure you want to delete this user?"
+                            okText="Delete"
+                            cancelText="Cancel"
+                            okButtonProps={{
+                                danger: true,
+                                loading: deletingID === record._id,
+                            }}
+                            onConfirm={async () => {
+                                try {
+                                    const resDelete = await deleteUser(record._id);
+                                    message.success(resDelete.message)
+                                    await refetch();
+                                } catch (error){
+                                    message.error(getErrorMessage(error));
+                                }
+                            }}
                         >
-                            Delete
-                        </Button>
-                    </Popconfirm>
+                            <Button
+                                color="danger"
+                                variant="outlined"
+                                style={{ width: 65 }}
+                                loading={updatingId === record._id}
+                            >
+                                Delete
+                            </Button>
+                        </Popconfirm>
+                    )}
                 </Space>
             ),
         },

@@ -1,23 +1,9 @@
-import { z } from "zod";
 import Product from "../../models/product.model";
 import { getAllChildCategoryIds } from "./productCategories.service";
 import { AppError } from "../../utils/AppError";
-import { CreateProductDTO, createProductSchema, GetProductsQuery, UpdateProductDTO, updateProductSchema } from "../../validations/admin/product.validation";
+import { CreateProductDTO, GetProductsQuery, UpdateProductDTO } from "../../validations/admin/product.validation";
 import { sanitizeEditorContent } from "../../utils/sanitizeHtml";
-
-const PRODUCT_WHITELIST = [
-    "title",
-    "product_category_id",
-    "description",
-    "content",
-    "price",
-    "discountPercentage",
-    "stock",
-    "images",
-    "status",
-    "position",
-    "featured"
-] as const;
+import { PRODUCT_WHITELIST } from "../../constants/product";
 
 export const getProducts = async (query: GetProductsQuery) => {
     const { status, category, stock, search, sort, page = 1, limit = 4 } = query;
