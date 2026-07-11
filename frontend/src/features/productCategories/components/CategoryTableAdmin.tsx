@@ -106,7 +106,7 @@ const CategoryTableAdmin = ({ categories, meta, updateQuery, }: Props) => {
             render: (_: any, record: CategoryListItem) => (
                 <Space>
                     <Link
-                        to={`/admin/categories/details/${record._id}`}
+                        to={`/admin/product-categories/details/${record._id}`}
                     >
                         <Button
                             color="default"
@@ -119,7 +119,7 @@ const CategoryTableAdmin = ({ categories, meta, updateQuery, }: Props) => {
 
                     {canUpdate && (
                         <Link
-                            to={`/admin/categories/edit/${record._id}`}
+                            to={`/admin/product-categories/edit/${record._id}`}
                         >
                             <Button
                                 color="primary"

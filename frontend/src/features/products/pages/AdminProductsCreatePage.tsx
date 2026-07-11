@@ -1,16 +1,5 @@
-import { useState, useRef, useEffect } from "react";
-import {
-    Card,
-    Form,
-    Input,
-    Radio,
-    Upload,
-    Image,
-    Button,
-    TreeSelect,
-    message,
-    Tag,
-} from "antd";
+import { useState, useRef} from "react";
+import { Card, Form, Input, Radio, Upload, Image, Button, TreeSelect, message, Tag, } from "antd";
 import { Editor } from "@tinymce/tinymce-react";
 import { PlusOutlined, StarFilled } from "@ant-design/icons";
 import { useAdminCategoriesTree } from "../../productCategories/hooks/useAdminCategoriesTree";

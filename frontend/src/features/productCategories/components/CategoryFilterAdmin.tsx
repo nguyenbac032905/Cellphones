@@ -1,15 +1,15 @@
 import { FilterOutlined, SwapOutlined } from "@ant-design/icons";
 import { Card, Select } from "antd";
-import type { CategoryListItem, ProductCategoryQuery } from "../types/categories.type";
+import type { ProductCategoryQuery } from "../types/categories.type";
+import { useAdminCategoriesTree } from "../hooks/useAdminCategoriesTree";
 
 type Props = {
     query: ProductCategoryQuery;
-    categories: CategoryListItem[];
     updateQuery: (values: Partial<ProductCategoryQuery>) => void;
 };
 
-const CategoryFilterAdmin = ({ query, categories, updateQuery, }: Props) => {
-    const rootCategories = categories.filter((item) => item.parent_id === null);
+const CategoryFilterAdmin = ({ query, updateQuery, }: Props) => {
+    const {categoriesTree, loading} = useAdminCategoriesTree(); 
 
     return (
         <Card
@@ -45,6 +45,7 @@ const CategoryFilterAdmin = ({ query, categories, updateQuery, }: Props) => {
 
                     <div className="sm:col-span-3 border-r border-gray-200 px-4 py-4 flex items-center justify-center">
                         <Select
+                            loading={loading}
                             variant="borderless"
                             className="w-full"
                             allowClear
@@ -61,10 +62,10 @@ const CategoryFilterAdmin = ({ query, categories, updateQuery, }: Props) => {
                                     value: "",
                                     label: "All Categories",
                                 },
-                                ...rootCategories.map((item) => ({
+                                ...categoriesTree.map((item) => ({
                                     value: item._id,
                                     label: item.title,
-                                })),
+                                }))
                             ]}
                         />
                     </div>

@@ -231,15 +231,12 @@ export const createProductService = async ( body: CreateProductDTO ) => {
             createFields[field] = body[field];
         }
     });
-
-    if (
-        createFields.position === undefined ||
-        createFields.position === null ||
-        createFields.position === ""
-    ) {
+    //xu li position
+    if ( createFields.position === undefined || createFields.position === null || createFields.position === "" ) {
         const maxProduct = await Product.findOne({}) .sort({ position: -1 }) .select("position");
         createFields.position = maxProduct ? maxProduct.position + 1 : 1;
     }
+    // xu li xss
     if ("description" in createFields) {
         createFields.description = sanitizeEditorContent(
             createFields.description!
@@ -248,10 +245,8 @@ export const createProductService = async ( body: CreateProductDTO ) => {
     if("content" in createFields){
         createFields.content = sanitizeEditorContent(createFields.content);
     }
-    const product = await Product.create(createFields);
-    if (!product) {
-        throw new AppError("Failed to create product", 500);
-    }
+    //tao moi
+    await Product.create(createFields);
     return {
         message: "Product created successfully"
     };

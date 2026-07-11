@@ -10,7 +10,7 @@ import { useAdminCategoryQuery } from "../hooks/useAdminCategoryQuery";
 const ProductCategoriesAdminPage = () => {
     const {query, updateQuery} = useAdminCategoryQuery();
     const {categories, loading, error, refetch, meta} = useAdminCategories(query);
-    console.log(categories)
+    
     if (loading) return <LoadingScreen />;
     if (error) return <CustomAlert error={error} />;
 
@@ -20,7 +20,7 @@ const ProductCategoriesAdminPage = () => {
                 title="Product Categories List"
                 description="Manage all product categories in your store"
             />
-            <CategoryFilterAdmin query={query} updateQuery={updateQuery} categories={categories}/>
+            <CategoryFilterAdmin query={query} updateQuery={updateQuery}/>
             <CategoryToolbarAdmin query={query} updateQuery={updateQuery} />
             <CategoryTableAdmin updateQuery={updateQuery} categories={categories} meta={meta} refetch={refetch} />
         </div>

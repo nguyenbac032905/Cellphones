@@ -1,7 +1,8 @@
 import mongoose from "mongoose";
 import { createTree, findChildCategoryIds } from "../../helpers/createTree";
 import ProductCategory from "../../models/productCategory.model";
-import { GetCategoriesQuery } from "../../validations/admin/productCategory.validation";
+import { CreateCategoryBody, GetCategoriesQuery } from "../../validations/admin/productCategory.validation";
+import { AppError } from "../../utils/AppError";
 
 type Category = {
   _id: mongoose.Types.ObjectId;
@@ -134,5 +135,17 @@ export const getCategoriesService = async (query: GetCategoriesQuery) => {
             limit: limitNum,
             totalPages: Math.ceil(total / limitNum),
         },
+    };
+};
+export const createCategoryService = async (body: CreateCategoryBody) => {
+    if (body.position === undefined) {
+        const maxCategory = await ProductCategory.findOne().sort({ position: -1 }).select("position");
+        body.position = maxCategory ? maxCategory.position + 1 : 1;
+    }
+
+    await ProductCategory.create(body);
+
+    return {
+        message: "Create Category successfully",
     };
 };

@@ -58,7 +58,7 @@ const CategoryToolbarAdmin = ({ query, updateQuery }: Props) => {
                 </div>
                 <div className="sm:col-span-1 col-span-2 flex items-center gap-2 p-4 border-l border-gray-200">
                     {canUpdate && (
-                        <Link to="/admin/recycle-bin/categories">
+                        <Link to="/admin/recycle-bin/product-categories">
                             <Button
                                 icon={<DeleteOutlined />}
                                 size="large"
@@ -70,7 +70,7 @@ const CategoryToolbarAdmin = ({ query, updateQuery }: Props) => {
                     )}
 
                     {canCreate && (
-                        <Link to="/admin/categories/create">
+                        <Link to="/admin/product-categories/create">
                             <Button
                                 size="large"
                                 icon={<PlusOutlined />}

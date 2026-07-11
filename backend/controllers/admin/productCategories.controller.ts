@@ -1,5 +1,5 @@
 import { Request, Response } from "express"
-import { getCategoriesService, getCategoryTreeService } from "../../services/admin/productCategories.service";
+import { createCategoryService, getCategoriesService, getCategoryTreeService } from "../../services/admin/productCategories.service";
 import { asyncHandler } from "../../utils/asyncHandler";
 export const getCategoryTree = asyncHandler(async (req:Request, res: Response) => {
     const result = await getCategoryTreeService();
@@ -14,5 +14,12 @@ export const getCategories = asyncHandler(async (req:Request, res: Response) => 
         success: true,
         data: result.data,
         meta: result.meta
+    });
+});
+export const createCategory = asyncHandler(async (req:Request, res: Response) => {
+    const result = await createCategoryService(req.body);
+    return res.status(200).json({
+        success: true,
+        message: result.message
     });
 });
