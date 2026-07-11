@@ -11,6 +11,7 @@ import { adminRoleRoutes } from "./features/roles/role.route";
 import ForbiddenPage from "./shared/pages/ForbiddenPage";
 import { usersAdminRoutes } from "./features/users/user.route";
 import MyAccountAdminPage from "./features/auth/pages/MyAccountAdminPage";
+import { productCategoryAdminRoutes } from "./features/productCategories/productCategory.route";
 
 export const routes = [
     {
@@ -28,6 +29,7 @@ export const routes = [
                             ...adminRecycleBinRoutes,
                             ...adminRoleRoutes,
                             ...usersAdminRoutes,
+                            ...productCategoryAdminRoutes,
                             {
                                 path: "my-account",
                                 element: <MyAccountAdminPage />

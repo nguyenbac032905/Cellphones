@@ -11,7 +11,7 @@ import {
 } from "@ant-design/icons";
 import { Layout, Menu, type MenuProps } from 'antd';
 import type { Dispatch, SetStateAction } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { usePermission } from "../../features/auth/hooks/usePermission";
 import { PERMISSIONS } from "../../features/roles/constants/role.const";
 const { Sider } = Layout;
@@ -48,7 +48,7 @@ const AdminSidebar = ({ collapsed, setCollapsed }: AdminHeaderProps) => {
                 }: null,
                 can(PERMISSIONS.CATEGORIES.READ) ? 
                 {
-                    key: "/admin/categories",
+                    key: "/admin/product-categories",
                     icon: <AppstoreOutlined />,
                     label: "Categories",
                 }: null,
@@ -90,16 +90,18 @@ const AdminSidebar = ({ collapsed, setCollapsed }: AdminHeaderProps) => {
     return (
         <Sider theme="light" trigger={null} collapsible collapsed={collapsed} breakpoint="md" onBreakpoint={(broken) => setCollapsed(broken)}>
             <div className="h-16 flex items-center justify-center border-b border-gray-100">
-                <img
-                    src="/Logo.png"
-                    alt="logo"
-                    className="
-                        object-contain
-                        transition-all
-                        duration-300
-                    "
-                    width={collapsed ? 40 : 120}
-                />
+                <Link to="/admin">
+                    <img
+                        src="/Logo.png"
+                        alt="logo"
+                        className="
+                            object-contain
+                            transition-all
+                            duration-300
+                        "
+                        width={collapsed ? 40 : 120}
+                    />
+                </Link>
             </div>
             <Menu
                 mode="inline"

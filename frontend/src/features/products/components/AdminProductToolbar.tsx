@@ -1,11 +1,7 @@
-import {
-    DeleteOutlined,
-    PlusOutlined,
-    EditOutlined
-} from "@ant-design/icons";
+import { DeleteOutlined, PlusOutlined, EditOutlined } from "@ant-design/icons";
 import { Card, Select, Input, Button, message, Popconfirm } from "antd";
 import { Link } from "react-router-dom";
-import type { Product,  ProductListItem,  ProductQuery } from "../types/products.type";
+import type {  ProductListItem,  ProductQuery } from "../types/products.type";
 import { useState} from "react";
 import { useAdminUpdateProduct } from "../hooks/useAdminUpdateProduct";
 import { useAdminDeleteProduct } from "../hooks/useAdminDeleteProduct";

@@ -1,8 +1,4 @@
-import {
-    FilterOutlined,
-    ReloadOutlined,
-    SwapOutlined
-} from "@ant-design/icons";
+import { FilterOutlined, ReloadOutlined, SwapOutlined } from "@ant-design/icons";
 import { Card, Select, TreeSelect } from "antd";
 import type { ProductQuery } from "../types/products.type";
 import { useAdminCategoriesTree } from "../../productCategories/hooks/useAdminCategoriesTree";
@@ -21,7 +17,7 @@ const AdminProductFilter = ({query, updateQuery}: Props) => {
             styles={{body: { padding: 16 }}}
         >
             <div className="grid grid-cols-1 lg:grid-cols-3 overflow-hidden rounded-2xl">
-                <div className="lg:col-span-2 grid grid-cols-3 sm:grid-cols-7 gap-y-2 border-b border-gray-200">
+                <div className="lg:col-span-2 grid grid-cols-3 sm:grid-cols-7 gap-y-2">
                     <div className="col-span-1 hidden sm:flex items-center justify-center border-r border-gray-200 gap-x-1">
                         <FilterOutlined className="text-xl text-gray-700" />
                         <p className="font-semibold text-gray-800 hidden xl:flex">Filter by</p>

@@ -209,4 +209,6 @@
 46. làm giao diện danh sách user và các tính năng lọc, phân trang
 47. xong tính năng tạo mới user
 48. xong tính năng chi tiết, sửa, xóa user
-49. làm tính năng logout admin
+49. triển khai author cho user
+50. làm tính năng logout admin
+51. làm trang my account và hiển thị đúng tên user trên header
