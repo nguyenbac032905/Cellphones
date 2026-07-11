@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { createTree, findChildCategoryIds } from "../../helpers/createTree";
+import { createTree, findChildCategoryIds, findParentCategory } from "../../helpers/createTree";
 import ProductCategory from "../../models/productCategory.model";
 import { CreateCategoryBody, GetCategoriesQuery, UpdateCategoryBody } from "../../validations/admin/productCategory.validation";
 import { AppError } from "../../utils/AppError";
@@ -7,6 +7,7 @@ import { AppError } from "../../utils/AppError";
 type Category = {
   _id: mongoose.Types.ObjectId;
   parent_id?: mongoose.Types.ObjectId;
+  [key: string]: any;
 };
 export const getCategoryTreeService = async () => {
     const categories = await ProductCategory.find({deleted: false}).lean();
@@ -20,6 +21,11 @@ export const getAllChildCategoryIds = async (parentId: string): Promise<mongoose
     const categories = await ProductCategory.find({deleted: false}).select("_id parent_id").lean<Category[]>();
     const childCategoryIds = findChildCategoryIds(categories,parentId);
     return childCategoryIds;
+};
+// service lấy ra tất cả category cha ông
+export const getAllParentCategory = async ( categoryID: string ) => {
+    const categories = await ProductCategory.find({ deleted: false, }) .select("_id parent_id status") .lean<Category[]>();
+    return findParentCategory(categories, categoryID);
 };
 export const getCategoriesService = async (query: GetCategoriesQuery) => {
     const { status, category, search, sort, page = 1, limit = 4 } = query;
@@ -148,10 +154,43 @@ export const createCategoryService = async (body: CreateCategoryBody) => {
         message: "Created Category successfully",
     };
 };
-export const updateCategoryService = async (categoryID: string, body: UpdateCategoryBody) => {
-    const category = await ProductCategory.updateOne({_id: categoryID},{$set: body});
+export const updateCategoryService = async ( categoryID: string, body: UpdateCategoryBody ) => {
+    if (body.status === "inactive") {
+        const categoryIds = await getAllChildCategoryIds(categoryID);
 
-    if(category.matchedCount === 0){
+        const result = await ProductCategory.updateMany(
+            { _id: { $in: categoryIds } },
+            { $set: { status: "inactive" } }
+        );
+        delete body.status
+        if (result.matchedCount === 0) {
+            throw new AppError("Product Category not found", 404);
+        }
+    }
+
+    if (body.status === "active") {
+        const parents = await getAllParentCategory(categoryID);
+
+        const existInactive = parents.some(
+            (item) => item.status === "inactive"
+        );
+
+        if (existInactive) {
+            throw new AppError(
+                "Can't activate category because a parent category is inactive.",
+                400
+            );
+        }
+    }
+
+    const result = await ProductCategory.updateOne(
+        { _id: categoryID },
+        {
+            $set: body,
+        }
+    );
+
+    if (result.matchedCount === 0) {
         throw new AppError("Product Category not found", 404);
     }
 
@@ -169,13 +208,15 @@ export const getCategoryService = async (categoryID: string) => {
     };
 };
 export const deleteCategoryService = async (categoryID: string) => {
-    const category = await ProductCategory.updateOne({_id: categoryID},{$set: {deleted: true}});
+    const categoryIds = await getAllChildCategoryIds(categoryID);
 
-    if(category.matchedCount === 0){
+    const result = await ProductCategory.updateMany({ _id: {$in: categoryIds}}, {$set: { deleted: true}});
+
+    if (result.matchedCount === 0) {
         throw new AppError("Product Category not found", 404);
     }
 
     return {
-        message: "Updated Category successfully",
+        message: "Deleted Category successfully",
     };
 };

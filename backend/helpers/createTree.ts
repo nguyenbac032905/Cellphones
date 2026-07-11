@@ -10,10 +10,7 @@ type CategoryTree = Category & {
     children: CategoryTree[];
 };
 
-export const createTree = (
-    categories: Category[],
-    parentId: string | null = null
-): CategoryTree[] => {
+export const createTree = ( categories: Category[], parentId: string | null = null ): CategoryTree[] => {
     const tree: CategoryTree[] = [];
 
     for (const category of categories) {
@@ -50,6 +47,37 @@ export const findChildCategoryIds = (categories: Category[], parentId: string): 
             )
         );
     }
+
+    return result;
+};
+
+export const findParentCategory = ( categories: Category[], categoryId: string ): Category[] => {
+    const result: Category[] = [];
+
+    const category = categories.find(
+        item => item._id.toString() === categoryId
+    );
+
+    if (!category || !category.parent_id) {
+        return result;
+    }
+
+    const parent = categories.find(
+        item => item._id.equals(category.parent_id!)
+    );
+
+    if (!parent) {
+        return result;
+    }
+
+    result.push(parent);
+
+    result.push(
+        ...findParentCategory(
+            categories,
+            parent._id.toString()
+        )
+    );
 
     return result;
 };

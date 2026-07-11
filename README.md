@@ -214,3 +214,4 @@
 51. làm trang my account và hiển thị đúng tên user trên header
 52. làm trang category list
 53. làm tính năng create category
+54. xong tính năng xem chi tiết, sửa, xóa category
