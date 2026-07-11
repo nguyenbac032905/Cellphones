@@ -1,7 +1,5 @@
 import z from "zod";
-const objectIdSchema = z
-    .string()
-    .regex(/^[a-f\d]{24}$/i, "Invalid role ID");
+const objectIdSchema = z .string() .regex(/^[a-f\d]{24}$/i, "Invalid role ID");
 
 export const createCategorySchema = z.object({
     title: z
@@ -38,4 +36,7 @@ export const createCategorySchema = z.object({
         .optional()
 }).strict();
 
+export const updateCategorySchema = createCategorySchema.partial();
+
 export type CreateCategoryBody = z.infer<typeof createCategorySchema>;
+export type UpdateCategoryBody = z.infer<typeof updateCategorySchema>;

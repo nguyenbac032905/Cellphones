@@ -1,10 +1,13 @@
-import { Button, Image, Input, Popconfirm, Space, Switch, Table, } from "antd";
+import { Button, Image, Input, message, Popconfirm, Space, Switch, Table, } from "antd";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import type { PaginationMeta } from "../../../shared/types/common.type";
 import { usePermission } from "../../auth/hooks/usePermission";
 import { PERMISSIONS } from "../../roles/constants/role.const";
 import type { CategoryListItem, ProductCategoryQuery } from "../types/categories.type";
+import { getErrorMessage } from "../../../shared/utils/errorHandler";
+import { useDeleteCategoryAdmin } from "../hooks/useDeleteCategoryAdmin";
+import { useUpdateCategoryAdmin } from "../hooks/useUpdateCategoryAdmin";
 
 type Props = {
     categories: CategoryListItem[];
@@ -13,8 +16,10 @@ type Props = {
     refetch: () => Promise<void>;
 };
 
-const CategoryTableAdmin = ({ categories, meta, updateQuery, }: Props) => {
+const CategoryTableAdmin = ({ categories, meta, updateQuery,refetch }: Props) => {
     const [updatingId, setUpdatingId] = useState("");
+    const {deletingID, deleteCategory} = useDeleteCategoryAdmin();
+    const {updateCategory} = useUpdateCategoryAdmin();
 
     const can = usePermission();
     const canUpdate = can(PERMISSIONS.CATEGORIES.UPDATE);
@@ -34,11 +39,18 @@ const CategoryTableAdmin = ({ categories, meta, updateQuery, }: Props) => {
                         width: 60,
                         textAlign: "center",
                     }}
-                    onBlur={(e) => {
+                    onBlur={async (e) => {
                         const newPosition = Number(e.target.value);
 
                         if (newPosition === position) return;
 
+                        try {
+                            const result = await updateCategory(record._id,{position: newPosition});
+                            await refetch();
+                            message.success(result.message);
+                        } catch (error) {
+                            message.error(getErrorMessage(error));
+                        }
                         console.log({
                             id: record._id,
                             title: record.title,
@@ -87,14 +99,14 @@ const CategoryTableAdmin = ({ categories, meta, updateQuery, }: Props) => {
                     checked={record.status === "active"}
                     checkedChildren="Active"
                     unCheckedChildren="Inactive"
-                    onChange={(checked) => {
-                        console.log({
-                            id: record._id,
-                            title: record.title,
-                            status: checked
-                                ? "active"
-                                : "inactive",
-                        });
+                    onChange={ async (checked) => {
+                        try {
+                            const result = await updateCategory(record._id,{status: checked ? "active" : "inactive"});
+                            await refetch();
+                            message.success(result.message);
+                        } catch (error) {
+                            message.error(getErrorMessage(error));
+                        }
                     }}
                 />
             ),
@@ -138,14 +150,21 @@ const CategoryTableAdmin = ({ categories, meta, updateQuery, }: Props) => {
                             okText="Delete"
                             cancelText="Cancel"
                             okButtonProps={{ danger: true }}
-                            onConfirm={() => {
-                                console.log(
-                                    "Delete",
-                                    record._id
-                                );
+                            onConfirm={ async () => {
+                                try {
+                                    const result = await deleteCategory(record._id);
+                                    updateQuery({
+                                        page: 1
+                                    });
+                                    await refetch();
+                                    message.success(result.message);
+                                } catch (error) {
+                                    message.error(getErrorMessage(error));
+                                }
                             }}
                         >
                             <Button
+                                loading={deletingID === record._id}
                                 color="danger"
                                 variant="outlined"
                                 style={{ width: 65 }}

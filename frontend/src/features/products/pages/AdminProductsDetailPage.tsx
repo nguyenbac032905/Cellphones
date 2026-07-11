@@ -2,15 +2,7 @@ import { Link, useParams } from "react-router-dom";
 import { useAdminProduct } from "../hooks/useAdminProduct";
 import LoadingScreen from "../../../shared/components/LoadingScreen";
 import CustomAlert from "../../../shared/components/CustomAlert";
-import {
-    Card,
-    Tabs,
-    Tag,
-    Typography,
-    Divider,
-    Image,
-    Descriptions
-} from "antd";
+import { Card, Tabs, Tag, Typography, Divider, Image, Descriptions } from "antd";
 import { useMemo, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";

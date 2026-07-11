@@ -82,10 +82,24 @@ const categoryBodySchema = z.object({
         .min(0, "Position must be greater than or equal to 0")
         .optional()
 }).strict();
-
 export const createCategorySchema = z.object({
     body: categoryBodySchema
 })
+//update
+const updateCategoryBodySchema = categoryBodySchema.partial();
+export const updateCategorySchema = z.object({
+    params: z.object({
+        categoryID: objectIdSchema
+    }).strict(),
+    body: updateCategoryBodySchema
+});
+//params
+export const categoryParamSchema = z.object({
+    params: z.object({
+        categoryID: objectIdSchema
+    }).strict()
+});
 
+export type UpdateCategoryBody = z.infer<typeof updateCategoryBodySchema>;
 export type CreateCategoryBody = z.infer<typeof categoryBodySchema>;
 export type GetCategoriesQuery = z.infer<typeof getCategoriesQuerySchema>;

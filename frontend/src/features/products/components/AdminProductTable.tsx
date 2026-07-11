@@ -142,8 +142,11 @@ const ProductTable = ({ products, meta, updateQuery, refetch, setSelectedRows }:
                                     setUpdatingId(record._id);
 
                                     const result = await deleteProduct(record._id);
-                                    message.success(result.message);
 
+                                    updateQuery({
+                                        page: 1
+                                    });
+                                    message.success(result.message);
                                     await refetch();
                                 } catch (error) {
                                     message.error(getErrorMessage(error));

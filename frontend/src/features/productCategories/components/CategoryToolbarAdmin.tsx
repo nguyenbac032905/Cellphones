@@ -25,8 +25,8 @@ const CategoryToolbarAdmin = ({ query, updateQuery }: Props) => {
             className="rounded-2xl shadow-sm"
             styles={{ body: { padding: 16 } }}
         >
-            <div className="grid grid-cols-4 rounded-2xl">
-                <div className="sm:col-span-3 col-span-2 p-4 flex gap-x-3">
+            <div className="grid grid-cols-5 rounded-2xl">
+                <div className="sm:col-span-4 col-span-2 p-4 flex gap-x-3">
                     <Search
                         placeholder="Search categories..."
                         allowClear
@@ -57,18 +57,6 @@ const CategoryToolbarAdmin = ({ query, updateQuery }: Props) => {
                     </button>
                 </div>
                 <div className="sm:col-span-1 col-span-2 flex items-center gap-2 p-4 border-l border-gray-200">
-                    {canUpdate && (
-                        <Link to="/admin/recycle-bin/product-categories">
-                            <Button
-                                icon={<DeleteOutlined />}
-                                size="large"
-                                danger
-                            >
-                                <span className="max-2xl:hidden">Trash</span>
-                            </Button>
-                        </Link>
-                    )}
-
                     {canCreate && (
                         <Link to="/admin/product-categories/create">
                             <Button

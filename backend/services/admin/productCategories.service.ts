@@ -1,14 +1,13 @@
 import mongoose from "mongoose";
 import { createTree, findChildCategoryIds } from "../../helpers/createTree";
 import ProductCategory from "../../models/productCategory.model";
-import { CreateCategoryBody, GetCategoriesQuery } from "../../validations/admin/productCategory.validation";
+import { CreateCategoryBody, GetCategoriesQuery, UpdateCategoryBody } from "../../validations/admin/productCategory.validation";
 import { AppError } from "../../utils/AppError";
 
 type Category = {
   _id: mongoose.Types.ObjectId;
   parent_id?: mongoose.Types.ObjectId;
 };
-//service tạo cây
 export const getCategoryTreeService = async () => {
     const categories = await ProductCategory.find({deleted: false}).lean();
     const categoryTree = createTree(categories);
@@ -146,6 +145,37 @@ export const createCategoryService = async (body: CreateCategoryBody) => {
     await ProductCategory.create(body);
 
     return {
-        message: "Create Category successfully",
+        message: "Created Category successfully",
+    };
+};
+export const updateCategoryService = async (categoryID: string, body: UpdateCategoryBody) => {
+    const category = await ProductCategory.updateOne({_id: categoryID},{$set: body});
+
+    if(category.matchedCount === 0){
+        throw new AppError("Product Category not found", 404);
+    }
+
+    return {
+        message: "Updated Category successfully",
+    };
+};
+export const getCategoryService = async (categoryID: string) => {
+    const category = await ProductCategory.findOne({_id: categoryID, deleted: false}).populate("parent_id", "title").select("-__v").lean();
+    if(!category){
+        throw new AppError("Product Category not found", 404);
+    }
+    return {
+        data: category
+    };
+};
+export const deleteCategoryService = async (categoryID: string) => {
+    const category = await ProductCategory.updateOne({_id: categoryID},{$set: {deleted: true}});
+
+    if(category.matchedCount === 0){
+        throw new AppError("Product Category not found", 404);
+    }
+
+    return {
+        message: "Updated Category successfully",
     };
 };
