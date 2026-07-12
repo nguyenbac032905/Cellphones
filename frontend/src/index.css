@@ -1,4 +1,24 @@
 @import "tailwindcss";
+@theme {
+  /* Cập nhật lại đúng bảng màu đỏ thương hiệu CellphoneS */
+  --color-primary-200: #fee2e2;
+  --color-primary-300: #e45464; /* Đỏ sáng của dải gradient */
+  --color-primary-500: #d70018; /* Màu đỏ thương hiệu chính gốc */
+  --color-primary-700: #bc0f14; /* Đỏ đậm phía dưới dải gradient */
+
+  /* Hiệu ứng chữ chạy cho Topbar */
+  --animate-scroll-left-infinite: scroll-left 20s linear infinite;
+
+  @keyframes scroll-left {
+    from {
+        transform: translateX(0);
+    }
+    to {
+        transform: translateX(-50%);
+    }
+    }
+}
+
 
 * {
     box-sizing: border-box;

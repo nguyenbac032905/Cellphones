@@ -215,3 +215,7 @@
 52. làm trang category list
 53. làm tính năng create category
 54. xong tính năng xem chi tiết, sửa, xóa category
+55. fix update, delete category
+    1. khi cập nhật category thành inactive thì phải cho tất cả category con cháu của nó inactive
+    2. khi cập nhật category thành active thì phải kiểm tra nếu không có category cha ông inactive thì mới được active
+    3. khi xóa 1 category thì tất cả category con cháu cũng phải bị xóa theo

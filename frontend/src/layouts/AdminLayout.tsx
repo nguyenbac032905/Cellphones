@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom";
 import{ useState } from 'react';
-import { Layout, theme } from 'antd';
+import { Layout } from 'antd';
 import AdminSidebar from "./components/AdminSidebar";
 import AdminHeader from "./components/AdminHeader";
 const { Content } = Layout;

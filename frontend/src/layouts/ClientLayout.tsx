@@ -1,11 +1,12 @@
 import { Outlet } from "react-router-dom";
+import ClientHeader from "./components/ClientHeader";
 
 const ClientLayout = () => {
     return(
-        <div className="flex flex-col">
-            <header className="bg-blue-500 text-white p-4">Client Header</header>
-            <main className="flex-1"><Outlet /></main>
-            <footer className="bg-gray-200 p-4 text-center">Client footer</footer>
+        <div className="flex flex-col min-h-screen">
+            <ClientHeader />
+            <main className="flex-1 mt-30"><Outlet /></main>
+            <footer className="p-4 text-center">Client footer</footer>
         </div>
     )
 }
