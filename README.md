@@ -219,3 +219,4 @@
     1. khi cập nhật category thành inactive thì phải cho tất cả category con cháu của nó inactive
     2. khi cập nhật category thành active thì phải kiểm tra nếu không có category cha ông inactive thì mới được active
     3. khi xóa 1 category thì tất cả category con cháu cũng phải bị xóa theo
+56. làm header trang client
