@@ -10,6 +10,9 @@
   --color-primary-700: #901; /* Đỏ đậm phía dưới dải gradient */
   --color-primary-800: #76000d;
   --color-primary-900: #5a000a;
+  
+  --color-black-alpha-200: #0000000f;
+  --color-black-alpha-300: #0000002b;
 
   /* Hiệu ứng chữ chạy cho Topbar */
   --animate-scroll-left-infinite: scroll-left 20s linear infinite;
@@ -21,6 +24,12 @@
     to {
         transform: translateX(-50%);
     }
+    }
+}
+@layer utilities {
+    .shadow-50 {
+        --tw-shadow: 0 4px 20px -8px var(--tw-shadow-color, #0000001c), 0 0 10px 0 var(--tw-shadow-color, #0000000f);
+        box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
     }
 }
 

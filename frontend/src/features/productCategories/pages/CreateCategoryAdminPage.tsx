@@ -102,11 +102,6 @@ const CreateCategoryAdminPage = () => {
                                         className="w-full !border !border-gray-300"
                                         placeholder="Select parent category"
                                         treeData={categoriesTree}
-                                        treeDefaultExpandedKeys={
-                                            categoriesTree?.[0]?._id
-                                                ? [categoriesTree[0]._id]
-                                                : []
-                                        }
                                         fieldNames={{
                                             label: "title",
                                             value: "_id",

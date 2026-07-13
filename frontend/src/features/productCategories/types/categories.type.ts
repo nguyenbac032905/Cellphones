@@ -6,13 +6,7 @@ export interface ProductCategory  {
     parent_id: string | null;
     description: string;
     thumbnail: string;
-    status: "active" | "inactive";
-    position: number;
     slug: string;
-    deleted: boolean;
-    deletedAt?: string;
-    createdAt: string;
-    updatedAt: string;
 };
 export type CategoryTree = ProductCategory & {
     children: CategoryTree[];

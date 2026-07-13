@@ -16,12 +16,13 @@ const upload = multer({
         const allowedMimeTypes = [
             "image/jpeg",
             "image/png",
-            "image/webp"
+            "image/webp",
+            "image/svg+xml"
         ];
         if (!allowedMimeTypes.includes(file.mimetype)) {
             return cb(
                 new AppError(
-                    "Only jpg, png, webp images are allowed",
+                    "Only jpg, png, webp, svg images are allowed",
                     400
                 )
             );

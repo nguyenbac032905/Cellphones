@@ -10,7 +10,7 @@ type Category = {
   [key: string]: any;
 };
 export const getCategoryTreeService = async () => {
-    const categories = await ProductCategory.find({deleted: false}).lean();
+    const categories = await ProductCategory.find({deleted: false}).select("_id title parent_id description thumbnail slug").lean();
     const categoryTree = createTree(categories);
     return {
       data: categoryTree

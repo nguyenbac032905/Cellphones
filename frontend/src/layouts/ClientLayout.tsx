@@ -6,7 +6,7 @@ const ClientLayout = () => {
     return(
         <div className="flex flex-col min-h-screen">
             <ClientHeader />
-            <main className="flex-1 mt-30 w-full max-w-[1200px] mx-auto"><Outlet /></main>
+            <main className="flex-1 mt-24 w-full max-w-[1200px] mx-auto"><Outlet /></main>
             <ClientFooter />
         </div>
     )
