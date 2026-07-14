@@ -1,4 +1,4 @@
-import { getCategoryTreeService } from "../../services/client/getCategories.service";
+import { getCategoryTreeService } from "../../services/client/categories.service";
 import { asyncHandler } from "../../utils/asyncHandler";
 import { Request,Response } from "express";
 

@@ -52,8 +52,19 @@ export interface ProductListItem {
     category: Category | null;
     mainImage: string | null;
 }
+
 export type ProductListResponse = ApiResponse<ProductListItem[]> & {
     meta: PaginationMeta;
 };
-
 export type ProductResponse = ApiResponse<Product>;
+
+export interface ProductByCategory {
+    title: string;
+    slug: string;
+    featured: boolean;
+    mainImage: string;
+    price: number;
+    discountPercentage: number
+}
+
+export type ProductByCategoryResponse = ApiResponse<ProductByCategory[]>;
