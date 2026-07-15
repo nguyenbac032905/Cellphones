@@ -1,7 +1,7 @@
 import express from "express";
 const router = express.Router();
 import * as controller from "../../controllers/admin/roles.controller";
-import { validateMiddlware } from "../../middlewares/admin/validate.middleware";
+import { validateMiddlware } from "../../middlewares/shared/validate.middleware";
 import { createRoleSchema, roleIDSchema, updateRoleSchema } from "../../validations/admin/role.validation";
 import { permissionMiddleware } from "../../middlewares/admin/permissionMiddleware";
 import { PERMISSIONS } from "../../constants/permission";

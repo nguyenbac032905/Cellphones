@@ -7,6 +7,7 @@ import type { Swiper as SwiperType } from "swiper";
 // Import Swiper styles
 import "swiper/css";
 import "swiper/css/navigation";
+import { ArrowLeftSlide, ArrowRightSlide } from "../../../shared/components/Icons";
 
 interface BannerItem {
     id: number;
@@ -144,18 +145,11 @@ const SliddingBanner: React.FC = () => {
                     ))}
                 </Swiper>
 
-                {/* Nút Prev Arrow tự chế */}
                 <button className="custom-swiper-button-prev absolute top-1/2 left-0 z-20 flex aspect-1/2 h-15 -translate-y-1/2 cursor-pointer items-center rounded-r-full bg-black/30 text-white shadow-lg opacity-0 transition-all duration-300 group-hover:opacity-100 hover:bg-black/70">
-                    <svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 512 512" className="ml-0.5 size-6" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
-                        <path fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="48" d="M328 112 184 256l144 144"></path>
-                    </svg>
+                    <ArrowLeftSlide className="ml-1.5 size-6"/>
                 </button>
-
-                {/* Nút Next Arrow tự chế */}
                 <button className="custom-swiper-button-next absolute top-1/2 right-0 z-20 flex aspect-1/2 h-15 -translate-y-1/2 cursor-pointer items-center rounded-l-full bg-black/30 text-white shadow-lg opacity-0 transition-all duration-300 group-hover:opacity-100 hover:bg-black/70">
-                    <svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 512 512" className="ml-1.5 size-6" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
-                        <path fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="48" d="m184 112 144 144-144 144"></path>
-                    </svg>
+                    <ArrowRightSlide  className="ml-1.5 size-6"/>
                 </button>
             </div>
         </div>

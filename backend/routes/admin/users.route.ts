@@ -1,7 +1,7 @@
 import express from "express";
 const router = express.Router();
 import * as controller from "../../controllers/admin/users.controller";
-import { validateMiddlware } from "../../middlewares/admin/validate.middleware";
+import { validateMiddlware } from "../../middlewares/shared/validate.middleware";
 import { createUserSchema, getUsersServiceSchema, updateUserSchema, userIDParamsSchema } from "../../validations/admin/users.validation";
 import { permissionMiddleware } from "../../middlewares/admin/permissionMiddleware";
 import { PERMISSIONS } from "../../constants/permission";

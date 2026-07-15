@@ -57,14 +57,30 @@ export type ProductListResponse = ApiResponse<ProductListItem[]> & {
     meta: PaginationMeta;
 };
 export type ProductResponse = ApiResponse<Product>;
-
-export interface ProductByCategory {
+// client
+export interface ProductListClient {
+    _id?: string;
     title: string;
     slug: string;
     featured: boolean;
     mainImage: string;
     price: number;
     discountPercentage: number
+    sold?: string;
+    createdAt?: string;
 }
 
-export type ProductByCategoryResponse = ApiResponse<ProductByCategory[]>;
+export type ProductListClientResponse = ApiResponse<ProductListClient[]> & {
+    meta: PaginationMeta;
+};
+
+export interface ProductClientQuery {
+    featured?: "true" | "false";
+    discount?: string;
+    minPrice?: string;
+    maxPrice?: string;
+    search?: string;
+    sort?: "newest" | "price-asc" | "price-desc" | "discount-desc";
+    page?: string;
+    limit?: string;
+}

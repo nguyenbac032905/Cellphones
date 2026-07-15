@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { getErrorMessage } from "../../../shared/utils/errorHandler";
-import type { ProductByCategory } from "../types/products.type";
 import { productService } from "../services/product.service";
+import type { ProductListClient } from "../types/products.type";
 
 export const useProductsByCategory = (categorySlug: string) => {
-    const [products, setProducts] = useState<ProductByCategory[]>([]);
+    const [products, setProducts] = useState<ProductListClient[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 

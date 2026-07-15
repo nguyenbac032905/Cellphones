@@ -2,7 +2,7 @@ import express from "express";
 const router = express.Router();
 import * as controller from "../../controllers/admin/auth.controller";
 import {authMiddleware} from "../../middlewares/admin/auth.middleware";
-import { validateMiddlware } from "../../middlewares/admin/validate.middleware";
+import { validateMiddlware } from "../../middlewares/shared/validate.middleware";
 import { loginSchema, updateMeSchema } from "../../validations/admin/auth.validation";
 import { loginRateLimitMiddleware} from "../../middlewares/shared/rateLimit.middleware";
 

@@ -222,3 +222,4 @@
 56. làm header trang client
 57. làm footer trang client
 58. làm phần banner category trang home
+58. xong banner category trang home

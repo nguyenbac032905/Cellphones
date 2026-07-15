@@ -1,7 +1,7 @@
 import express from "express";
 const router = express.Router();
 import * as controller from "../../controllers/admin/productCategories.controller";
-import { validateMiddlware } from "../../middlewares/admin/validate.middleware";
+import { validateMiddlware } from "../../middlewares/shared/validate.middleware";
 import { categoryParamSchema, createCategorySchema, getCategoriesSchema, updateCategorySchema } from "../../validations/admin/productCategory.validation";
 
 router.get("/tree", controller.getCategoryTree);
