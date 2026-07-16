@@ -106,10 +106,10 @@ const ProductTabSection = () => {
                         </div>
                     )}
 
-                    <button className="swiper-trend-prev shadow-50 absolute top-1/2 left-0 z-20 flex aspect-1/2 h-15 -translate-y-1/2 cursor-pointer items-center justify-center rounded-r-full bg-white/80 border border-neutral-100 transition-all duration-150 hover:bg-white/100 md:w-9 md:h-18 w-6 h-10">
+                    <button className="swiper-trend-prev shadow-50 absolute top-1/2 left-0 z-20 flex aspect-1/2 h-15 -translate-y-1/2 items-center justify-center rounded-r-full bg-white/80 border border-neutral-100 transition-all duration-150 hover:bg-white/100 md:w-9 md:h-18 w-6 h-10">
                         <ArrowLeftSlide className="size-7.5"/>
                     </button>
-                    <button className="swiper-trend-next shadow-50 absolute top-1/2 right-0 z-20 flex aspect-1/2 h-15 -translate-y-1/2 cursor-pointer items-center justify-center rounded-l-full bg-white/80  border border-neutral-100 transition-all duration-150 hover:bg-white/100 md:w-9 md:h-18 w-6 h-10">
+                    <button className="swiper-trend-next shadow-50 absolute top-1/2 right-0 z-20 flex aspect-1/2 h-15 -translate-y-1/2 items-center justify-center rounded-l-full bg-white/80 border border-neutral-100 transition-all duration-150 hover:bg-white/100 md:w-9 md:h-18 w-6 h-10">
                         <ArrowRightSlide className="size-7.5"/>
                     </button>
                 </div>

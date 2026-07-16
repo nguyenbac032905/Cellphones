@@ -1,4 +1,5 @@
 import BannerCategory from '../components/BannerCategory';
+import MobileProductSection from '../components/MobileProductSection';
 import ProductTabSection from '../components/ProductsTabSection';
 import SpecialPromoBanner from '../components/SpecialPromoBanner';
 const HomePage = () => {
@@ -7,6 +8,7 @@ const HomePage = () => {
             <BannerCategory />
             <SpecialPromoBanner />
             <ProductTabSection />
+            <MobileProductSection />
         </div>
     )
 }

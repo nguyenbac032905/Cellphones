@@ -14,6 +14,8 @@
   --color-black-alpha-200: #0000000f;
   --color-black-alpha-300: #0000002b;
 
+  --color-blue-500: #3b82f6;
+
   /* Hiệu ứng chữ chạy cho Topbar */
   --animate-scroll-left-infinite: scroll-left 20s linear infinite;
 

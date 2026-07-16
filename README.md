@@ -222,4 +222,14 @@
 56. làm header trang client
 57. làm footer trang client
 58. làm phần banner category trang home
-58. xong banner category trang home
+    1. sử dụng flex để 3 khối menu,main banner, sider thành hàng ngang
+    2. phần menu mình sẽ lọc qua từng phần tử của category và vẽ ra giao diện, set width của nó là 56, và ẩn đi khi co vào màn lg
+    3. phần sidebar right mình sẽ set width cho nó là 55, flex col để tách nó làm 2 khối và ẩn đi khi co vào màn md
+    4. phần main banner mình sẽ cho nó chiếm phần còn lại bằng flex-1, flex-col để chia làm 2 box chứa quảng cáo và slide banner
+    5. đối với component slide banner mình sẽ tạo 2 phần tabs để click vào chuyển slide, và slide sử dụng swiper. phần tabs để chuyển slide khai báo state activeIndex để lưu tab index, nếu tab nào active thì sẽ cho bg màu trắng hiện ảnh tai mèo lên, còn không thì opacity=0 để ẩn nó đi và bg màu trắng.đối với phần slide mình sẽ cho nó autoplay và thêm navigation vào để css button và css cho button đó.
+59. xong banner category trang home
+    1. khi hover vào item trong category mình sẽ set lại state category đang được active, banner category nhận được và mở flyoutCategory lên, trong flyoutCategory thì hiện các thông tin tương ứng. hiệu ứng tắt khi người dùng move chuột ra ngoài banner category
+60. xong product tab section
+    1. tạo productTabSection, bên trong chứa phần tab và phần slide, đối với phần tabs sẽ render ra 3 tab, khi chuyển tabs thì truyền query vào useProducts để call api tương ứng. khi 1 tab active thì cho nó có border xanh và bỏ border bottom,làm mờ text đi và hiện ảnh lên sử dụng opacity để nó chuyển mượt không bị nhấp nháy, tabs mặc định thì có màu xám và border-bottom.
+    2. đối với phần slide thì hiện ảnh slide tương ứng và responsive cho nó
+    3. đối với productItem thì hiện thông tin tương ứng, phần badge sử dụng ảnh và thêm position absolute để xác định vị trí theo phần tử cha
