@@ -4,7 +4,7 @@ import AdminProductsCreatePage from "./pages/AdminProductsCreatePage";
 import AdminProductsDetailPage from "./pages/AdminProductsDetailPage";
 import AdminProductsPage from "./pages/AdminProductsPage";
 import AdminProductsUpdatePage from "./pages/AdminProductsUpdatePage";
-import ProductsPage from "./pages/ProductsPage";
+import ProductByCategoryPage from "./pages/ProductByCategoryPage";
 
 export const adminProductRoutes = [
     {
@@ -41,7 +41,7 @@ export const adminProductRoutes = [
 ];
 export const productRoutes = [
     {
-        path: "products",
-        element: <ProductsPage />
+        path: ":categorySlug",
+        element: <ProductByCategoryPage />
     }
 ];

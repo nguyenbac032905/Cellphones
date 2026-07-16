@@ -133,8 +133,8 @@ const MobileProductSection = () => {
                                 {groupedProducts?.map((group, index) => (
                                     <SwiperSlide key={index}>
                                         <div className="h-full flex flex-col justify-between gap-2">
-                                            {group.map((product: ProductListClient) => (
-                                                <ProductItem key={product._id} product={product} />
+                                            {group.map((product: ProductListClient, index) => (
+                                                <ProductItem key={index} product={product} />
                                             ))}
                                         </div>
                                     </SwiperSlide>
