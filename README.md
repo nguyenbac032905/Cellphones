@@ -233,3 +233,4 @@
     1. tạo productTabSection, bên trong chứa phần tab và phần slide, đối với phần tabs sẽ render ra 3 tab, khi chuyển tabs thì truyền query vào useProducts để call api tương ứng. khi 1 tab active thì cho nó có border xanh và bỏ border bottom,làm mờ text đi và hiện ảnh lên sử dụng opacity để nó chuyển mượt không bị nhấp nháy, tabs mặc định thì có màu xám và border-bottom.
     2. đối với phần slide thì hiện ảnh slide tương ứng và responsive cho nó
     3. đối với productItem thì hiện thông tin tương ứng, phần badge sử dụng ảnh và thêm position absolute để xác định vị trí theo phần tử cha
+61. làm product mobile section
