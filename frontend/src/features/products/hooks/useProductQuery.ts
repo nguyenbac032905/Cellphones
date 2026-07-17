@@ -30,5 +30,17 @@ export const useProductQuery = () => {
         setSearchParams(params);
     };
 
-    return { query, updateQuery };
+    const replaceQuery = (values: Partial<ProductClientQuery>) => {
+        const params = new URLSearchParams();
+
+        Object.entries(values).forEach(([key, value]) => {
+            if (value != null && value !== "") {
+                params.set(key, value);
+            }
+        });
+
+        setSearchParams(params);
+    };
+
+    return { query, updateQuery, replaceQuery };
 };

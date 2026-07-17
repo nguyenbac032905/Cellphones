@@ -1,7 +1,8 @@
+import mongoose from "mongoose";
 import { z } from "zod";
 
-export const getProductsSchema = z.object({
-    query: z.object({
+
+const querySchema = z.object({
         featured: z
         .enum(["true", "false"])
         .optional(),
@@ -55,6 +56,16 @@ export const getProductsSchema = z.object({
             path: ["minPrice"]
         }
     ).strict()
+
+export const getProductsSchema = z.object({
+    query: querySchema
+});
+
+export const getProductsByCategorySchema = z.object({
+    query: querySchema,
+    params: z.object({
+        categorySlug: z.string().trim().min(0).max(100)
+    }).strict()
 });
 
 export type GetProductsQuery = z.infer<typeof getProductsSchema>["query"];

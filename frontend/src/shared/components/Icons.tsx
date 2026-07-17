@@ -310,3 +310,108 @@ export const HeartIcon = ({className}: {className: string}) => {
                     <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
             </svg>
 }
+type IconProps = {
+    className?: string;
+};
+export const HollowStar = ({ className }: IconProps) => {
+    return (
+        <svg
+            className={className}
+            width="20"
+            height="19"
+            viewBox="0 0 20 19"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+        >
+            <path
+                d="M9.99986 14.7915L4.85653 17.4957L5.83903 11.7682L1.67236 7.71238L7.42236 6.87905L9.99403 1.66821L12.5657 6.87905L18.3157 7.71238L14.149 11.7682L15.1315 17.4957L9.99986 14.7915Z"
+                stroke="currentColor"
+                strokeWidth={1.5}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+            />
+        </svg>
+    );
+};
+export const SaleIcon = ({ className }: IconProps) => {
+    return (
+        <svg
+            className={className}
+            width="18"
+            height="18"
+            viewBox="0 0 18 18"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+        >
+            <path
+                d="M6.5 11.5L11.5 6.5"
+                stroke="currentColor"
+                strokeWidth={1.5}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+            />
+
+            <circle
+                cx="6.91667"
+                cy="6.91667"
+                r="0.416667"
+                fill="currentColor"
+                stroke="currentColor"
+                strokeWidth={1.5}
+            />
+
+            <circle
+                cx="11.0832"
+                cy="11.0834"
+                r="0.416667"
+                fill="currentColor"
+                stroke="currentColor"
+                strokeWidth={1.5}
+            />
+
+            <path
+                d="M3.16656 4.9999C3.16656 3.98737 3.98737 3.16656 4.9999 3.16656H5.83323C6.31731 3.16629 6.78164 2.97456 7.1249 2.63323L7.70823 2.0499C8.05234 1.70385 8.52021 1.50928 9.00823 1.50928C9.49625 1.50928 9.96412 1.70385 10.3082 2.0499L10.8916 2.63323C11.2348 2.97456 11.6991 3.16629 12.1832 3.16656H13.0166C14.0291 3.16656 14.8499 3.98737 14.8499 4.9999V5.83323C14.8502 6.31731 15.0419 6.78164 15.3832 7.1249L15.9666 7.70823C16.3126 8.05234 16.5072 8.52021 16.5072 9.00823C16.5072 9.49625 16.3126 9.96412 15.9666 10.3082L15.3832 10.8916C15.0419 11.2348 14.8502 11.6991 14.8499 12.1832V13.0166C14.8499 14.0291 14.0291 14.8499 13.0166 14.8499H12.1832C11.6991 14.8502 11.2348 15.0419 10.8916 15.3832L10.3082 15.9666C9.96412 16.3126 9.49625 16.5072 9.00823 16.5072C8.52021 16.5072 8.05234 16.3126 7.70823 15.9666L7.1249 15.3832C6.78164 15.0419 6.31731 14.8502 5.83323 14.8499H4.9999C3.98737 14.8499 3.16656 14.0291 3.16656 13.0166V12.1832C3.16629 11.6991 2.97456 11.2348 2.63323 10.8916L2.0499 10.3082C1.70385 9.96412 1.50928 9.49625 1.50928 9.00823C1.50928 8.52021 1.70385 8.05234 2.0499 7.70823L2.63323 7.1249C2.97456 6.78164 3.16629 6.31731 3.16656 5.83323V4.9999"
+                stroke="currentColor"
+                strokeWidth={1.5}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+            />
+        </svg>
+    );
+};
+export const IncreaseIcon = ({ className }: IconProps) => {
+    return (
+        <svg
+            className={className}
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+        >
+            <path d="M5 7H9" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M5 12H12" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M5 17H14" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M14.5 9.5L17 7L19.5 9.5" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M17 7V17" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+    );
+};
+export const DecreaseIcon = ({ className }: IconProps) => {
+    return (
+        <svg
+            className={className}
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+        >
+            <path d="M5 17H9" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M5 12H12" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M5 7H14" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M14.5 14.5L17 17L19.5 14.5" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M17 17V7" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+    );
+};

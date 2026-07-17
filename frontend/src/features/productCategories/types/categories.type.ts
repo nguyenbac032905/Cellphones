@@ -53,4 +53,5 @@ export interface CategoryDetail {
     updatedAt: string;
     slug: string;
 };
-export type CategoryDetailResponse = ApiResponse<CategoryDetail>
+export type AllChildCategory = ApiResponse<ProductCategory[]>;
+export type CategoryDetailResponse = ApiResponse<CategoryDetail>;

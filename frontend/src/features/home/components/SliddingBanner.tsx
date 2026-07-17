@@ -8,6 +8,7 @@ import type { Swiper as SwiperType } from "swiper";
 import "swiper/css";
 import "swiper/css/navigation";
 import { ArrowLeftSlide, ArrowRightSlide } from "../../../shared/components/Icons";
+import { Link } from "react-router-dom";
 
 interface BannerItem {
     id: number;
@@ -131,8 +132,8 @@ const SliddingBanner: React.FC = () => {
                 >
                     {BANNER_DATA.map((slide) => (
                         <SwiperSlide key={slide.id} className="w-full aspect-[23/10]">
-                            <a href={slide.link} className="block w-full h-full">
-                                <span className="cps-image-cdn relative inline-block aspect-[23/10] w-full border border-neutral-100 object-cover">
+                            <Link to={slide.link} className="block w-full h-full">
+                                <span className="inline-block aspect-[23/10] w-full border border-neutral-100 object-cover">
                                     <img
                                         alt={`${slide.title} ${slide.subtitle}`}
                                         loading="lazy"
@@ -140,7 +141,7 @@ const SliddingBanner: React.FC = () => {
                                         className="object-cover w-full h-full transition-opacity duration-500 opacity-100"
                                     />
                                 </span>
-                            </a>
+                            </Link>
                         </SwiperSlide>
                     ))}
                 </Swiper>
