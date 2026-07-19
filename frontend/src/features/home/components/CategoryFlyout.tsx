@@ -70,7 +70,7 @@ const CategoryFlyout = ({ category }: CategoryFlyoutProps) => {
                         {featuredProducts.map((item) => (
                             <Link
                                 key={item.slug}
-                                to={`/products/${item.slug}`}
+                                to={`/detail/${item.slug}`}
                                 className="h-12 flex w-[160px] items-center gap-2 rounded-lg border border-neutral-200 bg-white p-1 transition-all duration-200 hover:border-primary-500 hover:shadow-sm "
                             >
                                 <img

@@ -111,7 +111,7 @@ const AdminProductsUpdatePage = () => {
             if (file.response) {
                 return {
                     ...file,
-                    url: file.response.urls,
+                    url: file.response.data.urls,
                 };
             }
 

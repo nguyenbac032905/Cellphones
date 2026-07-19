@@ -1,5 +1,5 @@
 import { publicClient } from "../../../shared/api/publicClient";
-import type { ProductClientQuery, ProductListClientResponse } from "../types/products.type";
+import type { ProductClientQuery, ProductDetailClientResponse, ProductListClientResponse } from "../types/products.type";
 
 export const productService = {
     getProductByCategory: async (categorySlug: string, query: ProductClientQuery): Promise<ProductListClientResponse> => {
@@ -8,6 +8,10 @@ export const productService = {
     },
     getAll: async (query: ProductClientQuery): Promise<ProductListClientResponse> => {
         const res = await publicClient.get<ProductListClientResponse>(`/api/products`, {params: query});
+        return res.data;
+    },
+    getProduct: async (productSlug: string): Promise<ProductDetailClientResponse> => {
+        const res = await publicClient.get<ProductDetailClientResponse>(`/api/products/${productSlug}`);
         return res.data;
     }
 };

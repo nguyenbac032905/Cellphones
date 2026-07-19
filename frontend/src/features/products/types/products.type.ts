@@ -84,3 +84,28 @@ export interface ProductClientQuery {
     page?: string;
     limit?: string;
 }
+//detail
+export type ProductDetailClient = {
+    _id: string;
+    title: string;
+    slug: string;
+    product_category_id: {
+        _id: string;
+        title: string;
+        slug: string;
+    };
+    description: string;
+    content: string;
+    price: number;
+    discountPercentage: number;
+    stock: number;
+    sold: number;
+    featured: boolean;
+    images: {
+        _id: string;
+        url: string;
+        isMain: boolean;
+    }[];
+};
+
+export type ProductDetailClientResponse = ApiResponse<ProductDetailClient>;

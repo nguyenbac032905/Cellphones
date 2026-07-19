@@ -234,4 +234,6 @@
     2. đối với phần slide thì hiện ảnh slide tương ứng và responsive cho nó
     3. đối với productItem thì hiện thông tin tương ứng, phần badge sử dụng ảnh và thêm position absolute để xác định vị trí theo phần tử cha
 61. làm product mobile section
-62. hoàn thiện trang home
+62. làm product laptop section
+63. hoàn thiện trang home
+64. xong trang products list theo category

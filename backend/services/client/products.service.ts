@@ -1,5 +1,6 @@
 import Product from "../../models/product.model"
 import ProductCategory from "../../models/productCategory.model";
+import { AppError } from "../../utils/AppError";
 import { getAllChildCategoryIds } from "../admin/productCategories.service";
 
 export const getProductsByCategoryService = async (categorySlug: string, query: any) => {
@@ -309,3 +310,15 @@ export const getProductsService = async ( query: any ) => {
         }
     };
 };
+
+export const getProductService = async (productSlug: string) => {
+    const product = await Product.findOne({slug: productSlug,deleted: false, status: "active"})
+                    .populate("product_category_id", "slug title")
+                    .select("title slug description content price discountPercentage stock sold featured images").lean();
+    if(!product){
+        throw new AppError("Product not found", 404);
+    }
+    return {
+        data: product
+    }
+}

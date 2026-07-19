@@ -22,7 +22,7 @@ export const useProductsByCategory = ( categorySlug: string, query?: ProductClie
         }),
         [query, defaultLimit]
     );
-    console.log(finalQuery)
+    
     const fetchApi = useCallback(async () => {
         if (!categorySlug) return;
 

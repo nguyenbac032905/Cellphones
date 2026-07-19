@@ -13,7 +13,7 @@ export const ProductItem = ({ product }: { product: ProductListClient }) => {
     // Giả lập mức giảm Smember & Student theo form CellphoneS
     const smemberDiscount = Math.min(Math.round(product.price * 0.03), 200000);
     const sstudentDiscount = Math.min(Math.round(product.price * 0.05), 100000);
-    const productLink = `/products/${product.slug}`;
+    const productLink = `/detail/${product.slug}`;
 
     return (
         <div className="h-full px-1 pt-1.5 pb-0.5">

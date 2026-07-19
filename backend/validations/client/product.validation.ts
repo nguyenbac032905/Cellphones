@@ -68,4 +68,10 @@ export const getProductsByCategorySchema = z.object({
     }).strict()
 });
 
+export const getProductSchema = z.object({
+    params: z.object({
+        productSlug: z.string().trim().min(0).max(100)
+    }).strict()
+})
+
 export type GetProductsQuery = z.infer<typeof getProductsSchema>["query"];

@@ -415,3 +415,181 @@ export const DecreaseIcon = ({ className }: IconProps) => {
         </svg>
     );
 };
+export const FillStar = ({className}: {className: string}) => {
+    return <svg className={`${className} fill-current text-yellow-400`} viewBox="0 0 576 512">
+                <path d="M381.2 150.3L524.9 171.5C536.8 173.2 546.8 181.6 550.6 193.1C554.4 204.7 551.3 217.3 542.7 225.9L438.5 328.1L463.1 474.7C465.1 486.7 460.2 498.9 450.2 506C440.3 513.1 427.2 514 416.5 508.3L288.1 439.8L159.8 508.3C149 514 135.9 513.1 126 506C116.1 498.9 111.1 486.7 113.2 474.7L137.8 328.1L33.58 225.9C24.97 217.3 21.91 204.7 25.69 193.1C29.46 181.6 39.43 173.2 51.42 171.5L195 150.3L259.4 17.97C264.7 6.954 275.9-.0391 288.1-.0391C300.4-.0391 311.6 6.954 316.9 17.97L381.2 150.3z"></path>
+            </svg>
+};
+//detail product
+export const CommentIcon = ({className}: {className: string}) => {
+    return <svg className={className} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M8 9H16" stroke="#3B82F6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+            <path d="M8 13H14" stroke="#3B82F6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path> 
+            <path d="M9 18H6C5.20435 18 4.44129 17.6839 3.87868 17.1213C3.31607 16.5587 3 15.7956 3 15V7C3 6.20435 3.31607 5.44129 3.87868 4.87868C4.44129 4.31607 5.20435 4 6 4H18C18.7956 4 19.5587 4.31607 20.1213 4.87868C20.6839 5.44129 21 6.20435 21 7V15C21 15.7956 20.6839 16.5587 20.1213 17.1213C19.5587 17.6839 18.7956 18 18 18H15L12 21L9 18Z" stroke="#3B82F6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+}
+export const CpuIcon = ({className}: {className: string}) => {
+    return <svg className={className} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="5" y="5" width="14" height="14" rx="2" stroke="#3B82F6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></rect> <path fill-rule="evenodd" clip-rule="evenodd" d="M9 10C9 9.44772 9.44772 9 10 9H14C14.5523 9 15 9.44772 15 10V14C15 14.5523 14.5523 15 14 15H10C9.44772 15 9 14.5523 9 14V10Z" stroke="#3B82F6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M3 10H5" stroke="#3B82F6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M3 14H5" stroke="#3B82F6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M10 3V5" stroke="#3B82F6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M14 3V5" stroke="#3B82F6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M21 10H19" stroke="#3B82F6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M21 14H19" stroke="#3B82F6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M14 21V19" stroke="#3B82F6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M10 21V19" stroke="#3B82F6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+}
+export const PlusBorderIcon = ({className}: {className: string}) => {
+    return <svg className={className} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 12C3 13.1819 3.23279 14.3522 3.68508 15.4442C4.13738 16.5361 4.80031 17.5282 5.63604 18.364C6.47177 19.1997 7.46392 19.8626 8.55585 20.3149C9.64778 20.7672 10.8181 21 12 21C13.1819 21 14.3522 20.7672 15.4442 20.3149C16.5361 19.8626 17.5282 19.1997 18.364 18.364C19.1997 17.5282 19.8626 16.5361 20.3149 15.4442C20.7672 14.3522 21 13.1819 21 12C21 9.61305 20.0518 7.32387 18.364 5.63604C16.6761 3.94821 14.3869 3 12 3C9.61305 3 7.32387 3.94821 5.63604 5.63604C3.94821 7.32387 3 9.61305 3 12Z" stroke="#3B82F6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M9 12H15" stroke="#3B82F6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M12 9V15" stroke="#3B82F6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+}
+export const ClockIcon = ({ className }: {className: string}) =>{
+    return (
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 512 512"
+            fill="currentColor"
+            className={className}
+        >
+            <path d="M232 120C232 106.7 242.7 96 256 96C269.3 96 280 106.7 280 120V243.2L365.3 300C376.3 307.4 379.3 322.3 371.1 333.3C364.6 344.3 349.7 347.3 338.7 339.1L242.7 275.1C236 271.5 232 264 232 255.1L232 120zM256 0C397.4 0 512 114.6 512 256C512 397.4 397.4 512 256 512C114.6 512 0 397.4 0 256C0 114.6 114.6 0 256 0zM48 256C48 370.9 141.1 464 256 464C370.9 464 464 370.9 464 256C464 141.1 370.9 48 256 48C141.1 48 48 141.1 48 256z" />
+        </svg>
+    );
+}
+
+export const PhoneCheckIcon = ({ className }: {className: string}) => {
+    return (
+        <svg
+            viewBox="0 0 18 18"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            className={className}
+        >
+            <g clipPath="url(#clip0)">
+                <path
+                    d="M8.625 15.75H6C5.60218 15.75 5.22064 15.592 4.93934 15.3107C4.65804 15.0294 4.5 14.6478 4.5 14.25V3.75C4.5 3.35218 4.65804 2.97064 4.93934 2.68934C5.22064 2.40804 5.60218 2.25 6 2.25H12C12.3978 2.25 12.7794 2.40804 13.0607 2.68934C13.342 2.97064 13.5 3.35218 13.5 3.75V10.875M8.25 3H9.75M9 12.75V12.7575M11.25 14.25L12.75 15.75L15.75 12.75"
+                    stroke="url(#paint0_linear)"
+                    strokeWidth={1.5}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                />
+            </g>
+
+            <defs>
+                <linearGradient
+                    id="paint0_linear"
+                    x1="10.125"
+                    y1="2.25"
+                    x2="10.125"
+                    y2="15.75"
+                    gradientUnits="userSpaceOnUse"
+                >
+                    <stop stopColor="#FFF5F0" />
+                    <stop offset="0.67" stopColor="#F4C8D0" />
+                </linearGradient>
+
+                <clipPath id="clip0">
+                    <rect width="18" height="18" fill="white" />
+                </clipPath>
+            </defs>
+        </svg>
+    );
+};
+export const ShieldCheckIcon = ({ className }: { className?: string }) => {
+    return (
+        <svg
+            viewBox="0 0 18 18"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            className={className}
+        >
+            <g clipPath="url(#clip0)">
+                <path
+                    d="M8.59506 15.6345C6.33703 14.9346 4.44505 13.3743 3.32797 11.2908C2.21089 9.20739 1.9584 6.76808 2.62506 4.5C4.96171 4.60692 7.24819 3.79993 9.00006 2.25C10.7519 3.79993 13.0384 4.60692 15.3751 4.5C15.8841 6.23183 15.8605 8.07671 15.3076 9.795M11.2501 14.25L12.7501 15.75L15.7501 12.75"
+                    stroke="url(#paint0_linear)"
+                    strokeWidth={1.5}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                />
+            </g>
+
+            <defs>
+                <linearGradient
+                    id="paint0_linear"
+                    x1="9.00491"
+                    y1="2.25"
+                    x2="9.00491"
+                    y2="15.75"
+                    gradientUnits="userSpaceOnUse"
+                >
+                    <stop stopColor="#FFF5F0" />
+                    <stop offset="0.67" stopColor="#F4C8D0" />
+                </linearGradient>
+
+                <clipPath id="clip0">
+                    <rect width="18" height="18" fill="white" />
+                </clipPath>
+            </defs>
+        </svg>
+    );
+};
+export const ChipIcon = ({ className }: { className?: string }) => {
+    return (
+        <svg
+            viewBox="0 0 18 18"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            className={className}
+        >
+            <path
+                d="M2.25 7.5H3.75M2.25 10.5H3.75M7.5 2.25V3.75M10.5 2.25V3.75M15.75 7.5H14.25M15.75 10.5H14.25M10.5 15.75V14.25M7.5 15.75V14.25M5.75 14.25H12.25C13.3546 14.25 14.25 13.3546 14.25 12.25V5.75C14.25 4.64543 13.3546 3.75 12.25 3.75H5.75C4.64543 3.75 3.75 4.64543 3.75 5.75V12.25C3.75 13.3546 4.64543 14.25 5.75 14.25ZM7.75 11.25H10.25C10.8023 11.25 11.25 10.8023 11.25 10.25V7.75C11.25 7.19772 10.8023 6.75 10.25 6.75H7.75C7.19772 6.75 6.75 7.19772 6.75 7.75V10.25C6.75 10.8023 7.19772 11.25 7.75 11.25Z"
+                stroke="url(#paint0_linear_chip)"
+                strokeWidth={1.5}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+            />
+
+            <defs>
+                <linearGradient
+                    id="paint0_linear_chip"
+                    x1="9"
+                    y1="2.25"
+                    x2="9"
+                    y2="15.75"
+                    gradientUnits="userSpaceOnUse"
+                >
+                    <stop stopColor="#FFF5F0" />
+                    <stop offset="0.67" stopColor="#F4C8D0" />
+                </linearGradient>
+            </defs>
+        </svg>
+    );
+};
+export const TagIcon = ({ className }: { className?: string }) => {
+    return (
+        <svg
+            viewBox="0 0 18 18"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            className={className}
+        >
+            <g clipPath="url(#clip0_tag)">
+                <path
+                    d="M13.5 14.25L14.694 13.056C15.3718 12.3781 15.7526 11.4587 15.7526 10.5C15.7526 9.54134 15.3718 8.62193 14.694 7.944L11.25 4.5M5.25 7.5H5.2425M2.25 6V9.129C2.25008 9.52679 2.40818 9.90826 2.6895 10.1895L6.972 14.472C7.31096 14.8109 7.77067 15.0013 8.25 15.0013C8.72933 15.0013 9.18904 14.8109 9.528 14.472L12.222 11.778C12.5609 11.439 12.7513 10.9793 12.7513 10.5C12.7513 10.0207 12.5609 9.56096 12.222 9.222L7.9395 4.9395C7.65826 4.65818 7.27679 4.50008 6.879 4.5H3.75C3.35218 4.5 2.97064 4.65804 2.68934 4.93934C2.40804 5.22064 2.25 5.60218 2.25 6Z"
+                    stroke="url(#paint0_linear_tag)"
+                    strokeWidth={1.5}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                />
+            </g>
+
+            <defs>
+                <linearGradient
+                    id="paint0_linear_tag"
+                    x1="9.00131"
+                    y1="4.5"
+                    x2="9.00131"
+                    y2="15.0013"
+                    gradientUnits="userSpaceOnUse"
+                >
+                    <stop stopColor="#FFF5F0" />
+                    <stop offset="0.67" stopColor="#F4C8D0" />
+                </linearGradient>
+
+                <clipPath id="clip0_tag">
+                    <rect width="18" height="18" fill="white" />
+                </clipPath>
+            </defs>
+        </svg>
+    );
+};
