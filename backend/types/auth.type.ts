@@ -4,7 +4,7 @@ import { Types } from "mongoose";
 
 export interface AccessTokenPayload extends JwtPayload {
     _id: string;
-    fullName: string;
+    fullName?: string;
     email: string;
     phone?: string;
     avatar?: string;
@@ -18,7 +18,7 @@ export interface AccessTokenPayload extends JwtPayload {
 
 export interface AuthenticatedUser {
     _id: Types.ObjectId;
-    fullName: string;
+    fullName?: string | null;
     email: string;
     phone?: string | null;
     avatar?: string | null;

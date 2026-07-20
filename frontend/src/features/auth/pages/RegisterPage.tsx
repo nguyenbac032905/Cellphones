@@ -1,13 +1,17 @@
-import { Link } from "react-router-dom";
-import { Button, Form, Input } from "antd";
+import { Link, useNavigate } from "react-router-dom";
+import { Button, Form, Input, message } from "antd";
 import BoxLeft from "../components/BoxLeft";
-import { registerSchema } from "../validations/auth.validation";
+import { registerSchema, type RegisterBody } from "../validations/auth.validation";
 import { zodToAntFormErrors } from "../../../shared/utils/zodToAntFormErrors";
+import { useRegister } from "../hooks/useRegister";
+import { getErrorMessage } from "../../../shared/utils/errorHandler";
 
 const RegisterPage = () => {
     const [form] = Form.useForm();
+    const {loading, register} = useRegister();
+    const navigate = useNavigate();
 
-    const handleSubmit = async (values: { email: string }) => {
+    const handleSubmit = async (values: RegisterBody) => {
         const parsed = registerSchema.safeParse(values);
         if(!parsed.success){
             const formErrors = zodToAntFormErrors(parsed.error);
@@ -19,7 +23,13 @@ const RegisterPage = () => {
             );
             return;
         }
-        console.log(parsed);
+        try {
+            const result = await register(parsed.data);
+            message.success(result.message);
+            navigate(`/verify-otp`,{state: {email: parsed.data.email}});
+        } catch (error) {
+            message.error(getErrorMessage(error));
+        }
     };
     return (
         <div className="min-h-screen w-full grid grid-cols-1 md:grid-cols-7 bg-white">
@@ -50,10 +60,11 @@ const RegisterPage = () => {
                         </Form.Item>
 
                         <Button
+                            loading={loading}
                             htmlType="submit"
                             className="!h-auto !p-3 !rounded-xl !bg-primary-500 hover:!bg-red-700 !text-white !font-bold tracking-wide shadow-sm !border-0"
                         >
-                            Đăng ký
+                            Gửi mã OTP
                         </Button>
                     </Form>
 

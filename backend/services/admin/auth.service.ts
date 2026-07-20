@@ -16,6 +16,9 @@ export const loginService = async ( email: string, password: string ) => {
     if (user.status !== "active") {
         throw new AppError("Your account has been locked!", 400);
     }
+    if (!user.password) {
+        throw new AppError( "This account does not support password login.", 400 );
+    }
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
         throw new AppError("Invalid Password!", 400);

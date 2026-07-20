@@ -35,3 +35,24 @@ export const updateMeSchema = z.object({
 });
 
 export type UpdateMeBody = z.infer<typeof updateMeSchema>;
+
+export const registerSchema = z.object({
+    email: emailSchema
+}).strict();
+export type RegisterBody = z.infer<typeof registerSchema>;
+
+export const verifyOtpSchema = z.object({
+    email: emailSchema,
+    otp: z.string().regex(/^\d{6}$/, "OTP must be exactly 6 digits")
+})
+export type VerifyOtpBody = z.infer<typeof verifyOtpSchema>;
+
+export const setPasswordSchema = z.object({
+    password: passwordSchema,
+    fullName: z
+            .string()
+            .trim()
+            .min(2, "Full name must be at least 2 characters")
+            .max(100, "Full name must not exceed 100 characters")
+})
+export type SetPasswordBody = z.infer<typeof setPasswordSchema>;

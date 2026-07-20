@@ -23,23 +23,6 @@ export const loginSchema = z.object({
         password: passwordSchema,
     }),
 });
-
-// register
-export const registerSchema = z.object({
-    body: z.object({
-        fullName: z
-            .string()
-            .trim()
-            .min(2, { error: "Full name must be at least 2 characters" })
-            .max(100, { error: "Full name must not exceed 100 characters" }),
-
-        email: emailSchema,
-
-        password: passwordSchema,
-
-        roleID: objectIdSchema
-    }),
-});
 //update me
 export const updateMeSchema = z.object({
     body: z.object({

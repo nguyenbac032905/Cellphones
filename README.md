@@ -237,3 +237,5 @@
 62. làm product laptop section
 63. hoàn thiện trang home
 64. xong trang products list theo category
+65. làm trang chi tiết sản phẩm
+66. là giao diện trang đăng nhập, đăng kí

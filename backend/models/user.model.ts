@@ -4,7 +4,6 @@ const userSchema = new mongoose.Schema(
     {
         fullName: {
             type: String,
-            required: true,
             trim: true
         },
 
@@ -18,7 +17,7 @@ const userSchema = new mongoose.Schema(
 
         password: {
             type: String,
-            required: true
+            default: null
         },
 
         phone: {
@@ -55,7 +54,7 @@ const userSchema = new mongoose.Schema(
 
         status: {
             type: String,
-            enum: ["active", "inactive"],
+            enum: ["active", "inactive", "pending"],
             default: "active"
         },
 
