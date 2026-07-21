@@ -1,12 +1,39 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import BoxLeft from "../components/BoxLeft";
-import { Button, Form, Input } from "antd";
+import { Button, Form, Input, message } from "antd";
+import { loginSchema, type LoginBody } from "../validations/auth.validation";
+import { zodToAntFormErrors } from "../../../shared/utils/zodToAntFormErrors";
+import { useLogin } from "../hooks/useLogin";
+import { getErrorMessage } from "../../../shared/utils/errorHandler";
+import { useAppDispatch } from "../../../app/hooks";
+import { setAuth } from "../auth.slice";
 
 const LoginPage = () => {
     const [form] = Form.useForm();
+    const {login, loading} = useLogin();
+    const navigate = useNavigate();
+    const dispatch = useAppDispatch();
 
-    const handleSubmit = async (values: { email: string; password: string; }) => {
-        console.log(values);
+    const handleSubmit = async (values: LoginBody) => {
+        const parsed = loginSchema.safeParse(values);
+        if(!parsed.success){
+            const formErrors = zodToAntFormErrors(parsed.error);
+            form.setFields(
+                Object.keys(formErrors).map((key) => ({
+                    name: key,
+                    errors: formErrors[key],
+                }))
+            );
+            return;
+        }
+        try {
+            const result = await login(parsed.data);
+            message.success(result.message);
+            dispatch(setAuth(result.data));
+            navigate("/");
+        } catch (error) {
+            message.error(getErrorMessage(error));
+        }
     };
     return (
         <div className="min-h-screen w-full grid grid-cols-1 md:grid-cols-7 bg-white">
@@ -47,6 +74,7 @@ const LoginPage = () => {
                             <Link to={"/"} className="text-sm !text-[#3b82f6] hover:underline" > Quên mật khẩu? </Link>
                         </div>
                         <Button
+                            loading={loading}
                             htmlType="submit"
                             className="!h-auto !p-3 !rounded-xl !bg-primary-500 hover:!bg-red-700 !text-white !font-bold tracking-wide shadow-sm !border-0"
                         >

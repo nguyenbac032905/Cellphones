@@ -11,7 +11,7 @@ import { updateUserSchema } from "../validations/user.validation";
 import { useUpdateUserAdmin } from "../hooks/useUpdateUserAdmin";
 import { useAdminRoles } from "../../roles/hooks/useAdminRoles";
 import { useUserAdmin } from "../hooks/useUserAdmin";
-import { privateClient } from "../../../shared/api/privateClient";
+import { privateAdmin } from "../../../shared/api/privateAdmin";
 const { Title } = Typography;
 
 const UpdateUserPage = () => {
@@ -318,7 +318,7 @@ const UpdateUserPage = () => {
                                         const formData = new FormData();
                                         formData.append( "images", file as Blob );
 
-                                        const res = await privateClient.post( "/admin/api/uploads/images", 
+                                        const res = await privateAdmin.post( "/admin/api/uploads/images", 
                                             formData,
                                             {
                                                 headers: { "Content-Type": "multipart/form-data", },

@@ -2,7 +2,7 @@ import { clearAuth, setAuth } from "../../features/auth/auth.slice";
 import { publicClient } from "../../shared/api/publicClient";
 import { store } from "../store";
 
-export const bootstrapAuth = async () => {
+export const bootstrapAdminAuth = async () => {
     try{
         const refreshRes = await publicClient.get("/admin/api/auth/refresh-token");
         const accessToken = refreshRes.data.data.accessToken;

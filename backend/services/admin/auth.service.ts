@@ -49,48 +49,6 @@ export const loginService = async ( email: string, password: string ) => {
         user: payload,
     };
 };
-export const registerService = async ( fullName: string, email: string, password: string, roleID: string ) => {
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-        throw new AppError("Email already exists!", 400);
-    }
-    const hashedPassword = await bcrypt.hash(password,10);
-    const newUser = new User({
-        fullName,
-        email,
-        accountType: "admin",
-        roleID: roleID,
-        password: hashedPassword
-    });
-    await newUser.save();
-    await newUser.populate("roleID", "permissions");
-
-    const payload = {
-        _id: newUser._id,
-        fullName: newUser.fullName,
-        email: newUser.email,
-        phone: newUser.phone,
-        avatar: newUser.avatar,
-        accountType: newUser.accountType,
-        roleID: newUser.roleID,
-        status: newUser.status
-    };
-
-    const newAccessToken = generateAccessToken(payload);
-    const newRefreshToken = generateRefreshToken(payload);
-    await User.findByIdAndUpdate(newUser._id, {
-        refreshToken: newRefreshToken,
-        refreshTokenExpiredAt:
-            new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
-    });
-
-    return {
-        message: "Đăng ký thành công",
-        newAccessToken,
-        newRefreshToken,
-        user: payload
-    };
-};
 export const refreshTokenService = async (refreshToken: string) => {
     if (!refreshToken) {
         throw new AppError("Refresh token missing", 401);

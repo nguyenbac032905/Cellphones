@@ -3,7 +3,7 @@ import { Button, Card, Form, Image, Input, message, Radio, Spin, TreeSelect, Upl
 import { PlusOutlined } from "@ant-design/icons";
 import { useNavigate, useParams } from "react-router-dom";
 import AdminTitle from "../../../shared/components/AdminTitle";
-import { privateClient } from "../../../shared/api/privateClient";
+import { privateAdmin } from "../../../shared/api/privateAdmin";
 import { getErrorMessage } from "../../../shared/utils/errorHandler";
 import { zodToAntFormErrors } from "../../../shared/utils/zodToAntFormErrors";
 import { useAdminCategoriesTree } from "../hooks/useAdminCategoriesTree";
@@ -193,7 +193,7 @@ const UpdateCategoryAdminPage = () => {
                                                 const formData = new FormData();
                                                 formData.append("images", file as Blob);
 
-                                                const res = await privateClient.post(
+                                                const res = await privateAdmin.post(
                                                     "/admin/api/uploads/images",
                                                     formData,
                                                     {

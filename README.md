@@ -239,3 +239,10 @@
 64. xong trang products list theo category
 65. làm trang chi tiết sản phẩm
 66. là giao diện trang đăng nhập, đăng kí
+67. làm tính năng register bên client
+    1. tạo helper sendmail, tạo route register, khi người dùng gửi đúng email sẽ gửi otp về email đó
+    2. tạo api verify-token, khi người dùng xác nhận đúng OTP thì gắn registerToken vào trong http only cookie
+    3. tạo api setPassword, kiểm tra xem người dùng có registerToken không, nếu có mới cho set mật khẩu
+    4. tạo service,hook cho api register và trang register
+    5. tạo service,hook cho api verify-token và trang verify
+    6. tạo service,hook cho api setPassword và trang setPassword

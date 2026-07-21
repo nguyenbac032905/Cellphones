@@ -8,7 +8,6 @@ import { loginRateLimitMiddleware} from "../../middlewares/shared/rateLimit.midd
 
 router.post("/login",loginRateLimitMiddleware,validateMiddlware(loginSchema), controller.login);
 router.post("/logout",authMiddleware, controller.logout)
-// router.post("/register",rateLimitRegisterMiddleware,validateMiddlware(registerSchema), controller.register);
 router.get("/refresh-token", controller.refreshToken);
 router.get("/me",authMiddleware, controller.getMe);
 router.patch("/me", authMiddleware,validateMiddlware(updateMeSchema), controller.updateMe);

@@ -6,7 +6,7 @@ const emailSchema = z
 
 const passwordSchema = z
     .string()
-    .min(6, "Password must be at least 8 characters")
+    .min(6, "Password must be at least 6 characters")
     .max(100, "Password must not exceed 100 characters");
 
 export const updateMeSchema = z.object({
@@ -56,3 +56,9 @@ export const setPasswordSchema = z.object({
             .max(100, "Full name must not exceed 100 characters")
 })
 export type SetPasswordBody = z.infer<typeof setPasswordSchema>;
+
+export const loginSchema = z.object({
+    email: emailSchema,
+    password: passwordSchema
+}).strict();
+export type LoginBody = z.infer<typeof loginSchema>;

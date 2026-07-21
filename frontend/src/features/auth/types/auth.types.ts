@@ -1,34 +1,49 @@
-import type { ApiResponse } from "../../../shared/types/common.type";
-
-export interface User {
+interface BaseUser {
     _id: string;
     fullName: string;
     email: string;
     phone: string;
     avatar: string;
-    accountType: string;
-    roleID: {
-        _id: string,
-        permissions: string[]
-    };
-    status: string;
 }
+
+export interface Client extends BaseUser {
+    accountType: "client";
+}
+
+export interface Admin extends BaseUser {
+    accountType: "admin";
+    status: "active" | "inactive";
+    roleID: {
+        _id: string;
+        permissions: string[];
+    };
+}
+
 export type LoginPayload = {
     email: string;
     password: string;
-}
-export type DataResponse = {
+};
+
+type AuthResponse<T extends BaseUser> = {
     accessToken: string;
-    user: User;
-}
-export type LoginResponse = {
+    user: T;
+};
+
+type LoginResponse<T extends BaseUser> = {
     success: boolean;
     message: string;
-    data: DataResponse;
-}
-export type GetMeResponse = {
+    data: AuthResponse<T>;
+};
+
+type GetMeResponse<T extends BaseUser> = {
     success: boolean;
     data: {
-        user: User
-    }
-}
+        user: T;
+    };
+};
+
+export type AdminLoginResponse = LoginResponse<Admin>;
+export type UserLoginResponse = LoginResponse<Client>;
+
+export type GetAdminResponse = GetMeResponse<Admin>;
+export type GetUserResponse = GetMeResponse<Client>;

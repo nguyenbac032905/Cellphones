@@ -6,7 +6,7 @@ import LoadingScreen from "../../../shared/components/LoadingScreen";
 import CustomAlert from "../../../shared/components/CustomAlert";
 import { getErrorMessage } from "../../../shared/utils/errorHandler";
 import { zodToAntFormErrors } from "../../../shared/utils/zodToAntFormErrors";
-import { privateClient } from "../../../shared/api/privateClient";
+import { privateAdmin } from "../../../shared/api/privateAdmin";
 import { useGetMeAdmin } from "../hooks/useGetMeAdmin";
 import { useUpdateMeAdmin } from "../hooks/useUpdateMeAdmin";
 import { updateMeSchema } from "../validations/auth.validation";
@@ -183,7 +183,7 @@ const MyAccountAdminPage = () => {
                                                 const formData = new FormData();
                                                 formData.append("images", file as Blob);
 
-                                                const res = await privateClient.post("/admin/api/uploads/images",
+                                                const res = await privateAdmin.post("/admin/api/uploads/images",
                                                     formData,
                                                     { headers: { "Content-Type": "multipart/form-data" } }
                                                 );

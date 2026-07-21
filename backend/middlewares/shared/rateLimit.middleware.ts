@@ -15,7 +15,7 @@ export const globalRateLimitMiddleware = rateLimit({
 //auth
 export const loginRateLimitMiddleware = rateLimit({
     windowMs: 15*60*1000,
-    max: 5,
+    max: 15,
     //chỉ tính request lỗi
     skipSuccessfulRequests: true,
     standardHeaders: true,

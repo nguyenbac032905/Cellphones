@@ -1,6 +1,5 @@
     import { NextFunction, Request, Response } from "express";
     import jwt from "jsonwebtoken";
-    import Role from "../../models/role.model";
     import { AccessTokenPayload } from "../../types/auth.type";
     import { AppError } from "../../utils/AppError";
     import User from "../../models/user.model";
@@ -18,7 +17,7 @@
                 process.env.JWT_ACCESS_SECRET!
             ) as AccessTokenPayload;
             
-            const user = await User.findOne({_id: decoded._id}).select("-password -refreshToken -refreshTokenExpiredAt").populate("roleID","permissions").lean(); 
+            const user = await User.findOne({_id: decoded._id, deleted: false, status: "active"}).select("-password -refreshToken -refreshTokenExpiredAt").populate("roleID","permissions").lean(); 
             if (!user) {
                 throw new AppError("User not found", 404);
             }

@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { getErrorMessage } from "../../../shared/utils/errorHandler";
-import type { User } from "../types/auth.types";
+import type { Admin } from "../types/auth.types";
 import { adminAuthService } from "../services/adminAuth.service";
 
 export const useGetMeAdmin = () => {
-    const [me, setMe] = useState<User>();
+    const [me, setMe] = useState<Admin>();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const fetchMe = async () => {

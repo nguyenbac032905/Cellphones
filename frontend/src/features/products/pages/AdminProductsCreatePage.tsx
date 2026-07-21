@@ -5,7 +5,7 @@ import { PlusOutlined, StarFilled } from "@ant-design/icons";
 import { useAdminCategoriesTree } from "../../productCategories/hooks/useAdminCategoriesTree";
 import AdminTitle from "../../../shared/components/AdminTitle";
 import { useAdminCreateProduct } from "../hooks/useAdminCreateProduct";
-import { privateClient } from "../../../shared/api/privateClient";
+import { privateAdmin } from "../../../shared/api/privateAdmin";
 import { useNavigate } from "react-router-dom";
 import { createProductSchema } from "../validations/product.validation";
 import { zodToAntFormErrors } from "../../../shared/utils/zodToAntFormErrors";
@@ -214,7 +214,7 @@ const AdminProductsCreatePage = () => {
                                             try {
                                                 const formData = new FormData();
                                                 formData.append("images", file as Blob);
-                                                const res = await privateClient.post(
+                                                const res = await privateAdmin.post(
                                                     "/admin/api/uploads/images",
                                                     formData,
                                                     {

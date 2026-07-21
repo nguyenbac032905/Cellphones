@@ -4,10 +4,15 @@ import App from './App.tsx'
 
 import {store} from "./app/store.ts";
 import { Provider } from 'react-redux';
-import { bootstrapAuth } from './app/bootstrap/bootstrapAuth.ts';
+import { bootstrapAdminAuth } from './app/bootstrap/bootstrapAdminAuth.ts';
+import { bootstrapClientAuth } from './app/bootstrap/bootstrapClientAuth.ts';
 
 const renderApp = async () => {
-  await bootstrapAuth();
+  if (window.location.pathname.startsWith("/admin")) {
+        await bootstrapAdminAuth();
+    } else {
+        await bootstrapClientAuth();
+    }
   createRoot(document.getElementById('root')!).render(
     <Provider store={store}>
       <App />

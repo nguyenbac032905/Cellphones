@@ -10,7 +10,7 @@ import { useAdminProduct } from "../hooks/useAdminProduct";
 import LoadingScreen from "../../../shared/components/LoadingScreen";
 import CustomAlert from "../../../shared/components/CustomAlert";
 import { useAdminUpdateProduct } from "../hooks/useAdminUpdateProduct";
-import { privateClient } from "../../../shared/api/privateClient";
+import { privateAdmin } from "../../../shared/api/privateAdmin";
 import { updateProductSchema } from "../validations/product.validation";
 import { zodToAntFormErrors } from "../../../shared/utils/zodToAntFormErrors";
 import { getErrorMessage } from "../../../shared/utils/errorHandler";
@@ -369,7 +369,7 @@ const AdminProductsUpdatePage = () => {
                                             try {
                                                 const formData = new FormData();
                                                 formData.append("images", file as Blob);
-                                                const res = await privateClient.post(
+                                                const res = await privateAdmin.post(
                                                     "/admin/api/uploads/images",
                                                     formData,
                                                     {

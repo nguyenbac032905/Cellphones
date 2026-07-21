@@ -1,15 +1,15 @@
 import { useState } from "react";
-import type { VerifyOtpBody } from "../validations/auth.validation";
+import type { LoginBody } from "../validations/auth.validation";
 import { authService } from "../services/auth.service";
 
-export const useVerifyOtp = () => {
+export const useLogin = () => {
     const [loading, setLoading] = useState(false);
 
-    const verifyOtp = async (body: VerifyOtpBody) => {
+    const login = async (body: LoginBody) => {
         try {
             setLoading(true);
 
-            const res = await authService.verifyOtp(body);
+            const res = await authService.login(body);
 
             return res;
         } finally {
@@ -17,5 +17,5 @@ export const useVerifyOtp = () => {
         }
     };
 
-    return { loading, verifyOtp };
+    return { loading, login };
 };

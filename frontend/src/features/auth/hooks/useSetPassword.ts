@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { adminAuthService } from "../services/adminAuth.service";
 import type { SetPasswordBody } from "../validations/auth.validation";
+import { authService } from "../services/auth.service";
 
 export const useSetPassword = () => {
     const [loading, setLoading] = useState(false);
@@ -9,7 +9,7 @@ export const useSetPassword = () => {
         try {
             setLoading(true);
 
-            const res = await adminAuthService.setPassword(body);
+            const res = await authService.setPassword(body);
 
             return res;
         } finally {
