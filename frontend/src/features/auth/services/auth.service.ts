@@ -1,3 +1,4 @@
+import { privateClient } from "../../../shared/api/privateClient";
 import { publicClient } from "../../../shared/api/publicClient";
 import type { MessageResponse } from "../../../shared/types/common.type";
 import type { UserLoginResponse } from "../types/auth.types";
@@ -18,5 +19,9 @@ export const authService = {
     login: async (body: LoginBody): Promise<UserLoginResponse> => {
         const res = await publicClient.post<UserLoginResponse>("/api/auth/login",body);
         return res.data
-    }
+    },
+    logout: async (): Promise<MessageResponse> => {
+        const res = await privateClient.post<MessageResponse>("/api/auth/logout");
+        return res.data;
+    },
 };

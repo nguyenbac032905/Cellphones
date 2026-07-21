@@ -1,4 +1,4 @@
-import { loginService, refreshTokenService, registerService, setPasswordService, verifyTokenService } from "../../services/client/auth.service";
+import { loginService, logoutService, refreshTokenService, registerService, setPasswordService, verifyTokenService } from "../../services/client/auth.service";
 import { AppError } from "../../utils/AppError";
 import { asyncHandler } from "../../utils/asyncHandler";
 import { Request, Response } from "express";
@@ -71,5 +71,18 @@ export const getMe = asyncHandler(async (req: Request, res: Response) => {
         data: {
             user: user
         }
+    });
+});
+export const logout = asyncHandler(async (req: Request, res: Response) => {
+    const user = req.user!;
+    const result = await logoutService(user._id.toString());
+    res.clearCookie("refreshToken", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+    });
+    return res.json({
+        success: true,
+        message: result.message,
     });
 });

@@ -14,4 +14,6 @@ router.post("/login",loginRateLimitMiddleware,validateMiddlware(loginSchema), co
 router.get("/refresh-token", controller.refreshToken);
 router.get("/me",authMiddleware, controller.getMe);
 
+router.post("/logout",authMiddleware, controller.logout)
+
 export default router;

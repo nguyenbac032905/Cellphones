@@ -1,13 +1,24 @@
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowDownIcon, CartIcon, CartMobileIcon, CategoryIcon, LocationIcon, LocationMobileIcon, SearchIcon, UserOutlineIcon } from "../../shared/components/Icons";
 import { useAppSelector } from "../../app/hooks";
-import { Dropdown, type MenuProps } from "antd";
+import { Dropdown, message } from "antd";
 import { UserOutlined, LogoutOutlined, ShoppingOutlined, GiftOutlined, EnvironmentOutlined, CrownOutlined, } from "@ant-design/icons";
 import { getLastName } from "../../shared/utils/getLastName";
+import { useLogout } from "../../features/auth/hooks/useLogout";
+import { getErrorMessage } from "../../shared/utils/errorHandler";
 const ClientHeaderBottom = () => {
     const user = useAppSelector(state => state.auth.user);
     const navigate = useNavigate();
-
+    const { logout } = useLogout();
+    const handleLogout = async () => {
+        try {
+            const resLogout = await logout();
+            navigate("/login", {replace: true});
+            message.success(resLogout.message);
+        } catch (error) {
+            message.error(getErrorMessage(error));
+        }
+    }
     return (
         <div className="mx-auto flex w-full max-w-[1200px] items-center gap-3 px-2 py-4 xl:px-1">
             {/* LOGO CELLPHONES (Tự thích ứng PC / Mobile) */}
@@ -43,12 +54,12 @@ const ClientHeaderBottom = () => {
                 </form>
             </div>
             {/* NÚT GIỎ HÀNG (Chỉ hiện chữ trên PC) */}
-            <span className="hover:bg-primary-500 hidden items-center justify-center gap-2 cursor-pointer min-h-[40px] rounded-lg text-white border-none bg-transparent md:flex px-3">
+            <Link to={"/cart"} className="hover:bg-primary-500 hidden items-center justify-center gap-2 cursor-pointer min-h-[40px] rounded-lg text-white border-none bg-transparent md:flex px-3">
                 <span className="hidden lg:inline-block text-sm">Giỏ hàng</span>
                 <span className="relative">
                     <CartIcon />
                 </span>
-            </span>
+            </Link>
             {/* NÚT ĐĂNG NHẬP (Chỉ hiện trên PC) */}
             {user ? (
                 <Dropdown
@@ -105,11 +116,11 @@ const ClientHeaderBottom = () => {
                             {/* NÚT ĐĂNG XUẤT */}
                             <div className="border-t border-neutral-100 p-1.5 bg-neutral-50/50">
                                 <button
-                                onClick={() => console.log("logout")}
-                                className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-xs font-semibold text-primary-500 transition-colors hover:bg-red-100/70 cursor-pointer"
+                                    onClick={() => handleLogout()}
+                                    className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-xs font-semibold text-primary-500 transition-colors hover:bg-red-100/70 cursor-pointer"
                                 >
                                 <LogoutOutlined className="text-base text-primary-500" />
-                                <span>Đăng xuất</span>
+                                    <span>Đăng xuất</span>
                                 </button>
                             </div>
                         </div>

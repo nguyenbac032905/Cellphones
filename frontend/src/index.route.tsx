@@ -12,6 +12,8 @@ import ForbiddenPage from "./shared/pages/ForbiddenPage";
 import { usersAdminRoutes } from "./features/users/user.route";
 import MyAccountAdminPage from "./features/auth/pages/MyAccountAdminPage";
 import { productCategoryAdminRoutes } from "./features/productCategories/productCategory.route";
+import ClientPrivateRoute from "./features/auth/components/ClientPrivateRoute";
+import { cartRoutes } from "./features/cart/cart.route";
 
 export const routes = [
     {
@@ -46,7 +48,14 @@ export const routes = [
             ...authRoutes,
             {
                 element: <ClientLayout />,
-                children: [...homeRoutes,...productRoutes]
+                children: [
+                    {
+                        element: <ClientPrivateRoute />,
+                        children: [...cartRoutes]
+                    },
+                    ...homeRoutes,
+                    ...productRoutes
+                ]
             }
         ]
     },

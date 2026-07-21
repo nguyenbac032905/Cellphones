@@ -246,3 +246,18 @@
     4. tạo service,hook cho api register và trang register
     5. tạo service,hook cho api verify-token và trang verify
     6. tạo service,hook cho api setPassword và trang setPassword
+68. làm tính năng đăng nhập client
+    1. tạo api login cho client
+    2. tạo api refresh token cho client
+    3. tạo api get me cho client
+    4. sửa lại kiểu kiểu trả về khi login của client khác admin 
+    5. fronted:
+    6. viết authmiddleware cho client
+    7. sửa lại instance private trước đây dùng thành admin chứ không phải client và tạo instance cho privateClient
+    8. sửa lại auth type cho kiểu tr ả về khi login tương ứng với backend
+    9. thêm validate login
+    10. tạo client service login, tạo hook client login
+    11. xử lí sự kiện khi người dùng bấm nút đăng nhập bên trang login
+    12. sửa lại auth slice lưu kiểu user là client hoặc admin
+    13. sửa lại header client, hiển thị dropdown và nút đăng nhập, fullName tương ứng
+    14. tạo bootstrapClient và bootstrapAdmin riêng vì client sau này trả về cả cart riêng

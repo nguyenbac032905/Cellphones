@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
-import { AccessTokenPayload, AccessTokenPayloadClient } from "../../types/auth.type";
+import { AccessTokenPayloadClient } from "../../types/auth.type";
 import User from "../../models/user.model";
 import { AppError } from "../../utils/AppError";
 

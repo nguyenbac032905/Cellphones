@@ -1,17 +1,12 @@
-
 import { useSelector } from "react-redux"
 import { Navigate, Outlet } from "react-router-dom";
 import type { RootState } from "../../../app/store";
 
-const AdminPrivateRoute = () => {
-    const user = useSelector((state: RootState) => state.auth.user);
+const ClientPrivateRoute = () => {
     const accessToken = useSelector((state: RootState) => state.auth.accessToken);
     if(!accessToken){
-        <Navigate to={"/admin/login"} replace/>
-    }
-    if (user?.accountType !== "admin") {
-        return <Navigate to="/" replace />;
+        <Navigate to={"/login"} replace/>
     }
     return <Outlet />
 }
-export default AdminPrivateRoute
+export default ClientPrivateRoute

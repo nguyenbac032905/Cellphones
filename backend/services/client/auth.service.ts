@@ -193,68 +193,14 @@ export const refreshTokenService = async (refreshToken: string) => {
         accessToken: newAccessToken,
     };
 };
+export const logoutService = async (userID: string) => {
+    const user = await User.updateOne({_id: userID},{refreshToken: null, refreshTokenExpiredAt: null});
+    if(user.matchedCount == 0){
+        throw new AppError("User not found", 404);
+    }
+    return {
+        message: "Logout successfully!"
+    }
+};
 
-const registerOtpTemplate = (otp: string) => `
-<div
-    style="
-        max-width:480px;
-        margin:auto;
-        padding:32px 24px;
-        border:1px solid #e5e7eb;
-        border-radius:12px;
-        font-family:Arial,sans-serif;
-        color:#333;
-    "
->
-    <h2
-        style="
-            margin:0 0 20px;
-            color:#d70018;
-            text-align:center;
-        "
-    >
-        Xác thực đăng ký SMEMBER
-    </h2>
-
-    <p>Xin chào,</p>
-
-    <p>
-        Đây là mã OTP để hoàn tất đăng ký tài khoản của bạn:
-    </p>
-
-    <div
-        style="
-            margin:24px 0;
-            padding:16px;
-            background:#fff5f5;
-            border-radius:8px;
-            text-align:center;
-            font-size:32px;
-            font-weight:bold;
-            letter-spacing:8px;
-            color:#d70018;
-        "
-    >
-        ${otp}
-    </div>
-
-    <p>Mã có hiệu lực trong <strong>5 phút</strong>.</p>
-
-    <p style="color:#6b7280;font-size:14px;">
-        Nếu bạn không yêu cầu mã này, vui lòng bỏ qua email.
-    </p>
-
-    <hr style="margin:24px 0;border:none;border-top:1px solid #e5e7eb;" />
-
-    <p
-        style="
-            margin:0;
-            text-align:center;
-            color:#9ca3af;
-            font-size:13px;
-        "
-    >
-        © SMEMBER
-    </p>
-</div>
-`;
+const registerOtpTemplate = (otp: string) => ` <div style=" max-width:480px; margin:auto; padding:32px 24px; border:1px solid #e5e7eb; border-radius:12px; font-family:Arial,sans-serif; color:#333; " > <h2 style=" margin:0 0 20px; color:#d70018; text-align:center; " > Xác thực đăng ký SMEMBER </h2> <p>Xin chào,</p> <p> Đây là mã OTP để hoàn tất đăng ký tài khoản của bạn: </p> <div style=" margin:24px 0; padding:16px; background:#fff5f5; border-radius:8px; text-align:center; font-size:32px; font-weight:bold; letter-spacing:8px; color:#d70018; " > ${otp} </div> <p>Mã có hiệu lực trong <strong>5 phút</strong>.</p> <p style="color:#6b7280;font-size:14px;"> Nếu bạn không yêu cầu mã này, vui lòng bỏ qua email. </p> <hr style="margin:24px 0;border:none;border-top:1px solid #e5e7eb;" /> <p style=" margin:0; text-align:center; color:#9ca3af; font-size:13px; " > © SMEMBER </p> </div> `;

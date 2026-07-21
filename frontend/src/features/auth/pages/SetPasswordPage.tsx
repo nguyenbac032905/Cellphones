@@ -68,7 +68,13 @@ const SetPasswordPage = () => {
                         >
                             <Input.Password
                                 placeholder="Nhập mật khẩu"
-                                className="!p-3 !rounded-xl !border !border-neutral-300 focus:!border-primary-500 text-sm focus:!shadow-none"
+                                className="!rounded-xl !border !border-neutral-300 focus-within:!border-primary-500 focus-within:!shadow-none text-sm"
+                                styles={{
+                                    input: {
+                                        padding: "9px",
+                                        fontSize: "14px",
+                                    },
+                                }}
                             />
                         </Form.Item>
                         <Form.Item
@@ -98,7 +104,13 @@ const SetPasswordPage = () => {
                         >
                             <Input.Password
                                 placeholder="Nhập lại mật khẩu"
-                                className="!p-3 !rounded-xl !border !border-neutral-300 focus:!border-primary-500 text-sm focus:!shadow-none"
+                                className="!rounded-xl !border !border-neutral-300 focus-within:!border-primary-500 focus-within:!shadow-none text-sm"
+                                styles={{
+                                    input: {
+                                        padding: "9px",
+                                        fontSize: "14px",
+                                    },
+                                }}
                             />
                         </Form.Item>
 
