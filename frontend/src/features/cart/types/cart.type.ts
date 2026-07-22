@@ -9,17 +9,18 @@ export interface ProductInCart {
     mainImage: string;
     slug: string
 }
-
 export interface CartItem {
-    _id: string;
+    _id?: string;
     productID: ProductInCart;
     quantity: number;
 }
-
 export interface Cart {
     _id: string;
     userID: string;
     products: CartItem[];
 }
-
 export type CartResponse = ApiResponse<Cart>;
+export type CartItemBody = {
+    productID: string,
+    quantity: number
+}

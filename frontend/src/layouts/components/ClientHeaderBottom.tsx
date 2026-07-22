@@ -20,6 +20,7 @@ const ClientHeaderBottom = () => {
         }
     }
     const cart = useAppSelector(state => state.cart.cart);
+    console.log(cart)
     return (
         <div className="mx-auto flex w-full max-w-[1200px] items-center gap-3 px-2 py-4 xl:px-1">
             {/* LOGO CELLPHONES (Tự thích ứng PC / Mobile) */}
@@ -54,12 +55,24 @@ const ClientHeaderBottom = () => {
                     </div>
                 </form>
             </div>
-            {/* NÚT GIỎ HÀNG (Chỉ hiện chữ trên PC) */}
-            <Link to={"/cart"} className="hover:bg-primary-500 hidden items-center justify-center gap-2 cursor-pointer min-h-[40px] rounded-lg text-white border-none bg-transparent md:flex px-3">
-                <span className="hidden lg:inline-block text-sm">Giỏ hàng</span>
-                <Badge size="small" count={cart?.products.length || 0} className="hover:!none">
-                    <CartIcon className="size-6 text-white"/>
-                </Badge>
+            {/* NÚT GIỎ HÀNG */}
+            <Link
+                to="/cart"
+                className="hover:bg-white/10 hidden min-h-[40px] cursor-pointer items-center justify-center gap-2 rounded-lg border-none bg-transparent px-3 text-white transition-colors md:flex"
+            >
+                <span className="hidden text-sm font-medium lg:inline-block">
+                    Giỏ hàng
+                </span>
+
+                <div className="relative flex items-center justify-center">
+                    <CartIcon className="size-6 text-white" />
+
+                    {!!cart?.products.length && (
+                        <span className="absolute -top-1 -right-1.5 flex h-3 w-3 items-center justify-center rounded-full bg-[#ff4d4f] px-1 text-[8px] font-semibold text-white shadow-[0_2px_4px_rgba(0,0,0,0.2)] ring-2 ring-white">
+                            {cart.products.reduce((sum, item) => sum + item.quantity, 0)}
+                        </span>
+                    )}
+                </div>
             </Link>
             {/* NÚT ĐĂNG NHẬP (Chỉ hiện trên PC) */}
             {user ? (

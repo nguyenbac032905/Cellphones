@@ -1,15 +1,19 @@
 import { useState } from "react";
-import type { CartItemBody } from "../validations/cart.validation";
 import { cartService } from "../services/cart.service";
+import type { CartItem } from "../types/cart.type";
+import { addItem } from "../cart.slice";
+import { useDispatch } from "react-redux";
 
 export const useAddItem = () => {
     const [loading, setLoading] = useState(false);
+    const dispatch = useDispatch();
 
-    const addItemToCart = async (body: CartItemBody) => {
+    const addItemToCart = async (cartItem: CartItem) => {
         try {
             setLoading(true);
 
-            const result = await cartService.addItem(body);
+            const result = await cartService.addItem({productID: cartItem.productID._id, quantity: cartItem.quantity});
+            dispatch(addItem(cartItem));
 
             return result;
         } finally {

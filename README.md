@@ -261,3 +261,16 @@
     12. sửa lại auth slice lưu kiểu user là client hoặc admin
     13. sửa lại header client, hiển thị dropdown và nút đăng nhập, fullName tương ứng
     14. tạo bootstrapClient và bootstrapAdmin riêng vì client sau này trả về cả cart riêng
+69. làm trang cart
+70. viết các api cart và lưu cart vào state, hiển thị cart trong state ra giao diện
+    1. sửa lại login service, khi user login sẽ tạo cart cho họ nếu chưa có
+    2. tạo api getCart
+    3. tạo api addItem
+    4. tạo api edit quantity
+    5. tạo api deleteItem
+    6. tạo getCart service, addItem service
+    7. tạo hook addItem
+    8. tạo cart.slice để lưu state cart
+    9. viết bootstrap cart để call lại state khi load trang, sử dụng trong main.tsx
+    10. sử dụng bootstrapcart để call state cart khi login trong hook useLogin
+    11. lấy ra cart trong state và hiển thị ra giao diện trang cart, header

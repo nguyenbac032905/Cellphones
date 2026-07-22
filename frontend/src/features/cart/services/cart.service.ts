@@ -1,7 +1,6 @@
 import { privateClient } from "../../../shared/api/privateClient";
 import type { MessageResponse } from "../../../shared/types/common.type";
-import type { CartResponse } from "../types/cart.type";
-import type { CartItemBody } from "../validations/cart.validation";
+import type { CartItemBody, CartResponse } from "../types/cart.type";
 
 export const cartService = {
     getCart: async (): Promise<CartResponse> => {
@@ -9,7 +8,7 @@ export const cartService = {
         return result.data;
     },
     addItem: async (body: CartItemBody): Promise<MessageResponse> => {
-        const result = await privateClient.post<MessageResponse>("/api/cart", body);
+        const result = await privateClient.post<MessageResponse>("/api/cart/items", body);
         return result.data;
     }
 }

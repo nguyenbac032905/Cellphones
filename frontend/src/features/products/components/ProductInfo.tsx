@@ -2,6 +2,9 @@ import type { ProductDetailClient } from "../types/products.type";
 import { Link } from "react-router-dom";
 import { CartIcon, CommentIcon, CpuIcon, FillStar, HeartIcon, PlusBorderIcon } from "../../../shared/components/Icons";
 import TicketPromo from "../components/TicketPromo";
+import { useAddItem } from "../../cart/hooks/useAddItem";
+import { message } from "antd";
+import { getErrorMessage } from "../../../shared/utils/errorHandler";
 const promos = [
     "Chỉ thêm 30K - nhận Sim/Esim 5G VNSKY, có ngay 3GB data/ngày+500 phút gọi Mobifone & VNSKY, miễn phí 30 ngày đầu - chỉ áp dụng tại cửa hàng",
     "Giảm thêm 10% cho Pin dự phòng - Camera giám sát - Đồng hồ trẻ em - Gia dụng - Sức khỏe Làm đẹp khi mua Điện thoại/Laptop",
@@ -13,6 +16,27 @@ const promos = [
 ];
 const ProductInfo = ({ product }: { product: ProductDetailClient }) => {
     const newPrice = Math.round(product.price * (1 - product.discountPercentage / 100));
+    const {addItemToCart, loading} = useAddItem();
+    const handleAddToCart = async () => {
+        try {
+            const cartItem = {
+                productID: {
+                    _id: product._id,
+                    title: product.title,
+                    price: product.price,
+                    stock: product.stock,
+                    discountPercentage: product.discountPercentage,
+                    mainImage: product.images.find(item => item.isMain === true)?.url ?? "",
+                    slug: product.slug
+                },
+                quantity: 1
+            }
+            const result = await addItemToCart(cartItem);
+            message.success(result.message);
+        } catch (error) {
+            message.error(getErrorMessage(error));
+        }
+    }
     return (
         <div className="flex flex-col gap-3 p-2">
             {/* danh gia */}
@@ -127,8 +151,8 @@ const ProductInfo = ({ product }: { product: ProductDetailClient }) => {
                     <strong>MUA NGAY</strong>
                     <span className="text-xs">Giao nhanh từ 2 giờ hoặc nhận tại cửa hàng</span>
                 </button>
-                <button className="flex items-center justify-center gap-1 !border !border-primary-500 rounded-xl !text-primary-500 p-1.5 hover:bg-[#fbe6e8] transition-all duration-200">
-                    <CartIcon />
+                <button onClick={() => handleAddToCart()} className="flex items-center justify-center gap-1 !border !border-primary-500 rounded-xl !text-primary-500 p-1.5 hover:bg-[#fbe6e8] transition-all duration-200">
+                    <CartIcon className="size-6" />
                     <strong >Thêm vào giỏ hàng</strong>
                 </button>
             </div>

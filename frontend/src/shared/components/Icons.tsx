@@ -39,14 +39,56 @@ export const ArrowDownIcon = () => {
         <path fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="48" d="m112 184 144 144 144-144"></path>
     </svg>
 }
-export const CartIcon = ({className}: {className: string}) => {
-    return <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" className={className} height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="176" cy="416" r="16" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="32"></circle>
-        <circle cx="400" cy="416" r="16" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="32"></circle>
-        <path fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="32" d="M48 80h64l48 272h256"></path>
-        <path fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="32" d="M160 288h249.44a8 8 0 0 0 7.85-6.43l28.8-144a8 8 0 0 0-7.85-9.57H128"></path>
-    </svg>
-}
+export const CartIcon = ({ className }: { className?: string }) => {
+    return (
+        <svg
+            stroke="currentColor"
+            fill="currentColor"
+            strokeWidth={0}
+            viewBox="0 0 512 512"
+            className={className}
+            height="1em"
+            width="1em"
+            xmlns="http://www.w3.org/2000/svg"
+        >
+            <circle
+                cx="176"
+                cy="416"
+                r="16"
+                fill="none"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={32}
+            />
+
+            <circle
+                cx="400"
+                cy="416"
+                r="16"
+                fill="none"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={32}
+            />
+
+            <path
+                fill="none"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={32}
+                d="M48 80h64l48 272h256"
+            />
+
+            <path
+                fill="none"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={32}
+                d="M160 288h249.44a8 8 0 0 0 7.85-6.43l28.8-144a8 8 0 0 0-7.85-9.57H128"
+            />
+        </svg>
+    );
+};
 export const SearchIcon = () => {
     return <svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 512 512" className="text-pure-black" height="20" width="20" xmlns="http://www.w3.org/2000/svg">
         <path fill="none" strokeMiterlimit="10" strokeWidth="32" d="M221.09 64a157.09 157.09 0 1 0 157.09 157.09A157.1 157.1 0 0 0 221.09 64z"></path>

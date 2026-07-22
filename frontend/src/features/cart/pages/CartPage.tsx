@@ -53,8 +53,8 @@ const CartPage = () => {
                                                {item.productID.title}
                                             </Link>
                                             <div className="flex items-center gap-2">
-                                                <span className="text-sm sm:text-base font-bold text-primary-500">{(item.productID.price*(1-item.productID.discountPercentage/100))}đ</span>
-                                                <span className="text-xs text-neutral-400 line-through">{item.productID.price}đ</span>
+                                                <span className="text-sm sm:text-base font-bold text-primary-500">{Math.round((item.productID.price*(1-item.productID.discountPercentage/100))).toLocaleString("vi-VN")}đ</span>
+                                                <span className="text-xs text-neutral-400 line-through">{item.productID.price.toLocaleString("vi-VN")}đ</span>
                                             </div>
                                         </div>
 
@@ -63,7 +63,7 @@ const CartPage = () => {
                                                 <MinusOutlined className="text-[10px] sm:text-xs" />
                                             </button>
                                             <span className="w-7 sm:w-9 text-center text-xs sm:text-sm font-medium text-neutral-800">
-                                                1
+                                                {item.quantity}
                                             </span>
                                             <button className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center text-neutral-600 hover:bg-neutral-200 rounded-r-lg transition-colors">
                                                 <PlusOutlined className="text-[10px] sm:text-xs" />
