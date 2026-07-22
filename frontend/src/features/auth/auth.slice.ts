@@ -1,5 +1,5 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import type {DataResponse, AuthUser} from "./types/auth.types";
+import type { AuthResponse, AuthUser} from "./types/auth.types";
 
 interface AuthState{
     accessToken: string | null,
@@ -15,7 +15,7 @@ const authSlice = createSlice({
     name: "auth",
     initialState,
     reducers: {
-        setAuth: (state,action: PayloadAction<DataResponse>) => {
+        setAuth: (state,action: PayloadAction<AuthResponse>) => {
             state.accessToken = action.payload.accessToken;
             state.user = action.payload.user;
         },

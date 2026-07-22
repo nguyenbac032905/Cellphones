@@ -20,9 +20,9 @@ const AdminHeader = ({ collapsed, setCollapsed }: AdminHeaderProps) => {
     const { token: { colorBgContainer }, } = theme.useToken();
     const { loading, logout } = useAdminLogout();
     const navigate = useNavigate();
-    const user = useAppSelector(state => state.auth.user);
+    const user = useAppSelector((state) => state.auth.user);
     const DEFAULT_AVATAR = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSePQrmECqQyT4U2vF38XPiBEyF95GRpEgoTriZ3laX_7ce0_An2KeSQlE&s=10";
-
+    
     const items: MenuProps['items'] = [
         {
             key: 'myAccount',

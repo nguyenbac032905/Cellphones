@@ -19,9 +19,6 @@ export const bootstrapClientAuth = async () => {
                 user: profileRes.data.data.user,
             })
         );
-
-        // Nếu API client trả về cart thì dispatch luôn
-        // store.dispatch(setCart(profileRes.data.data.cart));
     } catch {
         store.dispatch(clearAuth());
     }

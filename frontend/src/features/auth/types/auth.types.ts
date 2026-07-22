@@ -5,11 +5,9 @@ interface BaseUser {
     phone: string;
     avatar: string;
 }
-
 export interface Client extends BaseUser {
     accountType: "client";
 }
-
 export interface Admin extends BaseUser {
     accountType: "admin";
     status: "active" | "inactive";
@@ -18,24 +16,25 @@ export interface Admin extends BaseUser {
         permissions: string[];
     };
 }
+export type AuthUser = Admin | Client;
 
 export type LoginPayload = {
     email: string;
     password: string;
 };
 
-type AuthResponse<T extends BaseUser> = {
+export type AuthResponse<T extends AuthUser = AuthUser> = {
     accessToken: string;
     user: T;
 };
 
-type LoginResponse<T extends BaseUser> = {
+export type LoginResponse<T extends AuthUser = AuthUser> = {
     success: boolean;
     message: string;
     data: AuthResponse<T>;
 };
 
-type GetMeResponse<T extends BaseUser> = {
+export type GetMeResponse<T extends AuthUser = AuthUser> = {
     success: boolean;
     data: {
         user: T;

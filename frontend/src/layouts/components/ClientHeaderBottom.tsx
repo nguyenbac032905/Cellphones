@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowDownIcon, CartIcon, CartMobileIcon, CategoryIcon, LocationIcon, LocationMobileIcon, SearchIcon, UserOutlineIcon } from "../../shared/components/Icons";
 import { useAppSelector } from "../../app/hooks";
-import { Dropdown, message } from "antd";
+import { Badge, Dropdown, message } from "antd";
 import { UserOutlined, LogoutOutlined, ShoppingOutlined, GiftOutlined, EnvironmentOutlined, CrownOutlined, } from "@ant-design/icons";
 import { getLastName } from "../../shared/utils/getLastName";
 import { useLogout } from "../../features/auth/hooks/useLogout";
@@ -19,6 +19,7 @@ const ClientHeaderBottom = () => {
             message.error(getErrorMessage(error));
         }
     }
+    const cart = useAppSelector(state => state.cart.cart);
     return (
         <div className="mx-auto flex w-full max-w-[1200px] items-center gap-3 px-2 py-4 xl:px-1">
             {/* LOGO CELLPHONES (Tự thích ứng PC / Mobile) */}
@@ -56,9 +57,9 @@ const ClientHeaderBottom = () => {
             {/* NÚT GIỎ HÀNG (Chỉ hiện chữ trên PC) */}
             <Link to={"/cart"} className="hover:bg-primary-500 hidden items-center justify-center gap-2 cursor-pointer min-h-[40px] rounded-lg text-white border-none bg-transparent md:flex px-3">
                 <span className="hidden lg:inline-block text-sm">Giỏ hàng</span>
-                <span className="relative">
-                    <CartIcon />
-                </span>
+                <Badge size="small" count={cart?.products.length || 0} className="hover:!none">
+                    <CartIcon className="size-6 text-white"/>
+                </Badge>
             </Link>
             {/* NÚT ĐĂNG NHẬP (Chỉ hiện trên PC) */}
             {user ? (

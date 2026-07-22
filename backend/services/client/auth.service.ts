@@ -7,6 +7,7 @@ import bcrypt from "bcrypt";
 import { RegisterBody, SetPasswordBody, VerifyBody } from "../../validations/client/auth.validation";
 import { generateAccessToken, generateRefreshToken, generateRegisterToken } from "../../utils/jwt";
 import jwt from "jsonwebtoken";
+import Cart from "../../models/cart.model";
 
 interface RegisterTokenPayload extends jwt.JwtPayload {
     userId: string;
@@ -150,7 +151,14 @@ export const loginService = async ( email: string, password: string ) => {
         refreshToken: newRefreshToken,
         refreshTokenExpiredAt:new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
     });
-
+    await Cart.findOneAndUpdate(
+        { userID: user._id },
+        {},
+        {
+            upsert: true,
+            setDefaultsOnInsert: true
+        }
+    );
     return {
         message: "Đăng nhập thành công",
         newAccessToken,

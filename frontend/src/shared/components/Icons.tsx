@@ -39,8 +39,8 @@ export const ArrowDownIcon = () => {
         <path fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="48" d="m112 184 144 144 144-144"></path>
     </svg>
 }
-export const CartIcon = () => {
-    return <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" className="size-6" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
+export const CartIcon = ({className}: {className: string}) => {
+    return <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" className={className} height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
         <circle cx="176" cy="416" r="16" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="32"></circle>
         <circle cx="400" cy="416" r="16" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="32"></circle>
         <path fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="32" d="M48 80h64l48 272h256"></path>
