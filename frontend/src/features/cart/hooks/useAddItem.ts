@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { cartService } from "../services/cart.service";
 import type { CartItem } from "../types/cart.type";
-import { addItem } from "../cart.slice";
+import { addItemReducer } from "../cart.slice";
 import { useDispatch } from "react-redux";
 
 export const useAddItem = () => {
@@ -13,7 +13,7 @@ export const useAddItem = () => {
             setLoading(true);
 
             const result = await cartService.addItem({productID: cartItem.productID._id, quantity: cartItem.quantity});
-            dispatch(addItem(cartItem));
+            dispatch(addItemReducer(cartItem));
 
             return result;
         } finally {

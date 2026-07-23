@@ -1,11 +1,78 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import GiftIcon, { ArrowLeftSlide } from "../../../shared/components/Icons";
 import { PlusOutlined, MinusOutlined, DeleteOutlined, CloseOutlined } from "@ant-design/icons";
 import TicketPromo from "../../products/components/TicketPromo";
 import { useAppSelector } from "../../../app/hooks";
+import { useEditItem } from "../hooks/useEditItem";
+import { message } from "antd";
+import { getErrorMessage } from "../../../shared/utils/errorHandler";
+import type { CartItemBody, DeleteItemBody } from "../types/cart.type";
+import { useDeleteItem } from "../hooks/useDeleteItem";
+import { useEffect, useMemo, useState } from "react";
+import { useDeleteBulkItem } from "../hooks/useDeleteBulkItem";
 
 const CartPage = () => {
     const cart= useAppSelector(state => state.cart.cart);
+    const {editItem} = useEditItem();
+    const {deleteItem} = useDeleteItem();
+    const {deleteBulk} = useDeleteBulkItem();
+    const navigate = useNavigate();
+    //xu li checkbox
+    const [selectedIDs, setSelectedIDs] = useState<string[]>([]);
+    const allProductIDs = useMemo( () => cart?.products.map(item => item.productID._id) ?? [], [cart] );
+    useEffect(() => {
+        setSelectedIDs(prev =>
+            prev.filter(id => allProductIDs.includes(id))
+        );
+    }, [allProductIDs]);
+    const handleSelectOne = (id: string) => {
+        setSelectedIDs((prev) =>
+            prev.includes(id) 
+                ? prev.filter((selectedID) => selectedID !== id) 
+                : [...prev, id]
+        );
+    };
+    const handleSelectAll = (e: any) => {
+        if(e.target.checked){
+            setSelectedIDs(allProductIDs);
+        }else{
+            setSelectedIDs([]);
+        }
+    }
+    
+    //cac ham xu li cart
+    const handleChangeQuantity = async ({productID, quantity}: CartItemBody) => {
+        try {
+            const result = await editItem({productID, quantity});
+            message.success(result.message);
+        } catch (error) {
+            message.error(getErrorMessage(error));
+        }
+    }
+    const handleDeleteItem = async ({productID}: DeleteItemBody) => {
+        try {
+            const result = await deleteItem({productID});
+            message.success(result.message);
+        } catch (error) {
+            message.error(getErrorMessage(error));
+        }
+    }
+    const handleDeleteSelected = async () => {
+        try {
+            const result = await deleteBulk({productIDs: selectedIDs});
+            message.success(result.message);
+        } catch (error) {
+            message.error(getErrorMessage(error));
+        }
+    }
+    const handleCheckout = () => {
+        if(selectedIDs.length === 0){
+            message.error("Vui lòng chọn ít nhất 1 sản phẩm để thanh toán");
+            return;
+        }
+        sessionStorage.setItem("selectedProductIDs", JSON.stringify(selectedIDs));
+        navigate("/checkout");
+    }
     return (
         <div className="flex flex-col gap-3 mt-4 xl:px-1 px-2 min-h-[70vh] mb-10">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-xl border border-neutral-200 p-3 sm:px-4 bg-white shadow-sm">
@@ -21,10 +88,10 @@ const CartPage = () => {
                 <div className="lg:col-span-8 flex flex-col gap-4 bg-white rounded-xl p-4 sm:p-5 border border-neutral-100 shadow-sm">
                     <div className="flex items-center justify-between border-b border-neutral-100 pb-3">
                         <label className="flex items-center gap-2.5 cursor-pointer text-sm sm:text-base font-medium">
-                            <input type="checkbox" className="w-4 h-4 rounded accent-blue-600 cursor-pointer" />
-                            <span>Tất cả (2 sản phẩm)</span>
+                            <input checked={allProductIDs.length > 0 && allProductIDs.length === selectedIDs.length} onChange={handleSelectAll} type="checkbox" className="w-4 h-4 rounded accent-blue-600 cursor-pointer" />
+                            <span>Tất cả ({allProductIDs.length} sản phẩm)</span>
                         </label>
-                        <button className="text-primary-500 hover:text-primary-600 hover:bg-red-50 text-xs sm:text-sm font-medium transition-colors px-3 py-1.5 rounded-lg flex items-center gap-1">
+                        <button onClick={handleDeleteSelected} className="text-primary-500 hover:text-primary-600 hover:bg-red-50 text-xs sm:text-sm font-medium transition-colors px-3 py-1.5 rounded-lg flex items-center gap-1">
                             <DeleteOutlined />
                             <span>Xóa đã chọn</span>
                         </button>
@@ -35,7 +102,7 @@ const CartPage = () => {
                                 <div className="py-4 flex flex-col gap-3" key={item._id}>
                                     <div className="flex items-center justify-between gap-3 sm:gap-4 relative py-3">
                                         <div className="flex items-center gap-3 shrink-0">
-                                            <input type="checkbox" className="w-4 h-4 rounded accent-blue-600 cursor-pointer" />
+                                            <input checked={selectedIDs.includes(item.productID._id)} onChange={() => handleSelectOne(item.productID._id)} type="checkbox" className="w-4 h-4 rounded accent-blue-600 cursor-pointer" />
                                             <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl border border-neutral-100 p-1 flex items-center justify-center shrink-0">
                                                 <img
                                                     className="w-full h-full object-contain"
@@ -59,19 +126,25 @@ const CartPage = () => {
                                         </div>
 
                                         <div className="flex items-center border border-neutral-200 rounded-lg bg-neutral-50 shrink-0">
-                                            <button className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center text-neutral-600 hover:bg-neutral-200 rounded-l-lg transition-colors">
-                                                <MinusOutlined className="text-[10px] sm:text-xs" />
-                                            </button>
+                                            {item.quantity > 1 ? (
+                                                <button onClick={() => handleChangeQuantity({productID: item.productID._id, quantity: item.quantity-1})} className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center text-neutral-600 hover:bg-neutral-200 rounded-l-lg transition-colors">
+                                                    <MinusOutlined className="text-[10px] sm:text-xs" />
+                                                </button>
+                                            ) : (
+                                                <button onClick={() => handleDeleteItem({productID: item.productID._id})} className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center text-primary-500 hover:bg-neutral-200 rounded-l-lg transition-colors">
+                                                    <DeleteOutlined />
+                                                </button>
+                                            )}
                                             <span className="w-7 sm:w-9 text-center text-xs sm:text-sm font-medium text-neutral-800">
                                                 {item.quantity}
                                             </span>
-                                            <button className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center text-neutral-600 hover:bg-neutral-200 rounded-r-lg transition-colors">
+                                            <button onClick={() => handleChangeQuantity({productID: item.productID._id!, quantity: item.quantity+1})} className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center text-neutral-600 hover:bg-neutral-200 rounded-r-lg transition-colors">
                                                 <PlusOutlined className="text-[10px] sm:text-xs" />
                                             </button>
                                         </div>
 
                                         {/* Nút xóa Icon X */}
-                                        <button className="absolute top-[-10px] right-[0px] text-neutral-400 hover:!text-primary-500 transition-colors p-1 shrink-0 self-center">
+                                        <button onClick={() => handleDeleteItem({productID: item.productID._id})} className="absolute top-[-10px] right-[0px] text-neutral-400 hover:!text-primary-500 transition-colors p-1 shrink-0 self-center">
                                             <CloseOutlined className="text-base sm:text-lg" />
                                         </button>
                                     </div>
@@ -121,7 +194,7 @@ const CartPage = () => {
                         </div>
                     </div>
 
-                    <button className="w-full mt-2 flex flex-col items-center justify-center rounded-md text-white p-2 active:scale-[0.99] transition-all bg-primary-500 hover:bg-primary-600">
+                    <button onClick={handleCheckout} className="w-full mt-2 flex flex-col items-center justify-center rounded-md text-white p-2 active:scale-[0.99] transition-all bg-primary-500 hover:bg-primary-600">
                         <strong className="text-base tracking-wide">MUA NGAY</strong>
                         <span className="text-[11px] font-normal opacity-90">
                             Giao nhanh từ 2 giờ hoặc nhận tại cửa hàng

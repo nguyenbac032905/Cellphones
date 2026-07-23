@@ -1,5 +1,6 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import type { Cart, CartItem, CartResponse } from "./types/cart.type";
+import type { Cart, CartItem, CartResponse, CartItemBody, DeleteItemBody, DeleteBulkItem } from "./types/cart.type";
+
 
 interface CartState {
     cart: Cart | null;
@@ -13,10 +14,10 @@ const cartSlice = createSlice({
     name: "cart",
     initialState,
     reducers: {
-        setCart: (state, action: PayloadAction<CartResponse>) => {
+        setCartReducer: (state, action: PayloadAction<CartResponse>) => {
             state.cart = action.payload.data;
         },
-        addItem: (state, action: PayloadAction<CartItem>) => {
+        addItemReducer: (state, action: PayloadAction<CartItem>) => {
             if (!state.cart) return;
 
             const existItem = state.cart.products.find(
@@ -29,11 +30,37 @@ const cartSlice = createSlice({
                 state.cart.products.push(action.payload);
             }
         },
-        clearCart: (state) => {
+        editItemReducer: (state, action: PayloadAction<CartItemBody>) => {
+            if (!state.cart) return;
+
+            const item = state.cart.products.find(
+                (item) => item.productID._id === action.payload.productID
+            );
+
+            if (item) {
+                item.quantity = action.payload.quantity;
+            }
+        },
+        deleteItemReducer: (state, action: PayloadAction<DeleteItemBody>) => {
+            if (!state.cart) return;
+
+            state.cart.products = state.cart.products.filter(
+                (item) => item.productID._id !== action.payload.productID
+            );
+        },
+        deleteBulkReducer: (state, action: PayloadAction<DeleteBulkItem>) => {
+            if (!state.cart) return;
+
+            const productIDSet = new Set(action.payload.productIDs);
+            state.cart.products = state.cart.products.filter(
+                item => !productIDSet.has(item.productID._id)
+            );
+        },
+        clearCartReducer: (state) => {
             state.cart = null
         }
     },
 });
 
-export const { setCart, addItem, clearCart } = cartSlice.actions;
+export const { setCartReducer, addItemReducer, clearCartReducer, editItemReducer, deleteItemReducer, deleteBulkReducer } = cartSlice.actions;
 export default cartSlice.reducer;

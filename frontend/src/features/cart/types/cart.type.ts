@@ -24,3 +24,9 @@ export type CartItemBody = {
     productID: string,
     quantity: number
 }
+export type DeleteItemBody = {
+    productID: string
+}
+export type DeleteBulkItem = {
+    productIDs: string[]
+}

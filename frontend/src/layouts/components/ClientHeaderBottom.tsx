@@ -20,7 +20,7 @@ const ClientHeaderBottom = () => {
         }
     }
     const cart = useAppSelector(state => state.cart.cart);
-    console.log(cart)
+    
     return (
         <div className="mx-auto flex w-full max-w-[1200px] items-center gap-3 px-2 py-4 xl:px-1">
             {/* LOGO CELLPHONES (Tự thích ứng PC / Mobile) */}

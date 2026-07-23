@@ -1,4 +1,4 @@
-import { addItemService, deleteItemService, editItemService, getCartService } from "../../services/client/cart.service";
+import { addItemService, bulkDeleteItemService, deleteItemService, editItemService, getCartService } from "../../services/client/cart.service";
 import { asyncHandler } from "../../utils/asyncHandler";
 import { Request, Response } from "express";
 
@@ -29,6 +29,14 @@ export const editItem = asyncHandler(async (req: Request, res: Response) => {
 export const deleteItem = asyncHandler(async (req: Request, res: Response) => {
     const user = req.user!;
     const result = await deleteItemService(user?._id.toString(), req.body);
+    return res.status(200).json({
+        success: true,
+        message: result.message
+    })
+})
+export const bulkDeleteItem = asyncHandler(async (req: Request, res: Response) => {
+    const user = req.user!;
+    const result = await bulkDeleteItemService(user?._id.toString(), req.body);
     return res.status(200).json({
         success: true,
         message: result.message

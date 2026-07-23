@@ -22,7 +22,14 @@ export const deleteItemSchema = z.object({
         productID: objectIdSchema
     }).strict()
 })
+export const bulkDeleteItemSchema = z.object({
+    body: z.object({
+        productIDs: z.array(objectIdSchema).min(1, "At least one product ID is required")
+    }).strict()
+});
 
 export type CartItemBody = z.infer<typeof cartItemSchema>["body"];
 
 export type DeleteCartBody = z.infer<typeof deleteItemSchema>["body"];
+
+export type BulkDeleteBody = z.infer<typeof bulkDeleteItemSchema>["body"];
