@@ -274,3 +274,4 @@
     9. viết bootstrap cart để call lại state khi load trang, sử dụng trong main.tsx
     10. sử dụng bootstrapcart để call state cart khi login trong hook useLogin
     11. lấy ra cart trong state và hiển thị ra giao diện trang cart, header
+71. xong tính năng change item quantity, remove item from cart, remove bulk item

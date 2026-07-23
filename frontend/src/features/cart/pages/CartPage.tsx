@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import GiftIcon, { ArrowLeftSlide } from "../../../shared/components/Icons";
-import { PlusOutlined, MinusOutlined, DeleteOutlined, CloseOutlined } from "@ant-design/icons";
+import { PlusOutlined, MinusOutlined, DeleteOutlined, CloseOutlined, ShoppingCartOutlined } from "@ant-design/icons";
 import TicketPromo from "../../products/components/TicketPromo";
 import { useAppSelector } from "../../../app/hooks";
 import { useEditItem } from "../hooks/useEditItem";
@@ -96,7 +96,7 @@ const CartPage = () => {
                             <span>Xóa đã chọn</span>
                         </button>
                     </div>
-                    {cart && cart.products?.length>0 && (
+                    {cart && cart.products?.length>0 ? (
                         <div className="divide-y divide-neutral-100">
                             {cart?.products.map(item => (
                                 <div className="py-4 flex flex-col gap-3" key={item._id}>
@@ -162,6 +162,21 @@ const CartPage = () => {
                                     </div>
                                 </div>
                             ))}
+                        </div>
+                    ): (
+                        <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
+                            <div className="w-20 h-20 bg-neutral-100 rounded-full flex items-center justify-center mb-4 text-neutral-400">
+                                <ShoppingCartOutlined className="text-3xl" /> 
+                            </div>
+                            <h3 className="text-base font-semibold text-neutral-800 mb-1">
+                                Giỏ hàng của bạn hiện chưa có sản phẩm nào.
+                            </h3>
+                            <Link
+                                to="/"
+                                className="inline-flex items-center justify-center px-5 py-2.5 !bg-primary-500 hover:!bg-primary-600 !text-white text-xs sm:text-sm font-medium rounded-xl transition-colors shadow-sm hover:shadow"
+                            >
+                                Mua sắm ngay
+                            </Link>
                         </div>
                     )}
                 </div>

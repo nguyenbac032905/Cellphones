@@ -465,16 +465,16 @@ export const FillStar = ({className}: {className: string}) => {
 //detail product
 export const CommentIcon = ({className}: {className: string}) => {
     return <svg className={className} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M8 9H16" stroke="#3B82F6" strokeWidth="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-            <path d="M8 13H14" stroke="#3B82F6" strokeWidth="1.5" stroke-linecap="round" stroke-linejoin="round"></path> 
-            <path d="M9 18H6C5.20435 18 4.44129 17.6839 3.87868 17.1213C3.31607 16.5587 3 15.7956 3 15V7C3 6.20435 3.31607 5.44129 3.87868 4.87868C4.44129 4.31607 5.20435 4 6 4H18C18.7956 4 19.5587 4.31607 20.1213 4.87868C20.6839 5.44129 21 6.20435 21 7V15C21 15.7956 20.6839 16.5587 20.1213 17.1213C19.5587 17.6839 18.7956 18 18 18H15L12 21L9 18Z" stroke="#3B82F6" strokeWidth="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+            <path d="M8 9H16" stroke="#3B82F6" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path>
+            <path d="M8 13H14" stroke="#3B82F6" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path> 
+            <path d="M9 18H6C5.20435 18 4.44129 17.6839 3.87868 17.1213C3.31607 16.5587 3 15.7956 3 15V7C3 6.20435 3.31607 5.44129 3.87868 4.87868C4.44129 4.31607 5.20435 4 6 4H18C18.7956 4 19.5587 4.31607 20.1213 4.87868C20.6839 5.44129 21 6.20435 21 7V15C21 15.7956 20.6839 16.5587 20.1213 17.1213C19.5587 17.6839 18.7956 18 18 18H15L12 21L9 18Z" stroke="#3B82F6" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path>
         </svg>
 }
 export const CpuIcon = ({className}: {className: string}) => {
-    return <svg className={className} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="5" y="5" width="14" height="14" rx="2" stroke="#3B82F6" strokeWidth="1.5" stroke-linecap="round" stroke-linejoin="round"></rect> <path fill-rule="evenodd" clip-rule="evenodd" d="M9 10C9 9.44772 9.44772 9 10 9H14C14.5523 9 15 9.44772 15 10V14C15 14.5523 14.5523 15 14 15H10C9.44772 15 9 14.5523 9 14V10Z" stroke="#3B82F6" strokeWidth="1.5" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M3 10H5" stroke="#3B82F6" strokeWidth="1.5" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M3 14H5" stroke="#3B82F6" strokeWidth="1.5" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M10 3V5" stroke="#3B82F6" strokeWidth="1.5" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M14 3V5" stroke="#3B82F6" strokeWidth="1.5" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M21 10H19" stroke="#3B82F6" strokeWidth="1.5" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M21 14H19" stroke="#3B82F6" strokeWidth="1.5" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M14 21V19" stroke="#3B82F6" strokeWidth="1.5" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M10 21V19" stroke="#3B82F6" strokeWidth="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+    return <svg className={className} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="5" y="5" width="14" height="14" rx="2" stroke="#3B82F6" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></rect> <path fillRule="evenodd" clipRule="evenodd" d="M9 10C9 9.44772 9.44772 9 10 9H14C14.5523 9 15 9.44772 15 10V14C15 14.5523 14.5523 15 14 15H10C9.44772 15 9 14.5523 9 14V10Z" stroke="#3B82F6" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path> <path d="M3 10H5" stroke="#3B82F6" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path> <path d="M3 14H5" stroke="#3B82F6" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path> <path d="M10 3V5" stroke="#3B82F6" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path> <path d="M14 3V5" stroke="#3B82F6" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path> <path d="M21 10H19" stroke="#3B82F6" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path> <path d="M21 14H19" stroke="#3B82F6" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path> <path d="M14 21V19" stroke="#3B82F6" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path> <path d="M10 21V19" stroke="#3B82F6" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path></svg>
 }
 export const PlusBorderIcon = ({className}: {className: string}) => {
-    return <svg className={className} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 12C3 13.1819 3.23279 14.3522 3.68508 15.4442C4.13738 16.5361 4.80031 17.5282 5.63604 18.364C6.47177 19.1997 7.46392 19.8626 8.55585 20.3149C9.64778 20.7672 10.8181 21 12 21C13.1819 21 14.3522 20.7672 15.4442 20.3149C16.5361 19.8626 17.5282 19.1997 18.364 18.364C19.1997 17.5282 19.8626 16.5361 20.3149 15.4442C20.7672 14.3522 21 13.1819 21 12C21 9.61305 20.0518 7.32387 18.364 5.63604C16.6761 3.94821 14.3869 3 12 3C9.61305 3 7.32387 3.94821 5.63604 5.63604C3.94821 7.32387 3 9.61305 3 12Z" stroke="#3B82F6" strokeWidth="1.5" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M9 12H15" stroke="#3B82F6" strokeWidth="1.5" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M12 9V15" stroke="#3B82F6" strokeWidth="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+    return <svg className={className} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 12C3 13.1819 3.23279 14.3522 3.68508 15.4442C4.13738 16.5361 4.80031 17.5282 5.63604 18.364C6.47177 19.1997 7.46392 19.8626 8.55585 20.3149C9.64778 20.7672 10.8181 21 12 21C13.1819 21 14.3522 20.7672 15.4442 20.3149C16.5361 19.8626 17.5282 19.1997 18.364 18.364C19.1997 17.5282 19.8626 16.5361 20.3149 15.4442C20.7672 14.3522 21 13.1819 21 12C21 9.61305 20.0518 7.32387 18.364 5.63604C16.6761 3.94821 14.3869 3 12 3C9.61305 3 7.32387 3.94821 5.63604 5.63604C3.94821 7.32387 3 9.61305 3 12Z" stroke="#3B82F6" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path> <path d="M9 12H15" stroke="#3B82F6" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path> <path d="M12 9V15" stroke="#3B82F6" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path></svg>
 }
 export const ClockIcon = ({ className }: {className: string}) =>{
     return (
@@ -631,6 +631,38 @@ export const TagIcon = ({ className }: { className?: string }) => {
                 <clipPath id="clip0_tag">
                     <rect width="18" height="18" fill="white" />
                 </clipPath>
+            </defs>
+        </svg>
+    );
+};
+export const VoucherIcon = ({ className }: {className: string}) => {
+    return (
+        <svg
+            className={className}
+            viewBox="0 0 16 12"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+        >
+            <path
+                d="M0 2C0 0.895431 0.895431 0 2 0H14C15.1046 0 16 0.895431 16 2V4C14.8954 4 14 4.89543 14 6C14 7.10457 14.8954 8 16 8V10C16 11.1046 15.1046 12 14 12H2C0.895431 12 0 11.1046 0 10V8C1.10457 8 2 7.10457 2 6C2 4.89543 1.10457 4 0 4V2Z"
+                fill="#171A26"
+            />
+            <path
+                d="M0 2C0 0.895431 0.895431 0 2 0H14C15.1046 0 16 0.895431 16 2V4C14.8954 4 14 4.89543 14 6C14 7.10457 14.8954 8 16 8V10C16 11.1046 15.1046 12 14 12H2C0.895431 12 0 11.1046 0 10V8C1.10457 8 2 7.10457 2 6C2 4.89543 1.10457 4 0 4V2Z"
+                fill="url(#voucher-gradient)"
+            />
+            <defs>
+                <linearGradient
+                    id="voucher-gradient"
+                    x1="12"
+                    y1="-7"
+                    x2="-0.751216"
+                    y2="4.76604"
+                    gradientUnits="userSpaceOnUse"
+                >
+                    <stop stopColor="#ED8A95" />
+                    <stop offset="0.815713" stopColor="#C40016" />
+                </linearGradient>
             </defs>
         </svg>
     );

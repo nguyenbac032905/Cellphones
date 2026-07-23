@@ -14,6 +14,7 @@ import MyAccountAdminPage from "./features/auth/pages/MyAccountAdminPage";
 import { productCategoryAdminRoutes } from "./features/productCategories/productCategory.route";
 import ClientPrivateRoute from "./features/auth/components/ClientPrivateRoute";
 import { cartRoutes } from "./features/cart/cart.route";
+import { checkoutRoutes } from "./features/checkout/checkout.route";
 
 export const routes = [
     {
@@ -51,7 +52,7 @@ export const routes = [
                 children: [
                     {
                         element: <ClientPrivateRoute />,
-                        children: [...cartRoutes]
+                        children: [...cartRoutes,...checkoutRoutes]
                     },
                     ...homeRoutes,
                     ...productRoutes
