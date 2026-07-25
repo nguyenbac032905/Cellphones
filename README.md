@@ -274,4 +274,7 @@
     9. viết bootstrap cart để call lại state khi load trang, sử dụng trong main.tsx
     10. sử dụng bootstrapcart để call state cart khi login trong hook useLogin
     11. lấy ra cart trong state và hiển thị ra giao diện trang cart, header
-71. xong tính năng change item quantity, remove item from cart, remove bulk item
+71. lam tinh nang add to cart
+72. xong tính năng change item quantity, remove item from cart, remove bulk item
+73. làm trang checkout
+74. làm api shipping lấy tỉnh, quận, xã của ghn và tính fee

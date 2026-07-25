@@ -41,7 +41,7 @@ export const getFeeService = async (body: GetFeeBody) => {
         from_ward_code: body.fromWardCode,
         to_district_id: body.toDistrictId,
         to_ward_code: body.toWardCode,
-        service_type_id: 2,
+        service_type_id: 2, // mặc định hàng hóa nhẹ
         height: body.height,
         width: body.width,
         length: body.length,
