@@ -278,3 +278,6 @@
 72. xong tính năng change item quantity, remove item from cart, remove bulk item
 73. làm trang checkout
 74. làm api shipping lấy tỉnh, quận, xã của ghn và tính fee
+75. viết api create order và tạo đơn hàng bên giao hàng nhanh
+    1. tạo model order
+    2. luồng xử lí: người dùng gửi thông tin đơn hàng lên, lấy ra thông tin sản phẩm, tính giá phía backend, tạo đơn hàng với thông tin cơ bản. tạo đơn hàng giao hàng nhanh, cập nhật thông tin đơn hàng với thông tin giao hàng nhanh. thay đổi stock, sold, xóa sản phẩm trong cart.

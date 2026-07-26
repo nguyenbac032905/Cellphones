@@ -3,22 +3,18 @@ import Order from "../../models/order.model";
 import Product from "../../models/product.model";
 import { AppError } from "../../utils/AppError";
 import { CreateOrderBody } from "../../validations/client/order.validation";
-import axios from "axios";
-const ghnClient = axios.create({
-    baseURL: process.env.GHN_BASE_URL,
-    headers: {
-        Token: process.env.GHN_TOKEN,
-        ShopId: process.env.GHN_SHOP_ID,
-        "Content-Type": "application/json"
-    }
-});
+import { getFeeService } from "./shipping.service";
+import { createPaymentUrlService } from "./payment.service";
+import { calculatePricing } from "../../helpers/pricing";
+import { createGHNOrder } from "../../helpers/ghn";
 
-export const createOrderService = async (userID: string, body: CreateOrderBody) => {
+
+export const createOrderService = async ( userID: string, body: CreateOrderBody, ) => {
     const { products, fullName, phone, address, province, district, ward, districtID, wardCode, note, paymentMethod } = body;
 
     const newProducts = [];
     for (const item of products) {
-        const product: any = await Product.findOne({ _id: item.productID, deleted: false, status: "active" })
+        const product: any = await Product.findOne({_id: item.productID, deleted: false, status: "active"})
             .select("title price discountPercentage stock images")
             .lean();
 
@@ -27,24 +23,33 @@ export const createOrderService = async (userID: string, body: CreateOrderBody) 
         }
 
         if (product.stock < item.quantity) {
-            throw new AppError(`Sản phẩm ${product.title} không đủ số lượng tồn kho!`);
+            throw new AppError( `Sản phẩm ${product.title} không đủ số lượng tồn kho!` );
         }
 
-        const mainImage = product.images?.find((image: any) => image.isMain === true)?.url || product.images?.[0]?.url || "";
+        const mainImage = product.images?.find((i: any) => i.isMain)?.url || product.images?.[0]?.url || "";
         newProducts.push({ ...item, ...product, mainImage });
     }
 
-    // Tính toán số tiền
-    const subTotal = Math.round(newProducts.reduce((sum, item) => sum + item.quantity * item.price, 0));
-    const discountAmount = Math.round(newProducts.reduce((sum, item) => sum + item.quantity * (item.price * item.discountPercentage / 100), 0));
-    const totalOrder = subTotal - discountAmount;
+    const feeRes = await getFeeService({
+        fromDistrictId: 1680,
+        fromWardCode: "220101",
+        toDistrictId: districtID,
+        toWardCode: wardCode,
+        height: 10,
+        width: 30,
+        length: 40,
+        weight: 3000,
+        insuranceValue: 0
+    });
 
-    // Điều kiện Freeship (Đơn >= 300k: Shop trả ship [1], Dưới 300k: Khách trả ship [2])
-    const isFreeShip = totalOrder >= 300000 ? 1 : 2;
+    const pricing = calculatePricing({
+        items: newProducts,
+        shippingFee: feeRes.data.total
+    });
 
-    const order = new Order({
-        userID: userID,
-        items: newProducts.map(item => ({
+    const order = await Order.create({
+        userID,
+        items: newProducts.map((item) => ({
             productID: item.productID,
             title: item.title,
             price: item.price,
@@ -53,78 +58,68 @@ export const createOrderService = async (userID: string, body: CreateOrderBody) 
             mainImage: item.mainImage
         })),
         shippingAddress: {
-            fullName, phone, address, province, district, ward, note
+            fullName,
+            phone,
+            address,
+            province,
+            district,
+            ward,
+            note
         },
         paymentDetail: {
-            paymentMethod: paymentMethod
+            paymentMethod
+        },
+        pricing: {
+            subTotal: pricing.subTotal,
+            discountAmount: pricing.discountAmount,
+            shippingFee: pricing.actualShippingFee,
+            totalPrice: pricing.totalPrice
         }
     });
-    
+
     if (paymentMethod === "COD") {
-        const ghnOrderRes = await ghnClient.post("/v2/shipping-order/create", {
-            payment_type_id: isFreeShip,
-            cod_amount: Math.round(totalOrder),
-            note: note,
-            required_note: "KHONGCHOXEMHANG",
-
-            from_name: "Cellphones",
-            from_phone: "0353263314",
-            from_address: "25 Ngô Tất Tố, phường An Tảo, thành phố Hưng Yên, tỉnh Hưng Yên",
-            from_district_id: 1680,
-            from_ward_code: "220101",
-
-            to_name: fullName,
-            to_phone: phone,
-            to_address: address,
-            to_district_id: districtID,
-            to_ward_code: wardCode,
-
-            weight: 3000,
-            length: 40,
-            width: 30,
-            height: 10,
-            service_type_id: 2,
-
-            items: newProducts.map(item => ({
-                name: item.title,
-                quantity: item.quantity,
-                price: item.price
-            }))
+        const shippingDetails = await createGHNOrder({
+            fullName,
+            phone,
+            address,
+            districtID,
+            wardCode,
+            note,
+            codAmount: pricing.orderTotal,
+            paymentTypeID: pricing.paymentTypeID,
+            items: newProducts
         });
-        
-        if (!ghnOrderRes || !ghnOrderRes.data?.data) {
-            throw new AppError("Tạo đơn hàng GHN thất bại!");
-        }
 
-        const ghnData = ghnOrderRes.data.data;
-        order.shippingDetails = {
-            shippingOrderCode: ghnData.order_code,
-            expectedDeliveryDate: ghnData.expected_delivery_time,
-            ghnStatus: "ready_to_pick"
-        };
-        const actualShippingFee = isFreeShip ? 0 : ghnData.total_fee;
-        order.pricing = {
-            subTotal: subTotal,
-            discountAmount: discountAmount,
-            shippingFee: actualShippingFee,
-            totalPrice: totalOrder + actualShippingFee
-        }
+        order.shippingDetails = shippingDetails;
+        await order.save();
     }
 
-    await order.save();
+    const paymentUrl = createPaymentUrlService({ paymentMethod, orderID: order._id.toString(), amount: pricing.totalPrice, });
 
-    await Promise.all(newProducts.map(item =>
-        Product.updateOne({ _id: item.productID }, { $inc: { stock: -item.quantity, sold: item.quantity } })
-    ));
+    if (paymentUrl) {
+        return {
+            data: {
+                orderID: order._id,
+                paymentMethod,
+                nextAction: {
+                    type: "redirect",
+                    url: paymentUrl
+                }
+            }
+        };
+    }
 
-    const ids = newProducts.map(item => item.productID);
-    
-    await Cart.updateOne(
-        { userID: userID },
-        { $pull: { products: { productID: { $in: ids } } } }
-    );
+    await Promise.all( newProducts.map((item) => Product.updateOne( { _id: item.productID }, { $inc: { stock: -item.quantity, sold: item.quantity } } ) ) );
+    await Cart.updateOne( { userID }, { $pull: { products: { productID: { $in: newProducts.map((i) => i.productID) } } } } );
     
     return {
-        data: {orderID: order._id}
+        data: {
+            orderID: order._id,
+            paymentMethod,
+            nextAction: {
+                type: "navigate",
+                url: `/orders/${order._id}`
+            }
+        }
     };
 };
