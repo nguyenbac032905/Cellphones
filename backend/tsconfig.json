@@ -2,7 +2,6 @@
   "compilerOptions": {
     "target": "ES6",
     "module": "CommonJS",
-    "moduleResolution": "node",
     "ignoreDeprecations": "6.0",
     "removeComments": true,
     "esModuleInterop": true,
