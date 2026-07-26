@@ -1,6 +1,6 @@
 import axios from "axios";
 export const publicClient = axios.create(({
-    baseURL: "http://localhost:3000",
+    baseURL: "https://cellphones-9jtb.onrender.com",
     timeout: 10000,
     withCredentials:true
 }));

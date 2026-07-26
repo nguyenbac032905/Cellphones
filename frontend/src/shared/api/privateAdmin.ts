@@ -4,7 +4,7 @@ import { publicClient } from "./publicClient";
 import axios from "axios";
 
 export const privateAdmin = axios.create(({
-    baseURL: "http://localhost:3000",
+    baseURL: "https://cellphones-9jtb.onrender.com",
     timeout: 10000,
     withCredentials: true
 }));

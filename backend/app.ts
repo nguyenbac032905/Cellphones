@@ -19,7 +19,7 @@ app.use(requestLoggingMiddleware);
 app.use(helmet());
 // cau hinh domain gui request
 app.use(cors({
-    origin: "http://localhost:3002",
+    origin: ["http://localhost:3002","https://cellphones-tau.vercel.app"],
     credentials: true
 }));
 //cấu hình ratelimit tổng
