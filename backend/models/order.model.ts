@@ -1,4 +1,5 @@
 import mongoose, { Schema } from 'mongoose';
+import { number } from 'zod';
 
 const OrderItemSchema = new Schema({
     productID: { type: Schema.Types.ObjectId, ref: 'Product', required: true },
@@ -28,7 +29,9 @@ const OrderSchema = new Schema({
         province: { type: String, required: true },
         district: { type: String, required: true },
         ward: { type: String, required: true },
-        note: { type: String }
+        note: { type: String },
+        districtID: {type: Number, required: true},
+        wardCode: {type: String, required: true},
     },
 
     paymentDetail: {

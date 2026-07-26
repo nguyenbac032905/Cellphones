@@ -281,3 +281,9 @@
 75. viết api create order và tạo đơn hàng bên giao hàng nhanh
     1. tạo model order
     2. luồng xử lí: người dùng gửi thông tin đơn hàng lên, lấy ra thông tin sản phẩm, tính giá phía backend, tạo đơn hàng với thông tin cơ bản. tạo đơn hàng giao hàng nhanh, cập nhật thông tin đơn hàng với thông tin giao hàng nhanh. thay đổi stock, sold, xóa sản phẩm trong cart.
+76. làm tính năng thanh toán vnpay, tối ưu code
+    1. tạo helper tạo url thanh toán vnpay: nhận vào orderID, amount => tạo params, sort params theo yêu cầu vnpay, kí dữ liệu và tạo url và trả về url
+    2. tạo helper pricing : nhận vào các itemProduct và phí ship, trả về thông tin pricing
+    3. tạo helper tạo đơn hàng giao hàng nhanh, nhận vào thông tin đơn hàng, gọi đến api tạo đơn hàng giao hàng nhanh và trả về shippingDetails
+    4. tạo payment service, nhận vào paymentMethod, orderID, amount và gọi đến helper thanh toán tương ứng, trả về url thanh toán
+    5. luồng xử lí order service: nhận vào thông tin đơn hàng, lấy ra thông tin sản phẩm, tính pricing, nếu thanh toán COD thì gọi đến helper tạo đơn hàng luôn, 

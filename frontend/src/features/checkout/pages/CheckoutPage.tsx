@@ -1,43 +1,125 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeftSlide, VoucherIcon } from "../../../shared/components/Icons";
 import { UserOutlined, PhoneOutlined, MailOutlined, EnvironmentOutlined, ShoppingOutlined, CreditCardOutlined, } from "@ant-design/icons";
 import { useAppSelector } from "../../../app/hooks";
-import { Input, Select, Form, Radio } from "antd";
-
-const PROVINCES_MOCK = [
-    { value: 1123, label: "Hà Nội" },
-    { value: 1124, label: "TP. Hồ Chí Minh" },
-    { value: 1125, label: "Đà Nẵng" },
-];
-const WARDS_MOCK: Record<number, { value: number; label: string }[]> = {
-    1123: [
-        { value: 113, label: "Vĩnh Tuy" },
-        { value: 114, label: "Dịch Vọng" },
-        { value: 115, label: "Hàng Bạc" },
-    ],
-    1124: [
-        { value: 201, label: "Bến Nghé" },
-        { value: 202, label: "Thảo Điền" },
-    ],
-    1125: [{ value: 301, label: "Hải Châu I" }],
+import { Input, Select, Form, Radio, message } from "antd";
+import { useProvinces } from "../hooks/useProvinces";
+import { useDistricts } from "../hooks/useDistricts";
+import { useWards } from "../hooks/useWard";
+import { useFee } from "../hooks/useFee";
+import type { District, Province, Ward } from "../types/checkout.type";
+import { createOrderSchema } from "../../orders/validations/order.validation";
+import { zodToAntFormErrors } from "../../../shared/utils/zodToAntFormErrors";
+import { useCreateOrder } from "../../orders/hooks/useCreateOrder";
+import { getErrorMessage } from "../../../shared/utils/errorHandler";
+type CheckoutFormValues = {
+    fullName: string;
+    phone: string;
+    email: string;
+    province: number;
+    district: number;
+    ward: string;
+    address: string;
+    paymentMethod: "COD" | "VNPAY";
+    note: string;
 };
-
 const CheckoutPage = () => {
     const [form] = Form.useForm();
+    const {provinces} = useProvinces();
+    const {districts, getDistricts} = useDistricts();
+    const {wards, getWards} = useWards();
+    const {fee, getFee} = useFee();
+    const {createOrder} = useCreateOrder();
+    const navigate = useNavigate();
+    
+    //lay ra cart và tính giá sản phẩm
     const cart = useAppSelector((state) => state.cart.cart);
     const ids = JSON.parse(sessionStorage.getItem("selectedProductIDs") ?? "[]");
     const products = cart?.products.filter((item) => ids.includes(item.productID._id)) ?? [];
-
-    const [selectedProvince, setSelectedProvince] = useState<number>(1123);
-
-    const handleProvinceChange = (value: number) => {
-        setSelectedProvince(value);
-        form.setFieldsValue({ ward: undefined });
+    //tính tổng tiền hàng
+    const subTotal = Math.round(products.reduce((sum, item) => sum + item.productID.price*item.quantity,0));
+    //tính tiền giảm giá của sản phẩm
+    const directDiscount = Math.round(products.reduce((sum, item) => sum + item.productID.price*(item.productID.discountPercentage/100)*item.quantity,0));
+    const discountAmount = directDiscount
+    //tính tiền đơn hàng
+    const totalOrder = subTotal - discountAmount;
+    // kiểm tra có freeship không, nếu không thì cộng cả tiền ship vào
+    const isFreeShip = totalOrder >= 300000;
+    const totalPrice = totalOrder + (isFreeShip ? 0 : (fee?.total ?? 0));
+    //xử lí địa chỉ
+    const [selectedProvince, setSelectedProvince] = useState<Province>();
+    const [selectedDistrict, setSelectedDistrict] = useState<District>();
+    const [selectedWard, setSelectedWard] = useState<Ward>();
+    const handleProvinceChange = async (value: number) => {
+        const province = provinces.find(p => p.ProvinceID === value);
+        if (!province) return;
+        setSelectedProvince(province);
+        form.setFieldsValue({ district:undefined, ward: undefined });
+        await getDistricts(value);
     };
+    const handleDistrictChange = async (value: number) => {
+        const district = districts.find(d => d.DistrictID === value);
+        setSelectedDistrict(district)
+        form.setFieldsValue({ ward: undefined });
 
-    const onFinish = (values: any) => {
-        console.log("Thanh toán thành công với thông tin:", values);
+        await getWards(value);
+    };
+    const handleWardChange = async (value: string) => {
+        const ward = wards.find(w => w.WardCode === value);
+        if (!ward || !selectedDistrict) return;
+        setSelectedWard(ward);
+        const payload = {
+            fromDistrictId: 1680,
+            fromWardCode: "220101",
+            toDistrictId: selectedDistrict?.DistrictID!,
+            toWardCode: ward.WardCode,
+            height: 10,
+            width: 30,
+            length: 40,
+            weight: 3000,
+            insuranceValue: 0,
+        }
+        await getFee(payload);
+    }
+    //hàm submit
+    const onFinish = async (values: CheckoutFormValues) => {
+        const data = {
+            products: products.map(item => ({productID: item.productID._id, quantity: item.quantity})),
+            fullName: values.fullName,
+            phone: values.phone,
+            address: values.address,
+            province: selectedProvince?.ProvinceName,
+            district: selectedDistrict?.DistrictName,
+            ward: selectedWard?.WardName,
+            districtID: selectedDistrict?.DistrictID,
+            wardCode: selectedWard?.WardCode,
+            note: values.note,
+            paymentMethod: values.paymentMethod
+        }
+        const parsed = createOrderSchema.safeParse(data);
+        if(!parsed.success){
+            const formErrors = zodToAntFormErrors(parsed.error);
+            form.setFields(
+                Object.keys(formErrors).map((key) => ({
+                    name: key,
+                    errors: formErrors[key],
+                }))
+            );
+            return;
+        }
+
+        try {
+            const result = await createOrder(parsed.data);
+            message.success("Tạo đơn hàng thành công");
+            if(result.nextAction.type === "navigate"){
+                navigate(result.nextAction.url);
+            }else{
+                window.location.href = result.nextAction.url;
+            }
+        } catch (error) {
+            message.error(getErrorMessage(error));
+        }
     };
 
     return (
@@ -178,10 +260,25 @@ const CheckoutPage = () => {
                                 label={<span className="text-xs sm:text-sm font-medium text-neutral-700">Tỉnh / Thành phố:</span>}
                             >
                                 <Select
+                                    value={selectedProvince?.ProvinceID}
                                     placeholder="-- Chọn Tỉnh / Thành phố --"
                                     size="large"
                                     onChange={handleProvinceChange}
-                                    options={PROVINCES_MOCK}
+                                    options={provinces?.map(item => ({ value: item.ProvinceID, label: item.ProvinceName }))}
+                                    className="w-full rounded-lg"
+                                />
+                            </Form.Item>
+                            <Form.Item
+                                name="district"
+                                className="!mb-0"
+                                label={<span className="text-xs sm:text-sm font-medium text-neutral-700">Quận / Huyện:</span>}
+                            >
+                                <Select
+                                    value={selectedDistrict?.DistrictID}
+                                    placeholder="-- >Quận / Huyện --"
+                                    size="large"
+                                    onChange={handleDistrictChange}
+                                    options={districts?.map(item => ({ value: item.DistrictID, label: item.DistrictName }))}
                                     className="w-full rounded-lg"
                                 />
                             </Form.Item>
@@ -191,25 +288,44 @@ const CheckoutPage = () => {
                                 label={<span className="text-xs sm:text-sm font-medium text-neutral-700">Phường / Xã:</span>}
                             >
                                 <Select
+                                    value={selectedWard?.WardCode}
                                     placeholder="-- Chọn Phường / Xã --"
                                     size="large"
-                                    options={WARDS_MOCK[selectedProvince] || []}
+                                    onChange={handleWardChange}
+                                    options={wards?.map(item => ({ value: item.WardCode, label: item.WardName }))}
                                     className="w-full rounded-lg"
                                 />
                             </Form.Item>
+                            <Form.Item
+                                name="address"
+                                className="!mb-0"
+                                label={<span className="text-xs sm:text-sm font-medium text-neutral-700">Số nhà, tên đường:</span>}
+                            >
+                                <Input
+                                    size="large"
+                                    prefix={<EnvironmentOutlined className="text-neutral-400 mr-1" />}
+                                    placeholder="Ví dụ: Số 12, ngõ 34..."
+                                    className="rounded-lg"
+                                />
+                            </Form.Item>
+                            <Form.Item
+                                name="note"
+                                className="sm:col-span-2 !mb-0"
+                                label={
+                                    <span className="text-xs sm:text-sm font-medium text-neutral-700">
+                                        Ghi chú:
+                                    </span>
+                                }
+                            >
+                                <Input.TextArea
+                                    rows={4}
+                                    placeholder="Nhập ghi chú cho đơn hàng (không bắt buộc)"
+                                    className="rounded-lg"
+                                    showCount
+                                    maxLength={300}
+                                />
+                            </Form.Item>
                         </div>
-                        <Form.Item
-                            name="address"
-                            className="!mb-0"
-                            label={<span className="text-xs sm:text-sm font-medium text-neutral-700">Số nhà, tên đường:</span>}
-                        >
-                            <Input
-                                size="large"
-                                prefix={<EnvironmentOutlined className="text-neutral-400 mr-1" />}
-                                placeholder="Ví dụ: Số 12, ngõ 34..."
-                                className="rounded-lg"
-                            />
-                        </Form.Item>
 
                         {/* Phương thức thanh toán*/}
                         <div className="flex items-center gap-2 font-semibold text-base sm:text-lgtext-neutral-800 pt-3 border-t border-neutral-200 mt-2">
@@ -219,13 +335,13 @@ const CheckoutPage = () => {
                         <Form.Item name="paymentMethod" className="!mb-0">
                             <Radio.Group className="flex w-full flex-col">
                                 <label className="flex cursor-pointer items-center gap-3">
-                                    <Radio value="cod" />
+                                    <Radio value="COD" />
                                     <span className="text-xs font-medium text-neutral-800 sm:text-sm">
                                         Thanh toán khi nhận hàng (COD)
                                     </span>
                                 </label>
                                 <label className="mt-2 flex cursor-pointer items-center gap-3">
-                                    <Radio value="banking" />
+                                    <Radio value="VNPAY" />
                                     <span className="text-xs font-medium text-neutral-800 sm:text-sm">
                                         Chuyển khoản ngân hàng / Mã QR
                                     </span>
@@ -264,23 +380,23 @@ const CheckoutPage = () => {
 
                                 <div className="flex items-center justify-between text-neutral-600">
                                     <span>Tổng tiền hàng</span>
-                                    <span className="font-semibold text-neutral-800">816.000đ</span>
+                                    <span className="font-semibold text-neutral-800">{subTotal.toLocaleString("vi-VN")}đ</span>
                                 </div>
 
                                 <div className="flex items-center justify-between text-neutral-600">
                                     <span>Phí vận chuyển</span>
-                                    <span className="font-semibold text-[#34b766]">Miễn phí</span>
+                                    <span className="font-semibold text-[#34b766]">{(isFreeShip ? 0 : (fee?.total ?? 0)).toLocaleString("vi-VN")}đ</span>
                                 </div>
                             </div>
 
                             <div className="border-t border-b border-neutral-100 flex flex-col gap-2.5 py-3">
                                 <div className="flex items-center justify-between text-neutral-600">
                                     <span>Giảm giá trực tiếp</span>
-                                    <span className="font-semibold text-[#34b766]">-70.000đ</span>
+                                    <span className="font-semibold text-[#34b766]">-{directDiscount.toLocaleString("vi-VN")}đ</span>
                                 </div>
                                 <div className="flex items-center justify-between text-neutral-600">
                                     <span>Mã giảm giá</span>
-                                    <span className="font-semibold text-[#34b766]">-10.000đ</span>
+                                    <span className="font-semibold text-[#34b766]">-0đ</span>
                                 </div>
                             </div>
 
@@ -292,12 +408,12 @@ const CheckoutPage = () => {
                                             (Đã bao gồm thuế VAT)
                                         </div>
                                     </div>
-                                    <span className="text-lg font-semibold text-primary-500">816.000đ</span>
+                                    <span className="text-lg font-semibold text-primary-500">{totalPrice.toLocaleString("vi-VN")}đ</span>
                                 </div>
 
                                 <div className="text-xs flex items-center justify-between text-neutral-600 bg-green-50 px-2 py-1 rounded-lg border border-green-100">
                                     <span className="font-medium text-green-800">Bạn đã tiết kiệm được</span>
-                                    <span className="font-bold text-[#34b766]">-80.000đ</span>
+                                    <span className="font-bold text-[#34b766]">-{(discountAmount + (fee?.total ?? 0)).toLocaleString("vi-VN")}đ</span>
                                 </div>
                             </div>
                         </div>

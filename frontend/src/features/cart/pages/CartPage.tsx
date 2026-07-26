@@ -40,6 +40,12 @@ const CartPage = () => {
         }
     }
     
+    const totalPrice = Math.round(cart?.products.reduce((sum, item) => {
+        if (selectedIDs.includes(item.productID._id)) {
+            return sum + item.productID.price * item.quantity;
+        }
+        return sum;
+    }, 0) ?? 0);
     //cac ham xu li cart
     const handleChangeQuantity = async ({productID, quantity}: CartItemBody) => {
         try {
@@ -193,11 +199,6 @@ const CartPage = () => {
                             <span className="font-semibold text-neutral-800">2</span>
                         </div>
 
-                        <div className="flex items-center justify-between text-neutral-600">
-                            <span>Tạm tính</span>
-                            <span className="font-semibold text-neutral-800">816.000đ</span>
-                        </div>
-
                         <div className="border-t border-neutral-100 pt-3 mt-1 flex justify-between items-start">
                             <div>
                                 <div className="font-bold text-base text-neutral-900">Tổng tiền</div>
@@ -205,7 +206,7 @@ const CartPage = () => {
                                     (Đã bao gồm thuế VAT)
                                 </div>
                             </div>
-                            <span className="text-xl font-bold text-primary-500">816.000đ</span>
+                            <span className="text-xl font-bold text-primary-500">{totalPrice.toLocaleString("vi-VN")}đ</span>
                         </div>
                     </div>
 

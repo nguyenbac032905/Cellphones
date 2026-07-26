@@ -64,7 +64,9 @@ export const createOrderService = async ( userID: string, body: CreateOrderBody,
             province,
             district,
             ward,
-            note
+            note,
+            districtID,
+            wardCode,
         },
         paymentDetail: {
             paymentMethod
@@ -91,8 +93,9 @@ export const createOrderService = async ( userID: string, body: CreateOrderBody,
         });
 
         order.shippingDetails = shippingDetails;
-        await order.save();
     }
+    
+    await order.save();
 
     const paymentUrl = createPaymentUrlService({ paymentMethod, orderID: order._id.toString(), amount: pricing.totalPrice, });
 
