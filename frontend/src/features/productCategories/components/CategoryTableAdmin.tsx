@@ -17,9 +17,8 @@ type Props = {
 };
 
 const CategoryTableAdmin = ({ categories, meta, updateQuery,refetch }: Props) => {
-    const [updatingId, setUpdatingId] = useState("");
     const {deletingID, deleteCategory} = useDeleteCategoryAdmin();
-    const {updateCategory} = useUpdateCategoryAdmin();
+    const {updateCategory, updating} = useUpdateCategoryAdmin();
 
     const can = usePermission();
     const canUpdate = can(PERMISSIONS.CATEGORIES.UPDATE);
@@ -34,7 +33,7 @@ const CategoryTableAdmin = ({ categories, meta, updateQuery,refetch }: Props) =>
             render: (position: number, record: CategoryListItem) => (
                 <Input
                     defaultValue={position}
-                    disabled={!canUpdate || updatingId === record._id}
+                    disabled={!canUpdate || updating === record._id}
                     style={{
                         width: 60,
                         textAlign: "center",

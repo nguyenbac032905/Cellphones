@@ -3,19 +3,19 @@ import type { UpdateCategoryBody } from "../validations/category.validation";
 import { productCategoryAdminService } from "../services/productCategoryAdmin.service";
 
 export const useUpdateCategoryAdmin = () => {
-    const [loading, setLoading] = useState(false);
+    const [updating, setUpdating] = useState("");
 
     const updateCategory = async (categoryID: string, body: UpdateCategoryBody) => {
         try {
-            setLoading(true);
+            setUpdating(categoryID);
 
             const res = await productCategoryAdminService.update(categoryID, body);
 
             return res;
         } finally {
-            setLoading(false);
+            setUpdating(categoryID);
         }
     };
 
-    return {loading,updateCategory};
+    return {updating,updateCategory};
 };

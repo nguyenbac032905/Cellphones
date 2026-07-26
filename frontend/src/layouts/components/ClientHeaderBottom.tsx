@@ -1,8 +1,8 @@
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowDownIcon, CartIcon, CartMobileIcon, CategoryIcon, LocationIcon, LocationMobileIcon, SearchIcon, UserOutlineIcon } from "../../shared/components/Icons";
 import { useAppSelector } from "../../app/hooks";
-import { Badge, Dropdown, message } from "antd";
-import { UserOutlined, LogoutOutlined, ShoppingOutlined, GiftOutlined, EnvironmentOutlined, CrownOutlined, } from "@ant-design/icons";
+import { Dropdown, message } from "antd";
+import { UserOutlined, LogoutOutlined, ShoppingOutlined, GiftOutlined } from "@ant-design/icons";
 import { getLastName } from "../../shared/utils/getLastName";
 import { useLogout } from "../../features/auth/hooks/useLogout";
 import { getErrorMessage } from "../../shared/utils/errorHandler";

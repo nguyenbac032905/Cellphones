@@ -1,14 +1,5 @@
-import { useMemo, useState } from "react";
-import {
-    Button,
-    Card,
-    Image,
-    Popconfirm,
-    Table,
-    Tag,
-    Typography,
-    message,
-} from "antd";
+import { useMemo } from "react";
+import { Button, Card, Image, Popconfirm, Table, Tag, Typography, message, } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { DeleteOutlined, ReloadOutlined } from "@ant-design/icons";
 
@@ -28,7 +19,7 @@ const AdminRecycleBinPage = () => {
     const { products, loading, error, refetch } = useRecycleBinProduct();
     const { restoreProduct, loadingId: loadingRestore } = useRestoreProduct();
     const { forceProduct, loadingId: loadingForce } = useForceProduct();
-    console.log(products)
+    
     const handleRestore = async (id: string) => {
         try {
             const result = await restoreProduct(id);

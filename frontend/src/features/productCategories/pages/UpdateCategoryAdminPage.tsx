@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, Card, Form, Image, Input, message, Radio, Spin, TreeSelect, Upload } from "antd";
+import { Button, Card, Form, Image, Input, message, Radio, TreeSelect, Upload } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import { useNavigate, useParams } from "react-router-dom";
 import AdminTitle from "../../../shared/components/AdminTitle";
@@ -21,7 +21,7 @@ const UpdateCategoryAdminPage = () => {
     const navigate = useNavigate();
 
     const { categoriesTree } = useAdminCategoriesTree();
-    const { loading: updateLoading, updateCategory } = useUpdateCategoryAdmin();
+    const { updating, updateCategory } = useUpdateCategoryAdmin();
     
     const { category, loading: loadingDetail, error: fetchError } = useCategoryAdmin(categoryID);
 
@@ -265,7 +265,7 @@ const UpdateCategoryAdminPage = () => {
                                 <Button
                                     type="primary"
                                     htmlType="submit"
-                                    loading={updateLoading}
+                                    loading={updating !== ""}
                                     className="h-11 w-2/3"
                                 >
                                     Save Changes

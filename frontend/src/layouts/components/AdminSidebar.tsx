@@ -1,14 +1,4 @@
-import {
-    DashboardOutlined,
-    AppstoreOutlined,
-    UserOutlined,
-    ShoppingCartOutlined,
-    ShoppingOutlined,
-    SettingOutlined,
-    SafetyCertificateOutlined,
-    TeamOutlined,
-    KeyOutlined,
-} from "@ant-design/icons";
+import { DashboardOutlined, AppstoreOutlined, UserOutlined, ShoppingCartOutlined, ShoppingOutlined, SettingOutlined, SafetyCertificateOutlined, } from "@ant-design/icons";
 import { Layout, Menu, type MenuProps } from 'antd';
 import type { Dispatch, SetStateAction } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";

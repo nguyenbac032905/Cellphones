@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { ArrowLeftSlide, VoucherIcon } from "../../../shared/components/Icons";
-import { UserOutlined, PhoneOutlined, MailOutlined, EnvironmentOutlined, ShoppingOutlined, CreditCardOutlined, BankOutlined, MoneyCollectOutlined, CheckCircleFilled, } from "@ant-design/icons";
+import { UserOutlined, PhoneOutlined, MailOutlined, EnvironmentOutlined, ShoppingOutlined, CreditCardOutlined, } from "@ant-design/icons";
 import { useAppSelector } from "../../../app/hooks";
 import { Input, Select, Form, Radio } from "antd";
 
@@ -28,7 +28,6 @@ const CheckoutPage = () => {
     const cart = useAppSelector((state) => state.cart.cart);
     const ids = JSON.parse(sessionStorage.getItem("selectedProductIDs") ?? "[]");
     const products = cart?.products.filter((item) => ids.includes(item.productID._id)) ?? [];
-    const navigate = useNavigate();
 
     const [selectedProvince, setSelectedProvince] = useState<number>(1123);
 

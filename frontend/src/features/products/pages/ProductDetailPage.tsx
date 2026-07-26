@@ -7,7 +7,7 @@ import ProductRating from "../components/ProductRating";
 import CommitProduct from "../components/CommitProduct";
 const ProductDetailPage = () => {
     const { productSlug = "" } = useParams();
-    const { product, error, loading } = useProduct(productSlug);
+    const { product } = useProduct(productSlug);
     if(!product){
         return <div>Loading Product</div>
     }

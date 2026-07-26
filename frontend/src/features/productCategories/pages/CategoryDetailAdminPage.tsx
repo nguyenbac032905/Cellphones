@@ -2,9 +2,8 @@ import { Link, useParams } from "react-router-dom";
 import { useCategoryAdmin } from "../hooks/useCategoryAdmin";
 import LoadingScreen from "../../../shared/components/LoadingScreen";
 import CustomAlert from "../../../shared/components/CustomAlert";
-import { Card, Tabs, Tag, Typography, Image, Descriptions } from "antd";
+import { Card, Tag, Typography, Image, Descriptions } from "antd";
 import AdminTitle from "../../../shared/components/AdminTitle";
-import { sanitizeHtml } from "../../../shared/utils/sanitizeHtml";
 const { Title, Text } = Typography;
 
 const CategoryDetailAdminPage = () => {

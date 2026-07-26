@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { useGetAllChildCategory } from "../hooks/useGetAllChildCategory";
 
 const ListCategory = ({ categorySlug }: { categorySlug: string }) => {
-    const { categories, loading, error } = useGetAllChildCategory(categorySlug);
+    const { categories} = useGetAllChildCategory(categorySlug);
     return (
         <>
             {categories.length > 0 && (

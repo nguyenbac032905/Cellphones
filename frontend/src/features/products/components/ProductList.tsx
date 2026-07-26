@@ -43,7 +43,7 @@ const ProductList = ({ categorySlug }: { categorySlug: string }) => {
     const [filterActive, setFilterActive] = useState<any>([]);
     const [sortActive, setSortActive] = useState<string>();
     const { query, updateQuery } = useProductQuery();
-    const { products, meta, loading, error } = useProductsByCategory(categorySlug,query,"10");
+    const { products, meta} = useProductsByCategory(categorySlug,query,"10");
     
     return (
         <div className="flex flex-col gap-5">

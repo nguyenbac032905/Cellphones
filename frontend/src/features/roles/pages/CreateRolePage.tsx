@@ -84,7 +84,7 @@ const CreateRolePage = () => {
                         Permissions
                     </Title>
                     <div className="space-y-5">
-                        {permissionGroups.map((group, index) => {
+                        {permissionGroups.map((group) => {
                             const fieldName = group.title.toLowerCase();
 
                             const selectedPermissions = Form.useWatch(fieldName, form) || [];

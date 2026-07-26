@@ -182,7 +182,7 @@ const AdminProductsCreatePage = () => {
                             <Form.Item label="Description:" name="description">
                                 <Editor
                                     apiKey="0ewbvj6k7g3emiyhfawtxjqw6oftk4evzqa6j3cpojuej5yg"
-                                    onInit={(evt, editor) => (editorRef.current = editor)}
+                                    onInit={(_, editor) => (editorRef.current = editor)}
                                     init={{
                                         height: 280,
                                         menubar: false,

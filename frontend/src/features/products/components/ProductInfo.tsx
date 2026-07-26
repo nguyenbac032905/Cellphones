@@ -16,7 +16,7 @@ const promos = [
 ];
 const ProductInfo = ({ product }: { product: ProductDetailClient }) => {
     const newPrice = Math.round(product.price * (1 - product.discountPercentage / 100));
-    const {addItemToCart, loading} = useAddItem();
+    const {addItemToCart} = useAddItem();
     const handleAddToCart = async () => {
         try {
             const cartItem = {
