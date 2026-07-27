@@ -61,5 +61,10 @@ export const createOrderSchema = z.object({
             ).min(1, "Đơn hàng phải có ít nhất 1 sản phẩm")
     })
 });
-
 export type CreateOrderBody = z.infer<typeof createOrderSchema>["body"];
+
+export const orderIDSchema = z.object({
+    params: z.object({
+        orderID: objectIdSchema
+    }).strict()
+});

@@ -74,6 +74,10 @@ const OrderSchema = new Schema({
     //     discountValue: Number,
     //     discountAmount: Number
     // }
+    deleted: {
+        type: Boolean,
+        default: false
+    },
 }, {
     timestamps: true
 });

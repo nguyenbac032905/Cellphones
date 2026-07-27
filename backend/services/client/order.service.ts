@@ -8,7 +8,6 @@ import { createPaymentUrlService } from "./payment.service";
 import { calculatePricing } from "../../helpers/pricing";
 import { createGHNOrder } from "../../helpers/ghn";
 
-
 export const createOrderService = async ( userID: string, body: CreateOrderBody, ) => {
     const { products, fullName, phone, address, province, district, ward, districtID, wardCode, note, paymentMethod } = body;
 
@@ -126,3 +125,12 @@ export const createOrderService = async ( userID: string, body: CreateOrderBody,
         }
     };
 };
+export const getOrderService = async (userID: string, orderID: string) => {
+    const order = await Order.findOne({ userID: userID, _id: orderID, deleted: false, }).select("-userID -updatedAt").lean();
+    if(!order){ 
+        throw new AppError("Order not found", 404);
+    }
+    return {
+        data: order
+    }
+}
