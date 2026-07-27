@@ -287,12 +287,13 @@
     3. tạo helper tạo đơn hàng giao hàng nhanh, nhận vào thông tin đơn hàng, gọi đến api tạo đơn hàng giao hàng nhanh và trả về shippingDetails
     4. tạo payment service, nhận vào paymentMethod, orderID, amount và gọi đến helper thanh toán tương ứng, trả về url thanh toán
     5. luồng xử lí order service: nhận vào thông tin đơn hàng, lấy ra thông tin sản phẩm, tính pricing, nếu thanh toán COD thì gọi đến helper tạo đơn hàng giao hàng nhanh luôn, nếu phương thức thanh toán là vnpay thì tạo url thanh toán vnpay và trả về type là redirect để frontend redirect, còn không thì trả về type là navigate để frontend navigate.
-85. call api hiển thị select chọn địa chỉ ra trang checkout, và làm tính năng tạo đơn hàng
+86. call api hiển thị select chọn địa chỉ ra trang checkout, và làm tính năng tạo đơn hàng
     1. tạo service lấy tỉnh, huyện, xã, tính phí ship, đổ thông tin ra giao diện.
     2. tính subtotal, discountAmount, shippingFee, và hiển thị ra giao diện.
     3. tạo service và hooks tạo đơn hàng và bắt sự kiện tạo đơn hàng.
-86. hoàn thiện tính năng thanh toán online
+87. hoàn thiện tính năng thanh toán online
     1. sửa lại axios frontend call api tới local
     2. tạo route return_payment_url để vnpay trả dữ liệu về khi thanh toán xong
     3. service sẽ lấy ra vnp_params mà vnpay trả về, sử dụng secretkey để kí params đó và so sánh xem có giống với params mà vnpay trả về không. nếu sai chữ kí thì cập nhật trạng thái thanh toán là failed và redirect người dùng về trang chi tiết đơn hàng, nếu đúng chữ kí thì tạo đơn hàng giao hàng nhanh, cập nhật lại trạng thái thanh toán là PAID và lưu lại đơn hàng.
     4. sửa lại authController, nếu môi trường là dev thì để samesite là lax
+88. làm tính năng chi tiết đơn hàng
