@@ -1,5 +1,4 @@
 import mongoose, { Schema } from 'mongoose';
-import { number } from 'zod';
 
 const OrderItemSchema = new Schema({
     productID: { type: Schema.Types.ObjectId, ref: 'Product', required: true },

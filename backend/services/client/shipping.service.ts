@@ -1,14 +1,6 @@
 import axios from "axios";
 import { GetFeeBody } from "../../validations/client/shipping.validation";
-
-const ghnClient = axios.create({
-    baseURL: process.env.GHN_BASE_URL,
-    headers: {
-        Token: process.env.GHN_TOKEN,
-        ShopId: process.env.GHN_SHOP_ID,
-        "Content-Type": "application/json"
-    }
-});
+import { ghnClient } from "../../config/axiosConfig";
 
 export const getProvincesService = async () => {
     const {data} = await ghnClient.get("/master-data/province");

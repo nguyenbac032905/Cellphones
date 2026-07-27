@@ -40,12 +40,24 @@ const CartPage = () => {
         }
     }
     
-    const totalPrice = Math.round(cart?.products.reduce((sum, item) => {
+    const subTotal = Math.round(cart?.products.reduce((sum, item) => {
         if (selectedIDs.includes(item.productID._id)) {
             return sum + item.productID.price * item.quantity;
         }
         return sum;
     }, 0) ?? 0);
+    const directDiscount = Math.round(cart?.products.reduce((sum, item) => {
+        if (selectedIDs.includes(item.productID._id)) {
+            return sum + item.productID.price * (item.productID.discountPercentage/100) * item.quantity;
+        }
+        return sum;
+    }, 0) ?? 0);
+    const quantitySelected = cart?.products.reduce((sum, item) => {
+        if (selectedIDs.includes(item.productID._id)) {
+            return sum + item.quantity;
+        }
+        return sum;
+    }, 0) ?? 0;
     //cac ham xu li cart
     const handleChangeQuantity = async ({productID, quantity}: CartItemBody) => {
         try {
@@ -193,20 +205,33 @@ const CartPage = () => {
                         Thông tin đơn hàng
                     </h2>
 
-                    <div className="flex flex-col gap-3 text-sm">
-                        <div className="flex items-center justify-between text-neutral-600">
-                            <span>Số lượng sản phẩm</span>
-                            <span className="font-semibold text-neutral-800">2</span>
+                    <div className="flex flex-col gap-4 text-sm pt-1">
+                        <div className="flex flex-col gap-2.5">
+                            <div className="flex items-center justify-between text-neutral-600">
+                                <span>Số lượng sản phẩm</span>
+                                <span className="font-semibold text-neutral-800">{quantitySelected}</span>
+                            </div>
+
+                            <div className="flex items-center justify-between text-neutral-600">
+                                <span>Tổng tiền hàng</span>
+                                <span className="font-semibold text-neutral-800">{subTotal.toLocaleString("vi-VN")}đ</span>
+                            </div>
                         </div>
 
-                        <div className="border-t border-neutral-100 pt-3 mt-1 flex justify-between items-start">
-                            <div>
-                                <div className="font-bold text-base text-neutral-900">Tổng tiền</div>
-                                <div className="text-[11px] text-neutral-400 mt-0.5">
-                                    (Đã bao gồm thuế VAT)
-                                </div>
+                        <div className="border-t border-b border-neutral-100 flex flex-col gap-2.5 py-3">
+                            <div className="flex items-center justify-between text-neutral-600">
+                                <span>Giảm giá</span>
+                                <span className="font-semibold text-[#34b766]">-{directDiscount.toLocaleString("vi-VN")}đ</span>
                             </div>
-                            <span className="text-xl font-bold text-primary-500">{totalPrice.toLocaleString("vi-VN")}đ</span>
+                        </div>
+
+                        <div className="border-t border-neutral-100 pt-2 flex flex-col gap-3">
+                            <div className="flex justify-between items-start">
+                                <div>
+                                    <div className="font-bold text-base text-neutral-900">Tổng tiền</div>
+                                </div>
+                                <span className="text-lg font-semibold text-primary-500">{(subTotal-directDiscount).toLocaleString("vi-VN")}đ</span>
+                            </div>
                         </div>
                     </div>
 

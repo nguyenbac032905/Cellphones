@@ -20,13 +20,15 @@ const formatVNPayDate = (date: Date): string => {
     );
 };
 
-const sortObject = (obj: Record<string, any>) => {
+export const sortObject = (obj: Record<string, any>) => {
     const sorted: Record<string, any> = {};
-    const keys = Object.keys(obj).sort();
-    
-    for (const key of keys) {
-        sorted[key] = encodeURIComponent(obj[key]).replace(/%20/g, "+");
-    }
+
+    Object.keys(obj)
+        .sort()
+        .forEach((key) => {
+            sorted[key] = encodeURIComponent(obj[key]).replace(/%20/g, "+");
+        });
+
     return sorted;
 };
 
@@ -62,6 +64,6 @@ export const createVNPayUrl = ({ orderID, amount, orderInfo = "Thanh toan hoa do
     const signed = hmac.update(Buffer.from(signData, "utf-8")).digest("hex");
 
     vnp_Params["vnp_SecureHash"] = signed;
-
+    console.log("Url:",`${vnpUrl}?${qs.stringify(vnp_Params, { encode: false })}`)
     return `${vnpUrl}?${qs.stringify(vnp_Params, { encode: false })}`;
 };

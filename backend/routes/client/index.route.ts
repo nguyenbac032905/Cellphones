@@ -6,6 +6,7 @@ import cartRoutes from "./cart.route";
 import { authMiddleware } from "../../middlewares/client/auth.middleware";
 import shippingRoutes from "./shipping.route";
 import orderRoutes from "./order.route";
+import paymentRoutes from "./payment.route";
 const routesClient = (app: Express) => {
     const PATH ="/api";
     app.use(PATH + "/products", productRoutes);
@@ -14,6 +15,7 @@ const routesClient = (app: Express) => {
     app.use(PATH + "/cart",authMiddleware, cartRoutes);
     app.use(PATH + "/shipping",authMiddleware, shippingRoutes);
     app.use(PATH + "/orders",authMiddleware, orderRoutes);
+    app.use(PATH + "/payment", paymentRoutes);
 }
 
 export default routesClient;

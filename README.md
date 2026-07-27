@@ -286,4 +286,8 @@
     2. tạo helper pricing : nhận vào các itemProduct và phí ship, trả về thông tin pricing
     3. tạo helper tạo đơn hàng giao hàng nhanh, nhận vào thông tin đơn hàng, gọi đến api tạo đơn hàng giao hàng nhanh và trả về shippingDetails
     4. tạo payment service, nhận vào paymentMethod, orderID, amount và gọi đến helper thanh toán tương ứng, trả về url thanh toán
-    5. luồng xử lí order service: nhận vào thông tin đơn hàng, lấy ra thông tin sản phẩm, tính pricing, nếu thanh toán COD thì gọi đến helper tạo đơn hàng luôn, 
+    5. luồng xử lí order service: nhận vào thông tin đơn hàng, lấy ra thông tin sản phẩm, tính pricing, nếu thanh toán COD thì gọi đến helper tạo đơn hàng giao hàng nhanh luôn, nếu phương thức thanh toán là vnpay thì tạo url thanh toán vnpay và trả về type là redirect để frontend redirect, còn không thì trả về type là navigate để frontend navigate.
+85. call api hiển thị select chọn địa chỉ ra trang checkout, và làm tính năng tạo đơn hàng
+    1. tạo service lấy tỉnh, huyện, xã, tính phí ship, đổ thông tin ra giao diện.
+    2. tính subtotal, discountAmount, shippingFee, và hiển thị ra giao diện.
+    3. tạo service và hooks tạo đơn hàng và bắt sự kiện tạo đơn hàng.

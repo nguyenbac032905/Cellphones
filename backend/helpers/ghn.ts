@@ -1,5 +1,5 @@
-import axios from "axios";
 import { AppError } from "../utils/AppError";
+import { ghnClient } from "../config/axiosConfig";
 
 interface GHNItem {
     title: string;
@@ -37,19 +37,11 @@ interface ShippingDetails {
         | "returned";
 }
 
-const ghnClient = axios.create({
-    baseURL: process.env.GHN_BASE_URL,
-    headers: {
-        Token: process.env.GHN_TOKEN,
-        ShopId: process.env.GHN_SHOP_ID,
-        "Content-Type": "application/json"
-    }
-});
-
 export const createGHNOrder = async ({ 
     fullName, phone, address, districtID, wardCode, note, codAmount, paymentTypeID, items 
 }: CreateGHNOrderParams): Promise<ShippingDetails> => {
     const res = await ghnClient.post("/v2/shipping-order/create", {
+        // type = 1 là shop trả, type = 2 là người dùng trả
         payment_type_id: paymentTypeID,
         cod_amount: codAmount,
         note,

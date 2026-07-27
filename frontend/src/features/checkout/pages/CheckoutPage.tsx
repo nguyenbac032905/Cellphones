@@ -112,6 +112,7 @@ const CheckoutPage = () => {
         try {
             const result = await createOrder(parsed.data);
             message.success("Tạo đơn hàng thành công");
+            
             if(result.nextAction.type === "navigate"){
                 navigate(result.nextAction.url);
             }else{
@@ -385,7 +386,7 @@ const CheckoutPage = () => {
 
                                 <div className="flex items-center justify-between text-neutral-600">
                                     <span>Phí vận chuyển</span>
-                                    <span className="font-semibold text-[#34b766]">{(isFreeShip ? 0 : (fee?.total ?? 0)).toLocaleString("vi-VN")}đ</span>
+                                    <span className="font-semibold text-neutral-800">{(isFreeShip ? 0 : (fee?.total ?? 0)).toLocaleString("vi-VN")}đ</span>
                                 </div>
                             </div>
 
@@ -413,7 +414,7 @@ const CheckoutPage = () => {
 
                                 <div className="text-xs flex items-center justify-between text-neutral-600 bg-green-50 px-2 py-1 rounded-lg border border-green-100">
                                     <span className="font-medium text-green-800">Bạn đã tiết kiệm được</span>
-                                    <span className="font-bold text-[#34b766]">-{(discountAmount + (fee?.total ?? 0)).toLocaleString("vi-VN")}đ</span>
+                                    <span className="font-bold text-[#34b766]">-{(discountAmount + (isFreeShip ? (fee?.total ?? 0) : 0)).toLocaleString("vi-VN")}đ</span>
                                 </div>
                             </div>
                         </div>
