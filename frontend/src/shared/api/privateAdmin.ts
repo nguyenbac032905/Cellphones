@@ -2,12 +2,14 @@ import { store } from "../../app/store";
 import { clearAuth, setAuth } from "../../features/auth/auth.slice";
 import { publicClient } from "./publicClient";
 import axios from "axios";
+const backendLocal = import.meta.env.VITE_BACKEND_LOCAL;
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
-export const privateAdmin = axios.create(({
-    baseURL: "http://localhost:3000",
-    timeout: 10000,
-    withCredentials: true
-}));
+export const privateAdmin = axios.create({
+  baseURL: import.meta.env.DEV ? backendLocal : backendUrl,
+  timeout: 10000,
+  withCredentials: true,
+});
 
 privateAdmin.interceptors.request.use((config) => {
     const token = store.getState().auth.accessToken;

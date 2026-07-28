@@ -8,6 +8,7 @@ import CommitProduct from "../components/CommitProduct";
 const ProductDetailPage = () => {
     const { productSlug = "" } = useParams();
     const { product } = useProduct(productSlug);
+    
     if(!product){
         return <div>Loading Product</div>
     }

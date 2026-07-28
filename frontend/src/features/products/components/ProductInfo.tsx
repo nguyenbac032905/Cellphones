@@ -5,6 +5,7 @@ import TicketPromo from "../components/TicketPromo";
 import { useAddItem } from "../../cart/hooks/useAddItem";
 import { message } from "antd";
 import { getErrorMessage } from "../../../shared/utils/errorHandler";
+import { useCoupons } from "../../coupons/hooks/useCoupons";
 const promos = [
     "Chỉ thêm 30K - nhận Sim/Esim 5G VNSKY, có ngay 3GB data/ngày+500 phút gọi Mobifone & VNSKY, miễn phí 30 ngày đầu - chỉ áp dụng tại cửa hàng",
     "Giảm thêm 10% cho Pin dự phòng - Camera giám sát - Đồng hồ trẻ em - Gia dụng - Sức khỏe Làm đẹp khi mua Điện thoại/Laptop",
@@ -15,6 +16,7 @@ const promos = [
     "Tặng PMH trị giá 1.000.000 đ cho APPLE WATCH SE3/S11/Ultra mới - không áp dụng kèm ưu đãi khác/ HSSV"
 ];
 const ProductInfo = ({ product }: { product: ProductDetailClient }) => {
+    const {coupons} = useCoupons();
     const newPrice = Math.round(product.price * (1 - product.discountPercentage / 100));
     const {addItemToCart} = useAddItem();
     const handleAddToCart = async () => {
@@ -124,10 +126,10 @@ const ProductInfo = ({ product }: { product: ProductDetailClient }) => {
             <div style={{ background: "linear-gradient(to top right, #fcfeff, #eff5ff) padding-box, linear-gradient(to top right, #dbe8fe, #609afa)" }}
                 className="rounded-2xl border border-[#4a91e2cb] sm:p-3 p-1"
             >
-                <div className="flex items-center justify-between pb-2">
-                    <div className="flex-1 text-center">
-                        <TicketPromo />
-                    </div>
+                <div className="flex items-center gap-5 pb-2">
+                        {coupons && coupons.map(item => (
+                            <TicketPromo coupon={item}/>
+                        ))}
                 </div>
 
                 <div className="flex items-center justify-center gap-2 border-t border-dashed border-[#4a91e2cb] pt-3 mt-1">

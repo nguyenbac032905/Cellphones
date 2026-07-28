@@ -66,7 +66,17 @@ const userSchema = new mongoose.Schema(
         deletedAt: {
             type: Date,
             default: null
-        }
+        },
+
+        coupons: {
+            type: [
+                {
+                    type: mongoose.Schema.Types.ObjectId,
+                    ref: "Coupon",
+                },
+            ],
+            default: [],
+        },
     },
     {
         timestamps: true

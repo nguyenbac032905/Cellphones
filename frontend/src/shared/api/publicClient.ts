@@ -1,6 +1,8 @@
 import axios from "axios";
+const backendLocal = import.meta.env.VITE_BACKEND_LOCAL;
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
 export const publicClient = axios.create(({
-    baseURL: "http://localhost:3000",
+    baseURL: import.meta.env.DEV ? backendLocal : backendUrl,
     timeout: 10000,
     withCredentials:true
 }));

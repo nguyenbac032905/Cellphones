@@ -10,6 +10,7 @@ import type { CartItemBody, DeleteItemBody } from "../types/cart.type";
 import { useDeleteItem } from "../hooks/useDeleteItem";
 import { useEffect, useMemo, useState } from "react";
 import { useDeleteBulkItem } from "../hooks/useDeleteBulkItem";
+import { useCoupons } from "../../coupons/hooks/useCoupons";
 
 const CartPage = () => {
     const cart= useAppSelector(state => state.cart.cart);
@@ -17,6 +18,7 @@ const CartPage = () => {
     const {deleteItem} = useDeleteItem();
     const {deleteBulk} = useDeleteBulkItem();
     const navigate = useNavigate();
+    const {coupons} = useCoupons();
     //xu li checkbox
     const [selectedIDs, setSelectedIDs] = useState<string[]>([]);
     const allProductIDs = useMemo( () => cart?.products.map(item => item.productID._id) ?? [], [cart] );
@@ -173,9 +175,10 @@ const CartPage = () => {
                                             <GiftIcon className="size-4" />
                                             <span className="text-xs font-semibold">Khuyến mãi đi kèm</span>
                                         </div>
-                                        <div className="flex flex-wrap gap-3">
-                                            <TicketPromo />
-                                            <TicketPromo />
+                                        <div className="flex items-center gap-5 pb-2">
+                                                {coupons && coupons.map(item => (
+                                                    <TicketPromo coupon={item}/>
+                                                ))}
                                         </div>
                                     </div>
                                 </div>

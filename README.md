@@ -297,3 +297,5 @@
     3. service sẽ lấy ra vnp_params mà vnpay trả về, sử dụng secretkey để kí params đó và so sánh xem có giống với params mà vnpay trả về không. nếu sai chữ kí thì cập nhật trạng thái thanh toán là failed và redirect người dùng về trang chi tiết đơn hàng, nếu đúng chữ kí thì tạo đơn hàng giao hàng nhanh, cập nhật lại trạng thái thanh toán là PAID và lưu lại đơn hàng.
     4. sửa lại authController, nếu môi trường là dev thì để samesite là lax
 88. làm tính năng chi tiết đơn hàng
+89. làm giao diện dashboard
+90. hoàn thiện giao diện dashboard

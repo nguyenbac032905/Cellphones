@@ -2,9 +2,11 @@ import axios from "axios";
 import { store } from "../../app/store";
 import { publicClient } from "./publicClient";
 import { clearAuth, setAuth } from "../../features/auth/auth.slice";
+const backendLocal = import.meta.env.VITE_BACKEND_LOCAL;
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 export const privateClient = axios.create(({
-    baseURL: "http://localhost:3000",
+    baseURL: import.meta.env.DEV ? backendLocal : backendUrl,
     timeout: 10000,
     withCredentials: true
 }));

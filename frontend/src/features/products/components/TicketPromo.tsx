@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
+import type { Coupon } from "../../coupons/types/coupon.type";
 
-const TicketPromo = () => {
+const TicketPromo = ({coupon}: {coupon: Coupon}) => {
     const maskStyle = {
         maskImage: `
             radial-gradient(circle at 1px 2px, transparent 4px, black 5px),
@@ -21,20 +22,19 @@ const TicketPromo = () => {
                 style={maskStyle}
             >
                 <span className="text-xs text-center">
-                    Giảm<br />3%
+                    Giảm<br />{coupon.discountType === "percent" ? `${coupon.discountValue}%` : `${coupon.discountValue / 1000}K`}
                 </span>
             </div>
             <div className="flex-1 flex justify-between p-1.5 pl-2 bg-[#fff3f4] border-t border-r border-b border-primary-500 rounded-tr-lg rounded-br-lg">
                 <div className="flex flex-col justify-between text-left flex-1 min-w-0">
                     <div className="flex flex-col">
-                        <span className="font-extrabold text-[11px] text-gray-900 leading-tight">Tối đa 500k</span>
+                        <span className="font-extrabold text-[11px] text-gray-900 leading-tight">{coupon.title}</span>
                         <p className="text-[9px] text-gray-700 mt-0.5">
-                            Áp dụng sản phẩm hiển thị voucher
+                            {coupon.description}
                         </p>
                     </div>
                     <div className="text-[8px] text-gray-500 leading-none flex flex-col gap-0.5">
-                        <span>Thời hạn thu thập:</span>
-                        <span className="font-semibold text-gray-800">23:59 31/07/2026</span>
+                        <span className="font-semibold text-gray-800">Hết hạn: {new Date(coupon.expireAt).toLocaleString("vi-VN")}</span>
                     </div>
                 </div>
                 <div className="flex flex-col items-center justify-center gap-1 shrink-0 w-[58px]">
