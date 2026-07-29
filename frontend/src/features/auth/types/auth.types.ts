@@ -4,6 +4,7 @@ interface BaseUser {
     email: string;
     phone: string;
     avatar: string;
+    coupons: string[]
 }
 export interface Client extends BaseUser {
     accountType: "client";

@@ -12,5 +12,8 @@ export interface Coupon {
     status: "active" | "inactive";
     deleted: boolean;
 }
+export type AddCouponBody = {
+    couponID: string
+}
 
 export type CouponsResponse = ApiResponse<Coupon[]>;

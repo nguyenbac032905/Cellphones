@@ -142,7 +142,8 @@ export const loginService = async ( email: string, password: string ) => {
         email: user.email,
         phone: user.phone,
         avatar: user.avatar,
-        accountType: user.accountType
+        accountType: user.accountType,
+        coupons: user.coupons || []
     };
 
     const newAccessToken = generateAccessToken(payload);
@@ -195,6 +196,7 @@ export const refreshTokenService = async (refreshToken: string) => {
         phone: user.phone,
         avatar: user.avatar,
         accountType: user.accountType,
+        coupons: user.coupons || []
     };
     const newAccessToken = generateAccessToken(payload);
     return {

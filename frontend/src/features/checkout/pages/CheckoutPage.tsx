@@ -1,18 +1,20 @@
-import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeftSlide, VoucherIcon } from "../../../shared/components/Icons";
-import { UserOutlined, PhoneOutlined, MailOutlined, EnvironmentOutlined, ShoppingOutlined, CreditCardOutlined, } from "@ant-design/icons";
-import { useAppSelector } from "../../../app/hooks";
-import { Input, Select, Form, Radio, message } from "antd";
-import { useProvinces } from "../hooks/useProvinces";
-import { useDistricts } from "../hooks/useDistricts";
-import { useWards } from "../hooks/useWard";
+import { Form, message } from "antd";
 import { useFee } from "../hooks/useFee";
-import type { District, Province, Ward } from "../types/checkout.type";
 import { createOrderSchema } from "../../orders/validations/order.validation";
 import { zodToAntFormErrors } from "../../../shared/utils/zodToAntFormErrors";
 import { useCreateOrder } from "../../orders/hooks/useCreateOrder";
 import { getErrorMessage } from "../../../shared/utils/errorHandler";
+import ProductList from "../components/ProductList";
+import { useCheckoutSummary } from "../hooks/useCheckoutSummary";
+import { useCheckoutAddress } from "../hooks/useCheckoutAddress";
+import CheckoutForm from "../components/CheckoutForm";
+import { useState } from "react";
+import CouponModal from "../components/CouponModal";
+import { useAppSelector } from "../../../app/hooks";
+import { useCoupons } from "../../coupons/hooks/useCoupons";
+import type { Coupon } from "../../coupons/types/coupon.type";
 type CheckoutFormValues = {
     fullName: string;
     phone: string;
@@ -26,62 +28,26 @@ type CheckoutFormValues = {
 };
 const CheckoutPage = () => {
     const [form] = Form.useForm();
-    const {provinces} = useProvinces();
-    const {districts, getDistricts} = useDistricts();
-    const {wards, getWards} = useWards();
+    const navigate = useNavigate();
+    //mã giảm giá
+    const user = useAppSelector(state => state.auth.user);
+    const {coupons}= useCoupons();
+    const myCoupons = coupons.filter((coupon: Coupon) => user?.coupons.includes(coupon._id));
+    const [isCouponModalOpen, setIsCouponModalOpen] = useState(false);
+    const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
+    const openCouponModal = () => {
+        setIsCouponModalOpen(true);
+    };
+    const closeCouponModal = () => {
+        setIsCouponModalOpen(false);
+    };
+    // tạo đơn hàng
     const {fee, getFee} = useFee();
     const {createOrder} = useCreateOrder();
-    const navigate = useNavigate();
-    
     //lay ra cart và tính giá sản phẩm
-    const cart = useAppSelector((state) => state.cart.cart);
-    const ids = JSON.parse(sessionStorage.getItem("selectedProductIDs") ?? "[]");
-    const products = cart?.products.filter((item) => ids.includes(item.productID._id)) ?? [];
-    //tính tổng tiền hàng
-    const subTotal = Math.round(products.reduce((sum, item) => sum + item.productID.price*item.quantity,0));
-    //tính tiền giảm giá của sản phẩm
-    const directDiscount = Math.round(products.reduce((sum, item) => sum + item.productID.price*(item.productID.discountPercentage/100)*item.quantity,0));
-    const discountAmount = directDiscount
-    //tính tiền đơn hàng
-    const totalOrder = subTotal - discountAmount;
-    // kiểm tra có freeship không, nếu không thì cộng cả tiền ship vào
-    const isFreeShip = totalOrder >= 300000;
-    const totalPrice = totalOrder + (isFreeShip ? 0 : (fee?.total ?? 0));
+    const { products, subTotal, directDiscount, discountAmount, isFreeShip, shippingFee, totalPrice, totalSaving, } = useCheckoutSummary(fee);
     //xử lí địa chỉ
-    const [selectedProvince, setSelectedProvince] = useState<Province>();
-    const [selectedDistrict, setSelectedDistrict] = useState<District>();
-    const [selectedWard, setSelectedWard] = useState<Ward>();
-    const handleProvinceChange = async (value: number) => {
-        const province = provinces.find(p => p.ProvinceID === value);
-        if (!province) return;
-        setSelectedProvince(province);
-        form.setFieldsValue({ district:undefined, ward: undefined });
-        await getDistricts(value);
-    };
-    const handleDistrictChange = async (value: number) => {
-        const district = districts.find(d => d.DistrictID === value);
-        setSelectedDistrict(district)
-        form.setFieldsValue({ ward: undefined });
-
-        await getWards(value);
-    };
-    const handleWardChange = async (value: string) => {
-        const ward = wards.find(w => w.WardCode === value);
-        if (!ward || !selectedDistrict) return;
-        setSelectedWard(ward);
-        const payload = {
-            fromDistrictId: 1680,
-            fromWardCode: "220101",
-            toDistrictId: selectedDistrict?.DistrictID!,
-            toWardCode: ward.WardCode,
-            height: 10,
-            width: 30,
-            length: 40,
-            weight: 3000,
-            insuranceValue: 0,
-        }
-        await getFee(payload);
-    }
+    const { provinces, districts, wards, selectedProvince, selectedDistrict, selectedWard, handleProvinceChange, handleDistrictChange, handleWardChange, } = useCheckoutAddress({ form, getFee, });
     //hàm submit
     const onFinish = async (values: CheckoutFormValues) => {
         const data = {
@@ -149,207 +115,10 @@ const CheckoutPage = () => {
             >
                 <div className="lg:col-span-8 flex flex-col gap-5">
                     {/* Danh sách sản phẩm */}
-                    <div className="flex flex-col gap-4 bg-white rounded-xl p-4 sm:p-5 border border-neutral-200/80 shadow-sm">
-                        <div className="flex items-center justify-between border-b border-neutral-100 pb-3">
-                            <div className="flex items-center gap-2 font-semibold text-base sm:text-lg">
-                                <ShoppingOutlined className="text-primary-500 text-lg" />
-                                <span>Danh sách sản phẩm thanh toán <span className="max-sm:hidden">({products.length} sản phẩm)</span></span>
-                            </div>
-                        </div>
-
-                        {products.length > 0 ? (
-                            <div className="divide-y divide-neutral-100">
-                                {products.map((item) => (
-                                    <div className="py-3 flex items-center justify-between gap-3 sm:gap-4" key={item._id}>
-                                        <div className="flex items-center gap-3 shrink-0">
-                                            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl border border-neutral-100 p-1 flex items-center justify-center shrink-0 bg-neutral-50/50">
-                                                <img
-                                                    className="w-full h-full object-contain"
-                                                    src={item.productID.mainImage}
-                                                    alt={item.productID.title}
-                                                />
-                                            </div>
-                                        </div>
-
-                                        <div className="flex-1 flex flex-col gap-1 min-w-0">
-                                            <p
-                                                className="text-xs sm:text-sm font-semibold !text-neutral-800 line-clamp-2"
-                                            >
-                                                {item.productID.title}
-                                            </p>
-                                            <div className="flex items-center gap-2 mt-0.5">
-                                                <span className="text-sm sm:text-base font-bold text-primary-500">
-                                                    {Math.round(
-                                                        item.productID.price * (1 - item.productID.discountPercentage / 100)
-                                                    ).toLocaleString("vi-VN")}
-                                                    đ
-                                                </span>
-                                                <span className="text-xs text-neutral-400 line-through">
-                                                    {item.productID.price.toLocaleString("vi-VN")}đ
-                                                </span>
-                                            </div>
-                                        </div>
-
-                                        <div className="flex items-center gap-1 border border-neutral-200 rounded-lg bg-neutral-50 shrink-0 px-3 py-1 text-xs sm:text-sm font-medium text-neutral-700">
-                                            Số lượng: <b>{item.quantity}</b>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        ) : (
-                            <div className="text-center py-6 text-neutral-500 text-sm">
-                                Vui lòng chọn sản phẩm trong giỏ hàng để thanh toán
-                            </div>
-                        )}
-                    </div>
+                    <ProductList products={products} />
 
                     {/* Form thông tin người nhận và Địa chỉ */}
-                    <div className="flex flex-col gap-4 bg-white rounded-xl p-4 sm:p-5 border border-neutral-200/80 shadow-sm">
-                        <div className="flex items-center gap-2 font-semibold text-base sm:text-lg">
-                            <UserOutlined />
-                            <span>Thông tin nhận hàng</span>
-                        </div>
-
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <Form.Item
-                                name="fullName"
-                                className="!mb-0"
-                                label={<span className="text-xs sm:text-sm font-medium text-neutral-700">Họ và tên:</span>}
-                            >
-                                <Input
-                                    size="large"
-                                    prefix={<UserOutlined className="text-neutral-400 mr-1" />}
-                                    placeholder="Họ và tên người nhận"
-                                    className="rounded-lg"
-                                />
-                            </Form.Item>
-                            <Form.Item
-                                name="phone"
-                                className="!mb-0"
-                                label={<span className="text-xs sm:text-sm font-medium text-neutral-700">Số điện thoại:</span>}
-                            >
-                                <Input
-                                    size="large"
-                                    prefix={<PhoneOutlined className="text-neutral-400 mr-1" />}
-                                    placeholder="Số điện thoại liên hệ"
-                                    className="rounded-lg"
-                                />
-                            </Form.Item>
-                        </div>
-                        <Form.Item
-                            name="email"
-                            className="!mb-0"
-                            label={<span className="text-xs sm:text-sm font-medium text-neutral-700">Email nhận thông báo:</span>}
-                        >
-                            <Input
-                                size="large"
-                                type="email"
-                                prefix={<MailOutlined className="text-neutral-400 mr-1" />}
-                                placeholder="Địa chỉ email"
-                                className="rounded-lg"
-                            />
-                        </Form.Item>
-
-                        <div className="flex items-center gap-2 font-semibold text-base sm:text-lg text-neutral-800 pt-2 border-t border-neutral-200 mt-2">
-                            <EnvironmentOutlined />
-                            <span>Địa chỉ giao hàng</span>
-                        </div>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <Form.Item
-                                name="province"
-                                className="!mb-0"
-                                label={<span className="text-xs sm:text-sm font-medium text-neutral-700">Tỉnh / Thành phố:</span>}
-                            >
-                                <Select
-                                    value={selectedProvince?.ProvinceID}
-                                    placeholder="-- Chọn Tỉnh / Thành phố --"
-                                    size="large"
-                                    onChange={handleProvinceChange}
-                                    options={provinces?.map(item => ({ value: item.ProvinceID, label: item.ProvinceName }))}
-                                    className="w-full rounded-lg"
-                                />
-                            </Form.Item>
-                            <Form.Item
-                                name="district"
-                                className="!mb-0"
-                                label={<span className="text-xs sm:text-sm font-medium text-neutral-700">Quận / Huyện:</span>}
-                            >
-                                <Select
-                                    value={selectedDistrict?.DistrictID}
-                                    placeholder="-- >Quận / Huyện --"
-                                    size="large"
-                                    onChange={handleDistrictChange}
-                                    options={districts?.map(item => ({ value: item.DistrictID, label: item.DistrictName }))}
-                                    className="w-full rounded-lg"
-                                />
-                            </Form.Item>
-                            <Form.Item
-                                name="ward"
-                                className="!mb-0"
-                                label={<span className="text-xs sm:text-sm font-medium text-neutral-700">Phường / Xã:</span>}
-                            >
-                                <Select
-                                    value={selectedWard?.WardCode}
-                                    placeholder="-- Chọn Phường / Xã --"
-                                    size="large"
-                                    onChange={handleWardChange}
-                                    options={wards?.map(item => ({ value: item.WardCode, label: item.WardName }))}
-                                    className="w-full rounded-lg"
-                                />
-                            </Form.Item>
-                            <Form.Item
-                                name="address"
-                                className="!mb-0"
-                                label={<span className="text-xs sm:text-sm font-medium text-neutral-700">Số nhà, tên đường:</span>}
-                            >
-                                <Input
-                                    size="large"
-                                    prefix={<EnvironmentOutlined className="text-neutral-400 mr-1" />}
-                                    placeholder="Ví dụ: Số 12, ngõ 34..."
-                                    className="rounded-lg"
-                                />
-                            </Form.Item>
-                            <Form.Item
-                                name="note"
-                                className="sm:col-span-2 !mb-0"
-                                label={
-                                    <span className="text-xs sm:text-sm font-medium text-neutral-700">
-                                        Ghi chú:
-                                    </span>
-                                }
-                            >
-                                <Input.TextArea
-                                    rows={4}
-                                    placeholder="Nhập ghi chú cho đơn hàng (không bắt buộc)"
-                                    className="rounded-lg"
-                                    showCount
-                                    maxLength={300}
-                                />
-                            </Form.Item>
-                        </div>
-
-                        {/* Phương thức thanh toán*/}
-                        <div className="flex items-center gap-2 font-semibold text-base sm:text-lgtext-neutral-800 pt-3 border-t border-neutral-200 mt-2">
-                            <CreditCardOutlined />
-                            <span>Phương thức thanh toán</span>
-                        </div>
-                        <Form.Item name="paymentMethod" className="!mb-0">
-                            <Radio.Group className="flex w-full flex-col">
-                                <label className="flex cursor-pointer items-center gap-3">
-                                    <Radio value="COD" />
-                                    <span className="text-xs font-medium text-neutral-800 sm:text-sm">
-                                        Thanh toán khi nhận hàng (COD)
-                                    </span>
-                                </label>
-                                <label className="mt-2 flex cursor-pointer items-center gap-3">
-                                    <Radio value="VNPAY" />
-                                    <span className="text-xs font-medium text-neutral-800 sm:text-sm">
-                                        Chuyển khoản ngân hàng / Mã QR
-                                    </span>
-                                </label>
-                            </Radio.Group>
-                        </Form.Item>
-                    </div>
+                    <CheckoutForm provinces={provinces} districts={districts} wards={wards} selectedProvince = {selectedProvince} selectedDistrict = {selectedDistrict} selectedWard = {selectedWard} handleProvinceChange={handleProvinceChange} handleDistrictChange={handleDistrictChange} handleWardChange={handleWardChange}/>
                 </div>
 
                 <div className="lg:col-span-4 lg:sticky lg:top-24 flex flex-col gap-4">
@@ -365,11 +134,13 @@ const CheckoutPage = () => {
                                 </span>
                             </div>
                             <button
+                                onClick={openCouponModal}
                                 type="button"
                                 className="!text-xs !font-bold !text-primary-500 hover:!underline transition-all"
                             >
                                 Chọn mã
                             </button>
+                            <CouponModal isOpenModal={isCouponModalOpen} onCloseModal={closeCouponModal} coupons={myCoupons} selectedCoupon={selectedCoupon} setSelectedCoupon={setSelectedCoupon}/>
                         </div>
 
                         <div className="flex flex-col gap-4 text-sm pt-1">
@@ -386,7 +157,7 @@ const CheckoutPage = () => {
 
                                 <div className="flex items-center justify-between text-neutral-600">
                                     <span>Phí vận chuyển</span>
-                                    <span className="font-semibold text-neutral-800">{(isFreeShip ? 0 : (fee?.total ?? 0)).toLocaleString("vi-VN")}đ</span>
+                                    <span className="font-semibold text-neutral-800">{(isFreeShip ? 0 : (shippingFee)).toLocaleString("vi-VN")}đ</span>
                                 </div>
                             </div>
 
@@ -414,7 +185,7 @@ const CheckoutPage = () => {
 
                                 <div className="text-xs flex items-center justify-between text-neutral-600 bg-green-50 px-2 py-1 rounded-lg border border-green-100">
                                     <span className="font-medium text-green-800">Bạn đã tiết kiệm được</span>
-                                    <span className="font-bold text-[#34b766]">-{(discountAmount + (isFreeShip ? (fee?.total ?? 0) : 0)).toLocaleString("vi-VN")}đ</span>
+                                    <span className="font-bold text-[#34b766]">-{(totalSaving).toLocaleString("vi-VN")}đ</span>
                                 </div>
                             </div>
                         </div>

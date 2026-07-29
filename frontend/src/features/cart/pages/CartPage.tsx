@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import GiftIcon, { ArrowLeftSlide } from "../../../shared/components/Icons";
 import { PlusOutlined, MinusOutlined, DeleteOutlined, CloseOutlined, ShoppingCartOutlined } from "@ant-design/icons";
-import TicketPromo from "../../products/components/TicketPromo";
+import TicketPromo from "../../coupons/components/TicketPromo";
 import { useAppSelector } from "../../../app/hooks";
 import { useEditItem } from "../hooks/useEditItem";
 import { message } from "antd";
@@ -14,6 +14,9 @@ import { useCoupons } from "../../coupons/hooks/useCoupons";
 
 const CartPage = () => {
     const cart= useAppSelector(state => state.cart.cart);
+    const user = useAppSelector(state => state.auth.user);
+    const myCoupons = user?.coupons;
+
     const {editItem} = useEditItem();
     const {deleteItem} = useDeleteItem();
     const {deleteBulk} = useDeleteBulkItem();
@@ -176,9 +179,11 @@ const CartPage = () => {
                                             <span className="text-xs font-semibold">Khuyến mãi đi kèm</span>
                                         </div>
                                         <div className="flex items-center gap-5 pb-2">
-                                                {coupons && coupons.map(item => (
-                                                    <TicketPromo coupon={item}/>
-                                                ))}
+                                                {coupons?.map((item) => {
+                                                    const isAdded = myCoupons?.includes(item._id) ?? false;
+
+                                                    return ( <TicketPromo variant="collect" key={item._id} coupon={item} isAdded={isAdded} /> );
+                                                })}
                                         </div>
                                     </div>
                                 </div>

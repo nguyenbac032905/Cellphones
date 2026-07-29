@@ -1,7 +1,7 @@
 import type { ProductDetailClient } from "../types/products.type";
 import { Link } from "react-router-dom";
 import { CartIcon, CommentIcon, CpuIcon, FillStar, HeartIcon, PlusBorderIcon } from "../../../shared/components/Icons";
-import TicketPromo from "../components/TicketPromo";
+import TicketPromo from "../../coupons/components/TicketPromo";
 import { useAddItem } from "../../cart/hooks/useAddItem";
 import { message } from "antd";
 import { getErrorMessage } from "../../../shared/utils/errorHandler";

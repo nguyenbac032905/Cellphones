@@ -36,6 +36,7 @@ export interface AccessTokenPayloadClient extends JwtPayload {
     phone?: string;
     avatar?: string;
     accountType: string;
+    coupons: string[];
 }
 
 export interface AuthenticatedUser {
@@ -45,4 +46,5 @@ export interface AuthenticatedUser {
     phone?: string | null;
     avatar?: string | null;
     accountType: string;
+    coupons: string[];
 }
