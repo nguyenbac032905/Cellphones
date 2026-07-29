@@ -5,12 +5,19 @@ import { AppError } from "../../utils/AppError";
 import { CreateOrderBody } from "../../validations/client/order.validation";
 import { getFeeService } from "./shipping.service";
 import { createPaymentUrlService } from "./payment.service";
-import { calculatePricing } from "../../helpers/pricing";
+import { calculatePricing, ICoupon } from "../../helpers/pricing";
 import { createGHNOrder } from "../../helpers/ghn";
+import Coupon from "../../models/coupon.model";
 
 export const createOrderService = async ( userID: string, body: CreateOrderBody, ) => {
-    const { products, fullName, phone, address, province, district, ward, districtID, wardCode, note, paymentMethod } = body;
-
+    const { products, fullName, phone, address, province, district, ward, districtID, wardCode, note, paymentMethod, couponID } = body;
+    let coupon: ICoupon | null = null;
+    if (couponID) {
+        coupon = await Coupon.findOne({ _id: couponID, deleted: false, status: "active", expireAt: { $gt: new Date() }, }).lean<ICoupon>();
+        if (!coupon) {
+            throw new AppError("Coupon not found", 404);
+        }
+    }
     const newProducts = [];
     for (const item of products) {
         const product: any = await Product.findOne({_id: item.productID, deleted: false, status: "active"})
@@ -43,7 +50,8 @@ export const createOrderService = async ( userID: string, body: CreateOrderBody,
 
     const pricing = calculatePricing({
         items: newProducts,
-        shippingFee: feeRes.data.total
+        shippingFee: feeRes.data.total,
+        coupon: coupon
     });
 
     const order = await Order.create({
@@ -75,7 +83,15 @@ export const createOrderService = async ( userID: string, body: CreateOrderBody,
             discountAmount: pricing.discountAmount,
             shippingFee: pricing.actualShippingFee,
             totalPrice: pricing.totalPrice
-        }
+        },
+        ...(coupon && {
+            coupon: {
+                couponID: coupon._id,
+                discountType: coupon.discountType,
+                discountValue: coupon.discountValue,
+                discountAmount: pricing.discountCoupon,
+            },
+        }),
     });
 
     if (paymentMethod === "COD") {

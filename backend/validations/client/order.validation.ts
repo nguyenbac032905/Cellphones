@@ -58,7 +58,8 @@ export const createOrderSchema = z.object({
                         .int()
                         .positive("Số lượng phải lớn hơn 0")
                 })
-            ).min(1, "Đơn hàng phải có ít nhất 1 sản phẩm")
+            ).min(1, "Đơn hàng phải có ít nhất 1 sản phẩm"),
+        couponID: objectIdSchema.optional()
     })
 });
 export type CreateOrderBody = z.infer<typeof createOrderSchema>["body"];

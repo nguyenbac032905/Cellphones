@@ -1,8 +1,9 @@
 import { useMemo } from "react";
 import { useAppSelector } from "../../../app/hooks";
 import type { Fee } from "../types/checkout.type";
+import type { Coupon } from "../../coupons/types/coupon.type";
 
-export const useCheckoutSummary = (fee?: Fee | null) => {
+export const useCheckoutSummary = ({ fee, selectedCoupon, }: { fee?: Fee | null; selectedCoupon: Coupon | null; }) => {
     const cart = useAppSelector((state) => state.cart.cart);
 
     const ids = useMemo(
@@ -38,10 +39,22 @@ export const useCheckoutSummary = (fee?: Fee | null) => {
             )
         );
     }, [products]);
+    
+    const totalOrder = subTotal - directDiscount;
 
-    const discountAmount = directDiscount;
-
-    const totalOrder = subTotal - discountAmount;
+    const discountCoupon = selectedCoupon
+        ? Math.round(
+            totalOrder >= selectedCoupon.minOrderValue
+                ? selectedCoupon.discountType === "percent"
+                    ? Math.min(
+                            (totalOrder * selectedCoupon.discountValue) / 100,
+                            selectedCoupon.maxDiscount ?? Infinity
+                        )
+                    : Math.min(totalOrder, selectedCoupon.discountValue)
+                : 0
+        )
+        : 0;
+    const discountAmount = directDiscount + discountCoupon;
 
     const isFreeShip = totalOrder >= 300000;
 
@@ -61,5 +74,6 @@ export const useCheckoutSummary = (fee?: Fee | null) => {
         shippingFee,
         totalPrice,
         totalSaving,
+        discountCoupon
     };
 };

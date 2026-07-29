@@ -6,6 +6,7 @@ import { useAddItem } from "../../cart/hooks/useAddItem";
 import { message } from "antd";
 import { getErrorMessage } from "../../../shared/utils/errorHandler";
 import { useCoupons } from "../../coupons/hooks/useCoupons";
+import { useAppSelector } from "../../../app/hooks";
 const promos = [
     "Chỉ thêm 30K - nhận Sim/Esim 5G VNSKY, có ngay 3GB data/ngày+500 phút gọi Mobifone & VNSKY, miễn phí 30 ngày đầu - chỉ áp dụng tại cửa hàng",
     "Giảm thêm 10% cho Pin dự phòng - Camera giám sát - Đồng hồ trẻ em - Gia dụng - Sức khỏe Làm đẹp khi mua Điện thoại/Laptop",
@@ -17,6 +18,8 @@ const promos = [
 ];
 const ProductInfo = ({ product }: { product: ProductDetailClient }) => {
     const {coupons} = useCoupons();
+    const user = useAppSelector(state => state.auth.user);
+    const myCoupons = user?.coupons;
     const newPrice = Math.round(product.price * (1 - product.discountPercentage / 100));
     const {addItemToCart} = useAddItem();
     const handleAddToCart = async () => {
@@ -127,9 +130,11 @@ const ProductInfo = ({ product }: { product: ProductDetailClient }) => {
                 className="rounded-2xl border border-[#4a91e2cb] sm:p-3 p-1"
             >
                 <div className="flex items-center gap-5 pb-2">
-                        {coupons && coupons.map(item => (
-                            <TicketPromo coupon={item}/>
-                        ))}
+                        {coupons?.map((item) => {
+                            const isAdded = myCoupons?.includes(item._id) ?? false;
+
+                            return ( <TicketPromo variant="collect" key={item._id} coupon={item} isAdded={isAdded} /> );
+                        })}
                 </div>
 
                 <div className="flex items-center justify-center gap-2 border-t border-dashed border-[#4a91e2cb] pt-3 mt-1">

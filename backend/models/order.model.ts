@@ -67,13 +67,22 @@ const OrderSchema = new Schema({
     // Pricing
     pricing: { type: OrderPricingSchema, required: true },
 
-    // coupon:{
-    //     coupon_id: String,
-    //     coupon_code: String,
-    //     discountType: String,
-    //     discountValue: Number,
-    //     discountAmount: Number
-    // }
+    coupon: {
+        couponID: {
+            type: Schema.Types.ObjectId,
+            ref: "Coupon",
+            default: null,
+        },
+        discountType: {
+            type: String,
+            enum: ["percent", "fixed"],
+        },
+        discountValue: Number,
+        discountAmount: {
+            type: Number,
+            default: 0,
+        },
+    },
     deleted: {
         type: Boolean,
         default: false

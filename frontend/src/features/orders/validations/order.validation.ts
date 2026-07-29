@@ -56,6 +56,10 @@ export const createOrderSchema = z.object({
     paymentMethod: z.enum(["COD", "VNPAY"], {
         error: "Phương thức thanh toán không hợp lệ",
     }),
+    couponID: z
+        .string()
+        .regex(/^[a-fA-F0-9]{24}$/, "ID sản phẩm không hợp lệ")
+        .optional()
 });
 
 export type CreateOrderBody = z.infer<typeof createOrderSchema>;

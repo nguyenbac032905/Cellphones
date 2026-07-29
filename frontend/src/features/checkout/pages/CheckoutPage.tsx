@@ -45,7 +45,7 @@ const CheckoutPage = () => {
     const {fee, getFee} = useFee();
     const {createOrder} = useCreateOrder();
     //lay ra cart và tính giá sản phẩm
-    const { products, subTotal, directDiscount, discountAmount, isFreeShip, shippingFee, totalPrice, totalSaving, } = useCheckoutSummary(fee);
+    const { products, subTotal, directDiscount, discountCoupon, isFreeShip, shippingFee, totalPrice, totalSaving, } = useCheckoutSummary({fee, selectedCoupon});
     //xử lí địa chỉ
     const { provinces, districts, wards, selectedProvince, selectedDistrict, selectedWard, handleProvinceChange, handleDistrictChange, handleWardChange, } = useCheckoutAddress({ form, getFee, });
     //hàm submit
@@ -61,7 +61,10 @@ const CheckoutPage = () => {
             districtID: selectedDistrict?.DistrictID,
             wardCode: selectedWard?.WardCode,
             note: values.note,
-            paymentMethod: values.paymentMethod
+            paymentMethod: values.paymentMethod,
+            ...(selectedCoupon && {
+                couponID: selectedCoupon._id
+            })
         }
         const parsed = createOrderSchema.safeParse(data);
         if(!parsed.success){
@@ -168,7 +171,7 @@ const CheckoutPage = () => {
                                 </div>
                                 <div className="flex items-center justify-between text-neutral-600">
                                     <span>Mã giảm giá</span>
-                                    <span className="font-semibold text-[#34b766]">-0đ</span>
+                                    <span className="font-semibold text-[#34b766]">-{discountCoupon.toLocaleString("vi-VN")}đ</span>
                                 </div>
                             </div>
 
