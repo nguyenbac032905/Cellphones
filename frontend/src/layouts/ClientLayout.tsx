@@ -1,6 +1,7 @@
 import { Outlet } from "react-router-dom";
 import ClientHeader from "./components/ClientHeader";
 import ClientFooter from "./components/ClientFooter";
+import ChatWidget from "./components/ChatWidget";
 
 const ClientLayout = () => {
     return(
@@ -8,6 +9,7 @@ const ClientLayout = () => {
             <ClientHeader />
             <main className="flex-1 mt-24 w-full max-w-[1200px] mx-auto"><Outlet /></main>
             <ClientFooter />
+            <ChatWidget />
         </div>
     )
 }
