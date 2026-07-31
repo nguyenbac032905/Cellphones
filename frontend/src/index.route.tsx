@@ -16,6 +16,7 @@ import ClientPrivateRoute from "./features/auth/components/ClientPrivateRoute";
 import { cartRoutes } from "./features/cart/cart.route";
 import { checkoutRoutes } from "./features/checkout/checkout.route";
 import { orderRoutes } from "./features/orders/order.route";
+import { chatAdminRoutes } from "./features/chat/chat.route";
 
 export const routes = [
     {
@@ -34,6 +35,7 @@ export const routes = [
                             ...adminRoleRoutes,
                             ...usersAdminRoutes,
                             ...productCategoryAdminRoutes,
+                            ...chatAdminRoutes,
                             {
                                 path: "my-account",
                                 element: <MyAccountAdminPage />

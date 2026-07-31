@@ -302,3 +302,13 @@
 92. Tối ưu component checkoutpage và hiển thị modal mã giảm giá ra cho người dùng chọn
 93. xong tính năng áp mã giảm giá bên client
 94. làm float button hiển thị boxchat
+95. làm tính năng client gửi chat realtime
+    1. khi client login nếu chưa có roomchat thì tạo mới roomchat cho họ
+    2. tạo api get my room chat
+    3. tạo authMiddleware của socket để lấy ra token người dùng gửi lên khi connect và decode, gắn nó vào auth của socket
+    3. cấu hình socket trong socket.ts, sử dụng authMiddleware, bắt sự kiện connection, khi connect thì lắng nghe sự kiện join_room client gửi lên lấy ra room đó và join vào 
+    4. lắng nghe sự kiện send_message client gửi lên và lưu message vào db, sau khi lưu xong thì dùng io để emit message về roomchat
+    5. tạo service, hooks call api lấy ra roomchat tương ứng
+    6. cấu hình socket.ts cho frontend, cấu hình urlbackend, hàm connectSocket khi connect thì gửi lên accessToken, hàm disconnectSocket.
+    7. chatBox lấy ra roomID, bắt sự kiện connect thì phát emit join_room, trả về hàm clean khi đóng boxchat thì xóa các sự kiện đang lắng nghe và disconnect socket đi. phải hủy đi vì khi disconnect các sự kiện k tự mất đi, khi connect lại thì sẽ bị chồng sự kiện lên nhau.
+    8. khi người dùng gửi tin nhắn thì emit lên message của người dùng và lắng nghe server trả về tin nhắn và push vào mảng tin nhắn

@@ -1,4 +1,4 @@
-import { DashboardOutlined, AppstoreOutlined, UserOutlined, ShoppingCartOutlined, ShoppingOutlined, SettingOutlined, SafetyCertificateOutlined, } from "@ant-design/icons";
+import { DashboardOutlined, AppstoreOutlined, UserOutlined, ShoppingCartOutlined, ShoppingOutlined, SettingOutlined, SafetyCertificateOutlined, MessageOutlined, } from "@ant-design/icons";
 import { Layout, Menu, type MenuProps } from 'antd';
 import type { Dispatch, SetStateAction } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -22,6 +22,11 @@ const AdminSidebar = ({ collapsed, setCollapsed }: AdminHeaderProps) => {
             key: "/admin",
             icon: <DashboardOutlined />,
             label: "Dashboard",
+        },
+        {
+            key: "/admin/chat",
+            icon: <MessageOutlined />,
+            label: "Chat",
         },
         {
             type: "divider",

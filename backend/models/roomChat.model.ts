@@ -20,6 +20,24 @@ const roomChatSchema = new mongoose.Schema(
                 },
             },
         ],
+        unreadCount: {
+            admin: {
+                type: Number,
+                default: 0
+            },
+            user: {
+                type: Number,
+                default: 0
+            },
+        },
+        lastMessage: {
+            userID: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "User",
+            },
+            message: String,
+            createdAt: Date,
+        },
     },
     {
         timestamps: true,
