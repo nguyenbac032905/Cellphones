@@ -300,3 +300,5 @@
 89. làm giao diện dashboard
 90. hoàn thiện giao diện dashboard
 92. Tối ưu component checkoutpage và hiển thị modal mã giảm giá ra cho người dùng chọn
+93. xong tính năng áp mã giảm giá bên client
+94. làm float button hiển thị boxchat

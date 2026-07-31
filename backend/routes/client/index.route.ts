@@ -8,6 +8,7 @@ import shippingRoutes from "./shipping.route";
 import orderRoutes from "./order.route";
 import paymentRoutes from "./payment.route";
 import couponRoutes from "./coupon.route";
+import chatRoutes from "./chat.route";
 const routesClient = (app: Express) => {
     const PATH ="/api";
     app.use(PATH + "/products", productRoutes);
@@ -18,6 +19,7 @@ const routesClient = (app: Express) => {
     app.use(PATH + "/orders",authMiddleware, orderRoutes);
     app.use(PATH + "/payment", paymentRoutes);
     app.use(PATH + "/coupons", couponRoutes);
+    app.use(PATH + "/chats",authMiddleware, chatRoutes);
 }
 
 export default routesClient;

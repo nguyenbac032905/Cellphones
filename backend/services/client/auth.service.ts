@@ -8,6 +8,7 @@ import { RegisterBody, SetPasswordBody, VerifyBody } from "../../validations/cli
 import { generateAccessToken, generateRefreshToken, generateRegisterToken } from "../../utils/jwt";
 import jwt from "jsonwebtoken";
 import Cart from "../../models/cart.model";
+import RoomChat from "../../models/roomChat.model";
 
 interface RegisterTokenPayload extends jwt.JwtPayload {
     userId: string;
@@ -158,6 +159,24 @@ export const loginService = async ( email: string, password: string ) => {
         {
             upsert: true,
             setDefaultsOnInsert: true
+        }
+    );
+    await RoomChat.findOneAndUpdate(
+        {
+            "users.userID": user._id,
+        },
+        {
+            $setOnInsert: {
+                users: [
+                    {
+                        userID: user._id,
+                    }
+                ]
+            }
+        },
+        {
+            upsert: true,
+            setDefaultsOnInsert: true,
         }
     );
     return {
