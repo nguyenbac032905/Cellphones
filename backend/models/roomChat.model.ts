@@ -31,9 +31,9 @@ const roomChatSchema = new mongoose.Schema(
             },
         },
         lastMessage: {
-            userID: {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: "User",
+            role: {
+                type: String,
+                enum: ["admin", "user"]
             },
             message: String,
             createdAt: Date,

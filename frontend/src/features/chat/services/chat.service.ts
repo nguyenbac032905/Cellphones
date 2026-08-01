@@ -5,5 +5,5 @@ export const chatService = {
     getRoom: async (): Promise<GetRoomResponse> => {
         const result = await privateClient.get<GetRoomResponse>("/api/chats/my-room");
         return result.data
-    }
+    },
 }

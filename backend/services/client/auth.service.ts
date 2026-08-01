@@ -170,6 +170,7 @@ export const loginService = async ( email: string, password: string ) => {
                 users: [
                     {
                         userID: user._id,
+                        role: "user"
                     }
                 ]
             }
