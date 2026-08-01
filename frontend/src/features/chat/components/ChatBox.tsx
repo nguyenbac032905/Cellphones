@@ -1,66 +1,159 @@
-import { Avatar, Button, Form, Input, Tooltip, Upload, } from "antd";
-import { CloseOutlined, PaperClipOutlined, SendOutlined, } from "@ant-design/icons";
+import { Avatar, Button, Form, Image, Spin, Tooltip, Upload, message } from "antd";
+import { CloseOutlined, LoadingOutlined, PaperClipOutlined, SendOutlined } from "@ant-design/icons";
 import { useEffect, useRef, useState } from "react";
 import { connectSocket, disconnectSocket, socket } from "../../../sockets/socket";
 import { useRoom } from "../hooks/useRoom";
 import TextArea from "antd/es/input/TextArea";
 import { useMessages } from "../hooks/useMessages";
 import type { IChatMessage } from "../types/chatAdmin.type";
-const ChatBox = ({ setOpen, }: { setOpen: (state: boolean) => void; }) => {
+import { privateClient } from "../../../shared/api/privateClient";
+import type { UploadedFile } from "../pages/ChatPageAdmin";
+
+const ChatBox = ({ setOpen }: { setOpen: (state: boolean) => void }) => {
     const [form] = Form.useForm();
     const { room } = useRoom();
-    const {messages, setMessages} = useMessages(room?._id || "");
+    const { messages, setMessages } = useMessages(room?._id || "");
     const messageEndRef = useRef<HTMLDivElement>(null);
-    // hàm cuộn xuống tin nhắn cuối cùng
+
+    // Quản lý danh sách ảnh đính kèm
+    const [fileList, setFileList] = useState<UploadedFile[]>([]);
+
+    // Hàm cuộn xuống tin nhắn cuối cùng
     const scrollToBottom = (behavior: ScrollBehavior = "smooth") => {
         messageEndRef.current?.scrollIntoView({ behavior });
     };
-    // cuộn mượt xuống dưới cùng khi có tin nhắn mới
+
+    // Cuộn mượt xuống dưới cùng khi có tin nhắn mới
     useEffect(() => {
         scrollToBottom("auto");
     }, [messages]);
+
     useEffect(() => {
         if (!room) return;
-        // bắt sự kiện khi socket kết nối với backend
+
         const handleConnect = () => {
             socket.emit("join_room", room._id, (res: any) => {
-                if(res.success){
+                if (res.success) {
                     console.log("Đã join room");
-                }else{
-                    console.log(res.message)
+                } else {
+                    console.log(res.message);
                 }
             });
         };
+
         socket.on("connect", handleConnect);
-        // bắt sự kiện backend trả về tin nhắn
         const handleReceiveMessage = (message: IChatMessage) => {
-            setMessages(prev => [...prev, message]);
-        }
+            setMessages((prev) => [...prev, message]);
+        };
         socket.on("receive_message", handleReceiveMessage);
 
-        // gọi hàm kết nối socketIO với backend
         connectSocket();
 
         return () => {
-            // hủy kết nối khi không dùng đến nữa
             socket.off("connect", handleConnect);
             socket.off("receive_message", handleReceiveMessage);
             disconnectSocket();
         };
     }, [room]);
-    const handleSendMessage = (values: {message: string}) => {
-        socket.emit("send_message",values.message);
+
+    // Xóa ảnh khỏi danh sách preview
+    const handleRemoveImage = (uid: string) => {
+        setFileList((prev) => prev.filter((item) => item.uid !== uid));
+    };
+
+    // Upload file lên server
+    const handleCustomUpload = async ({ file, onSuccess, onError }: any) => {
+        if (fileList.length >= 10) {
+            message.warning("Chỉ được tải lên tối đa 10 ảnh.");
+            return;
+        }
+
+        // Tạo blob preview tạm thời trước khi upload xong
+        const previewUrl = URL.createObjectURL(file as Blob);
+
+        const fileItem: UploadedFile = {
+            uid: file.uid,
+            name: file.name,
+            status: "uploading",
+            url: previewUrl,
+        };
+
+        setFileList((prev) => [...prev, fileItem]);
+
+        try {
+            const formData = new FormData();
+            formData.append("images", file as Blob);
+
+            const res = await privateClient.post("/api/uploads/images", formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            });
+
+            const responseData = res.data?.data;
+            let imageUrl = "";
+
+            if (Array.isArray(responseData)) {
+                imageUrl = responseData[0];
+            } else if (Array.isArray(responseData?.urls)) {
+                imageUrl = responseData.urls[0];
+            } else {
+                imageUrl = responseData?.urls || responseData?.url || responseData;
+            }
+
+            setFileList((prev) =>
+                prev.map((item) =>
+                    item.uid === file.uid
+                        ? { ...item, status: "done", url: imageUrl }
+                        : item
+                )
+            );
+
+            onSuccess?.(res.data.data);
+        } catch (err: any) {
+            setFileList((prev) => prev.filter((item) => item.uid !== file.uid));
+            message.error(
+                err?.response?.data?.message || "Upload thất bại, dung lượng phải nhỏ hơn 5MB."
+            );
+            onError?.(err as Error);
+        }
+    };
+
+    const handleSendMessage = (values: { message?: string }) => {
+        const textContent = values.message?.trim() || "";
+
+        const isUploading = fileList.some((f) => f.status === "uploading");
+        if (isUploading) {
+            message.warning("Vui lòng đợi ảnh tải lên hoàn tất.");
+            return;
+        }
+
+        const imageUrls = fileList
+            .filter((f) => f.status === "done" && f.url)
+            .map((f) => f.url);
+
+        if (!textContent && imageUrls.length === 0) return;
+
+        socket.emit("send_message", {
+            message: textContent,
+            images: imageUrls,
+        });
+
         form.resetFields();
-    }
-    // hàm nhấn enter để gửi tin nhắn
+        setFileList([]);
+    };
+
+    // Hàm nhấn Enter để gửi tin nhắn
     const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
         if (e.key === "Enter" && !e.shiftKey) {
             e.preventDefault();
             form.submit();
         }
     };
+
     return (
-        <div className="flex h-[430px] w-[320px] flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-md">
+        <div className="flex h-[480px] w-[340px] flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-md">
+            {/* Header */}
             <div className="flex items-start justify-between bg-primary-500 px-4 py-3 text-white">
                 <div className="flex items-center gap-3">
                     <Avatar
@@ -82,29 +175,68 @@ const ChatBox = ({ setOpen, }: { setOpen: (state: boolean) => void; }) => {
                     onClick={() => setOpen(false)}
                 />
             </div>
-            {/* Messages */}
-            <div className="flex-1 space-y-3 overflow-y-auto bg-gray-50 p-2">
-                {messages.map((message) => {
-                    if (message.userID.accountType === "admin") {
-                        return (
-                            <div key={message._id} className="flex justify-start">
-                                <div className="max-w-[75%]">
-                                    <p className="mb-1 ml-1 text-xs font-medium text-gray-500">
-                                        {message.userID.fullName}
-                                    </p>
 
-                                    <div className="rounded-xl rounded-bl-md border border-gray-200 bg-white px-4 py-2 text-sm leading-6 text-gray-700">
-                                        {message.content}
-                                    </div>
-                                </div>
-                            </div>
-                        );
-                    }
-
+            {/* Messages Body */}
+            <div className="flex-1 space-y-3 overflow-y-auto bg-gray-50 p-3">
+                {messages.map((msg) => {
+                    const isUser = msg.userID?.accountType === "user";
                     return (
-                        <div key={message._id} className="flex justify-end">
-                            <div className="max-w-[75%] rounded-xl rounded-br-md bg-primary-500 px-4 py-2 text-sm leading-6 text-white">
-                                {message.content}
+                        <div
+                            key={msg._id}
+                            className={`flex ${isUser ? "justify-end" : "justify-start"} mb-3`}
+                        >
+                            <div className="max-w-[80%]">
+                                {!isUser && (
+                                    <p className="mb-1 ml-1 text-xs font-medium text-gray-500">
+                                        {msg.userID?.fullName}
+                                    </p>
+                                )}
+
+                                <div className={`flex flex-col gap-2 ${ isUser ? "items-end" : "items-start" }`}>
+                                    {msg.images?.length > 0 && (
+                                        <div
+                                            className={`rounded-2xl p-2 ${
+                                                isUser
+                                                    ? "bg-blue-50"
+                                                    : "bg-gray-100 border border-gray-200"
+                                            }`}
+                                        >
+                                            <div className="flex flex-wrap gap-2" >
+                                                <Image.PreviewGroup>
+                                                    {msg.images.map((imgUrl, idx) => (
+                                                        <div
+                                                            key={idx}
+                                                            className="overflow-hidden rounded-xl"
+                                                        >
+                                                            <Image
+                                                                src={imgUrl}
+                                                                width={90}
+                                                                height={90}
+                                                                preview
+                                                                style={{
+                                                                    objectFit: "cover",
+                                                                    borderRadius: 12,
+                                                                }}
+                                                            />
+                                                        </div>
+                                                    ))}
+                                                </Image.PreviewGroup>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {msg.content && (
+                                        <div
+                                            className={`max-w-[360px] rounded-xl px-4 py-2.5 text-[14px] leading-6 transition-all ${
+                                                isUser
+                                                    ? "bg-primary-500 text-white rounded-br-md"
+                                                    : "bg-white border border-gray-200 text-gray-800 rounded-bl-md"
+                                            }`}
+                                        >
+                                            {msg.content}
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         </div>
                     );
@@ -112,7 +244,35 @@ const ChatBox = ({ setOpen, }: { setOpen: (state: boolean) => void; }) => {
                 <div ref={messageEndRef} />
             </div>
 
-            <div className="border-t border-gray-200 bg-white p-3">
+            {/* Area Preview ảnh đính kèm trước khi gửi */}
+            {fileList.length > 0 && (
+                <div className="flex gap-2 overflow-x-auto border-t border-gray-100 bg-gray-50 p-2">
+                    {fileList.map((item) => (
+                        <div key={item.uid} className="relative h-14 w-14 flex-shrink-0 rounded-lg border border-gray-200 bg-white">
+                            <img
+                                src={item.url}
+                                alt={item.name}
+                                className="h-full w-full rounded-lg object-cover"
+                            />
+                            {item.status === "uploading" && (
+                                <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-black/40">
+                                    <Spin indicator={<LoadingOutlined className="text-white" style={{ fontSize: 16 }} spin />} />
+                                </div>
+                            )}
+                            <button
+                                type="button"
+                                onClick={() => handleRemoveImage(item.uid)}
+                                className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-gray-800 text-white hover:bg-red-500"
+                            >
+                                <CloseOutlined className="text-[10px]" />
+                            </button>
+                        </div>
+                    ))}
+                </div>
+            )}
+
+            {/* Input Form */}
+            <div className="border-t border-gray-200 bg-white p-2.5">
                 <Form
                     form={form}
                     onFinish={handleSendMessage}
@@ -120,8 +280,10 @@ const ChatBox = ({ setOpen, }: { setOpen: (state: boolean) => void; }) => {
                 >
                     <Tooltip title="Gửi ảnh">
                         <Upload
+                            multiple
                             showUploadList={false}
-                            beforeUpload={() => false}
+                            customRequest={handleCustomUpload}
+                            accept="image/*"
                         >
                             <Button
                                 type="text"
@@ -134,13 +296,6 @@ const ChatBox = ({ setOpen, }: { setOpen: (state: boolean) => void; }) => {
                     <Form.Item
                         name="message"
                         className="!mb-0 flex-1"
-                        rules={[
-                            {
-                                required: true,
-                                whitespace: true,
-                                message: "Vui lòng nhập tin nhắn",
-                            },
-                        ]}
                     >
                         <TextArea
                             autoSize={{

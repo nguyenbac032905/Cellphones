@@ -9,6 +9,7 @@ import orderRoutes from "./order.route";
 import paymentRoutes from "./payment.route";
 import couponRoutes from "./coupon.route";
 import chatRoutes from "./chat.route";
+import uploadRoutes from "./uploads.route";
 const routesClient = (app: Express) => {
     const PATH ="/api";
     app.use(PATH + "/products", productRoutes);
@@ -20,6 +21,7 @@ const routesClient = (app: Express) => {
     app.use(PATH + "/payment", paymentRoutes);
     app.use(PATH + "/coupons", couponRoutes);
     app.use(PATH + "/chats",authMiddleware, chatRoutes);
+    app.use(PATH + "/uploads",authMiddleware, uploadRoutes);
 }
 
 export default routesClient;

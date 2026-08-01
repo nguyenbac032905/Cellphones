@@ -254,9 +254,15 @@ const ChatPageAdmin = () => {
                                                     : "text-gray-500"
                                                 }`}
                                         >
-                                            {room.lastMessage?.role === "admin"
-                                                ? `Bạn: ${room.lastMessage?.message}`
-                                                : room.lastMessage?.message}
+                                            {
+                                                room.lastMessage?.role === "admin"
+                                                    ? room.lastMessage?.message
+                                                        ? `Bạn: ${room.lastMessage.message}`
+                                                        : "Bạn: đã gửi ảnh"
+                                                    : room.lastMessage?.message
+                                                        ? room.lastMessage.message
+                                                        : "Đã gửi ảnh"
+                                            }
                                         </p>
                                         {room.unreadCount?.admin > 0 && (
                                             <Badge
