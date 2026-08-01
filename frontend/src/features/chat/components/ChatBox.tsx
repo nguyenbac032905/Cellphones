@@ -4,16 +4,12 @@ import { useEffect, useState } from "react";
 import { connectSocket, disconnectSocket, socket } from "../../../sockets/socket";
 import { useRoom } from "../hooks/useRoom";
 import TextArea from "antd/es/input/TextArea";
-interface Message {
-    _id: string;
-    accountType: string;
-    message: string;
-    fullName: string
-}
+import { useMessages } from "../hooks/useMessages";
+import type { IChatMessage } from "../types/chatAdmin.type";
 const ChatBox = ({ setOpen, }: { setOpen: (state: boolean) => void; }) => {
-    const [messages, setMessages] = useState<Message[]>([]);
     const [form] = Form.useForm();
     const { room } = useRoom();
+    const {messages, setMessages} = useMessages(room?._id || "");
     useEffect(() => {
         if (!room) return;
         // bắt sự kiện khi socket kết nối với backend
@@ -28,8 +24,7 @@ const ChatBox = ({ setOpen, }: { setOpen: (state: boolean) => void; }) => {
         };
         socket.on("connect", handleConnect);
         // bắt sự kiện backend trả về tin nhắn
-        const handleReceiveMessage = (message: Message) => {
-            console.log(message)
+        const handleReceiveMessage = (message: IChatMessage) => {
             setMessages(prev => [...prev, message]);
         }
         socket.on("receive_message", handleReceiveMessage);
@@ -74,16 +69,16 @@ const ChatBox = ({ setOpen, }: { setOpen: (state: boolean) => void; }) => {
             {/* Messages */}
             <div className="flex-1 space-y-3 overflow-y-auto bg-gray-50 p-2">
                 {messages.map((message) => {
-                    if (message.accountType === "admin") {
+                    if (message.userID.accountType === "admin") {
                         return (
                             <div key={message._id} className="flex justify-start">
                                 <div className="max-w-[75%]">
                                     <p className="mb-1 ml-1 text-xs font-medium text-gray-500">
-                                        {message.fullName}
+                                        {message.userID.fullName}
                                     </p>
 
                                     <div className="rounded-xl rounded-bl-md border border-gray-200 bg-white px-4 py-2 text-sm leading-6 text-gray-700">
-                                        {message.message}
+                                        {message.content}
                                     </div>
                                 </div>
                             </div>
@@ -93,7 +88,7 @@ const ChatBox = ({ setOpen, }: { setOpen: (state: boolean) => void; }) => {
                     return (
                         <div key={message._id} className="flex justify-end">
                             <div className="max-w-[75%] rounded-xl rounded-br-md bg-primary-500 px-4 py-2 text-sm leading-6 text-white">
-                                {message.message}
+                                {message.content}
                             </div>
                         </div>
                     );

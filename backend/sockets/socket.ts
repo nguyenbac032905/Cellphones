@@ -9,12 +9,19 @@ export const initSocket = (io: Server) => {
         socket.on("join_room", async (roomID: string, callback) => {
             try {
                 const user = socket.data.user;
-                const room = await RoomChat.findOne({ _id: roomID, "users.userID": user._id, }).select("_id").lean();
-
-                if (!room) {
-                    return callback({success: false, message: "Không có quyền vào phòng"});
+                const accountType = user.accountType;
+                if(accountType === "user"){
+                    const room = await RoomChat.findOne({ _id: roomID, "users.userID": user._id, }).select("_id").lean();
+                    if (!room) {
+                        return callback({success: false, message: "Không có quyền vào phòng"});
+                    }
                 }
-
+                const update = {
+                    $set: {
+                        [`unreadCount.${user.accountType}`]: 0,
+                    }
+                };
+                await RoomChat.updateOne({ _id: roomID }, update);
                 socket.join(roomID);
                 socket.data.roomID = roomID;
                 
@@ -32,23 +39,40 @@ export const initSocket = (io: Server) => {
         socket.on("send_message", async (message: string) => {
             const user = socket.data.user;
             const roomID = socket.data.roomID;
-
             if (!roomID) return;
+            
+            const createdChat = await Chat.create({ userID: user._id, roomChatID: roomID, content: message, });
 
-            const chat = await Chat.create({
-                userID: user._id,
-                roomChatID: roomID,
-                content: message,
-            });
+            const update = user.accountType === "user" ? 
+                {
+                    $inc: {
+                        "unreadCount.admin": 1,
+                    },
+                    $set: {
+                        lastMessage: {
+                            role: "user",
+                            message,
+                            createdAt: new Date(),
+                        },
+                    },
+                }: 
+                {
+                    $inc: {
+                        "unreadCount.user": 1,
+                    },
+                    $set: {
+                        lastMessage: {
+                            role: "admin",
+                            message,
+                            createdAt: new Date(),
+                        },
+                    },
+                };
+            await RoomChat.updateOne({ _id: roomID }, update);
 
-            io.to(roomID).emit("receive_message", {
-                _id: chat._id,
-                accountType: user.accountType,
-                fullName: user.fullName,
-                message: chat.content,
-            });
+            const chat = await Chat.findById(createdChat._id).select("-deletedAt -updatedAt").populate("userID", "fullName avatar accountType").lean();
+            io.to(roomID).emit("receive_message", chat);
         });
-
         socket.on("disconnect", () => {
             console.log(`${socket.id} disconnected`);
         });

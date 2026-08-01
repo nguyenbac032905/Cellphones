@@ -313,3 +313,7 @@
     7. chatBox lấy ra roomID, bắt sự kiện connect thì phát emit join_room, trả về hàm clean khi đóng boxchat thì xóa các sự kiện đang lắng nghe và disconnect socket đi. phải hủy đi vì khi disconnect các sự kiện k tự mất đi, khi connect lại thì sẽ bị chồng sự kiện lên nhau.
     8. khi người dùng gửi tin nhắn thì emit lên message của người dùng và lắng nghe server trả về tin nhắn và push vào mảng tin nhắn
 96. làm trang chat bên admin
+97. lấy ra danh sách phòng chat với các user và hiển thị tin nhắn tương ứng
+    1. tạo api getRooms và getMessage
+    2. tạo service và hooks call api tương ứng
+    3. hiển thị ra giao diện

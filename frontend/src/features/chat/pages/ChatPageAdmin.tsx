@@ -7,6 +7,7 @@ import CustomAlert from "../../../shared/components/CustomAlert";
 import type { IChatMessage, RoomAdmin } from "../types/chatAdmin.type";
 import { useMessagesAdmin } from "../hooks/useMessagesAdmin";
 import { useAppSelector } from "../../../app/hooks";
+import { connectSocket, disconnectSocket, socket } from "../../../sockets/socket";
 const { TextArea } = Input;
 
 const ChatPageAdmin = () => {
@@ -14,12 +15,12 @@ const ChatPageAdmin = () => {
     const {rooms, loading, error} = useRoomsAdmin();
     const [currentRoom, setCurrentRoom] = useState<RoomAdmin | null>(null);
     const {messages, setMessages} = useMessagesAdmin(currentRoom?._id ?? "");
-    const myUserInfo = useAppSelector(state => state.auth.user);
     const defaultAvatar = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSePQrmECqQyT4U2vF38XPiBEyF95GRpEgoTriZ3laX_7ce0_An2KeSQlE&s=10";
     useEffect(() => {
         if (rooms.length > 0 && currentRoom === null) {
             setCurrentRoom(rooms[0]);
         }
+
     }, [rooms, currentRoom]);
     const messagesEndRef = useRef<HTMLDivElement>(null);
     
@@ -37,27 +38,40 @@ const ChatPageAdmin = () => {
     useEffect(() => {
         scrollToBottom("smooth");
     }, [messages]);
+    //xử lí tin nhắn realtime
+    useEffect(() => {
+        if (!currentRoom) return;
+        // bắt sự kiện khi socket kết nối với backend
+        const handleConnect = () => {
+            socket.emit("join_room", currentRoom._id, (res: any) => {
+                if(res.success){
+                    console.log("Đã join room");
+                }else{
+                    console.log(res.message)
+                }
+            });
+        };
+        socket.on("connect", handleConnect);
+        // bắt sự kiện backend trả về tin nhắn
+        const handleReceiveMessage = (message: IChatMessage) => {
+            setMessages(prev => [...prev, message]);
+        }
+        socket.on("receive_message", handleReceiveMessage);
 
+        // gọi hàm kết nối socketIO với backend
+        connectSocket();
+
+        return () => {
+            // hủy kết nối khi không dùng đến nữa
+            socket.off("connect", handleConnect);
+            socket.off("receive_message", handleReceiveMessage);
+            disconnectSocket();
+        };
+    }, [currentRoom]);
     // xử lý gửi tin nhắn
     const handleSendMessage = (values: { message?: string }) => {
         if (!values.message || !values.message.trim()) return;
-
-        const newMessage: IChatMessage = {
-            _id: Date.now().toString(),
-            userID: {
-                _id: myUserInfo?._id!,
-                fullName: myUserInfo?.fullName!,
-                avatar: myUserInfo?.avatar ?? "",
-                accountType: "admin",
-            },
-            roomChatID: currentRoom?._id! ?? Date.now().toString(),
-            content: values.message.trim(),
-            images: [],
-            deleted: false,
-            createdAt: Date.now().toString(),
-        };
-
-        setMessages((prev) => [...prev, newMessage]);
+        socket.emit("send_message",values.message);
         form.resetFields();
     };
 
@@ -130,14 +144,14 @@ const ChatPageAdmin = () => {
                                     <div className="mt-0.5 flex items-center justify-between gap-1">
                                         <p
                                             className={`truncate text-xs 
-                                                    ${isActive || room.unreadCount?.admin > 0
+                                                    ${room.unreadCount?.admin > 0
                                                     ? "font-semibold text-gray-800"
                                                     : "text-gray-500"
                                                 }`}
                                         >
-                                            {room.lastMessage?.message}
+                                            {room.lastMessage?.role === "admin" ? `Bạn: ${room.lastMessage?.message}` : (room.lastMessage?.message)}
                                         </p>
-                                        {room.unreadCount?.admin > 0 && !isActive && (
+                                        {room.unreadCount?.admin > 0 && (
                                             <Badge count={room.unreadCount?.admin} className="shrink-0" />
                                         )}
                                     </div>

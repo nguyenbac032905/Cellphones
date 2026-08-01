@@ -14,7 +14,7 @@ export const getRoomChatService = async (userID: string) => {
 export const getMessagesService = async (roomID: string, userID: string) => {
     const joinedRoom = await RoomChat.findOne({
         _id: roomID,
-        "users.userID": userID,
+        "users.userID": userID
     }).select("_id");
 
     if (!joinedRoom) {
