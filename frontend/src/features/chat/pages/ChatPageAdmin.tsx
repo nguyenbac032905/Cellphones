@@ -6,13 +6,12 @@ import LoadingScreen from "../../../shared/components/LoadingScreen";
 import CustomAlert from "../../../shared/components/CustomAlert";
 import type { IChatMessage, RoomAdmin } from "../types/chatAdmin.type";
 import { useMessagesAdmin } from "../hooks/useMessagesAdmin";
-import { useAppSelector } from "../../../app/hooks";
 import { connectSocket, disconnectSocket, socket } from "../../../sockets/socket";
 const { TextArea } = Input;
 
 const ChatPageAdmin = () => {
     const [form] = Form.useForm();
-    const {rooms, loading, error} = useRoomsAdmin();
+    const {rooms, setRooms, loading, error} = useRoomsAdmin();
     const [currentRoom, setCurrentRoom] = useState<RoomAdmin | null>(null);
     const {messages, setMessages} = useMessagesAdmin(currentRoom?._id ?? "");
     const defaultAvatar = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSePQrmECqQyT4U2vF38XPiBEyF95GRpEgoTriZ3laX_7ce0_An2KeSQlE&s=10";
@@ -57,7 +56,29 @@ const ChatPageAdmin = () => {
             setMessages(prev => [...prev, message]);
         }
         socket.on("receive_message", handleReceiveMessage);
-
+        //xử lí khi có tin nhắn mới
+        const handleUpdateRoom = (data: { roomID: string; lastMessage: { message: string; role: "admin" | "user"; createdAt: string; }; }) => {
+            setRooms((prev) =>
+                prev.map((room) => {
+                    if (room._id !== data.roomID) return room;
+                    const isCurrentRoom = currentRoom._id === data.roomID;
+                    return {
+                        ...room,
+                        lastMessage: data.lastMessage,
+                        unreadCount: isCurrentRoom
+                            ? room.unreadCount
+                            : {
+                                ...room.unreadCount,
+                                admin:
+                                    data.lastMessage.role === "user"
+                                        ? room.unreadCount.admin + 1
+                                        : room.unreadCount.admin,
+                            },
+                    };
+                })
+            );
+        };
+        socket.on("update_room", handleUpdateRoom);
         // gọi hàm kết nối socketIO với backend
         connectSocket();
 
@@ -65,6 +86,7 @@ const ChatPageAdmin = () => {
             // hủy kết nối khi không dùng đến nữa
             socket.off("connect", handleConnect);
             socket.off("receive_message", handleReceiveMessage);
+            socket.off("update_room", handleUpdateRoom);
             disconnectSocket();
         };
     }, [currentRoom]);

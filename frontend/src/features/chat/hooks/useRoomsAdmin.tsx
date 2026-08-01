@@ -30,6 +30,7 @@ export const useRoomsAdmin = () => {
 
     return {
         rooms,
+        setRooms: setRooms,
         loading,
         error
     };
