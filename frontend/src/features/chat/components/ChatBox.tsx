@@ -1,6 +1,6 @@
 import { Avatar, Button, Form, Input, Tooltip, Upload, } from "antd";
 import { CloseOutlined, PaperClipOutlined, SendOutlined, } from "@ant-design/icons";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { connectSocket, disconnectSocket, socket } from "../../../sockets/socket";
 import { useRoom } from "../hooks/useRoom";
 import TextArea from "antd/es/input/TextArea";
@@ -10,6 +10,15 @@ const ChatBox = ({ setOpen, }: { setOpen: (state: boolean) => void; }) => {
     const [form] = Form.useForm();
     const { room } = useRoom();
     const {messages, setMessages} = useMessages(room?._id || "");
+    const messageEndRef = useRef<HTMLDivElement>(null);
+    // hàm cuộn xuống tin nhắn cuối cùng
+    const scrollToBottom = (behavior: ScrollBehavior = "smooth") => {
+        messageEndRef.current?.scrollIntoView({ behavior });
+    };
+    // cuộn mượt xuống dưới cùng khi có tin nhắn mới
+    useEffect(() => {
+        scrollToBottom("auto");
+    }, [messages]);
     useEffect(() => {
         if (!room) return;
         // bắt sự kiện khi socket kết nối với backend
@@ -43,6 +52,13 @@ const ChatBox = ({ setOpen, }: { setOpen: (state: boolean) => void; }) => {
         socket.emit("send_message",values.message);
         form.resetFields();
     }
+    // hàm nhấn enter để gửi tin nhắn
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+        if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
+            form.submit();
+        }
+    };
     return (
         <div className="flex h-[430px] w-[320px] flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-md">
             <div className="flex items-start justify-between bg-primary-500 px-4 py-3 text-white">
@@ -93,6 +109,7 @@ const ChatBox = ({ setOpen, }: { setOpen: (state: boolean) => void; }) => {
                         </div>
                     );
                 })}
+                <div ref={messageEndRef} />
             </div>
 
             <div className="border-t border-gray-200 bg-white p-3">
@@ -130,6 +147,7 @@ const ChatBox = ({ setOpen, }: { setOpen: (state: boolean) => void; }) => {
                                 minRows: 1,
                                 maxRows: 4,
                             }}
+                            onKeyDown={handleKeyDown}
                             placeholder="Nhập tin nhắn..."
                             className="!rounded-lg"
                         />

@@ -16,7 +16,6 @@ export const useMessagesAdmin = (roomID: string) => {
                 setError("");
 
                 const result = await chatAdminService.getMessages(roomID);
-                console.log(result.data)
                 setMessages(result.data);
             } catch (error) {
                 setError(getErrorMessage(error));

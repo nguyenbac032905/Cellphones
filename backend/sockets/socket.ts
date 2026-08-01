@@ -31,6 +31,9 @@ export const initSocket = (io: Server) => {
                         return callback({success: false, message: "Không có quyền vào phòng"});
                     }
                 }
+                if (user.accountType === "admin") {
+                    socket.join("adminRoom");
+                }
                 const update = {
                     $set: {
                         [`unreadCount.${user.accountType}`]: 0,
@@ -51,12 +54,24 @@ export const initSocket = (io: Server) => {
             }
         });
 
-        socket.on("send_message", async (message: string) => {
+        socket.on("send_message", async (data) => {
             const user = socket.data.user;
             const roomID = socket.data.roomID;
             if (!roomID) return;
-            
-            const createdChat = await Chat.create({ userID: user._id, roomChatID: roomID, content: message, });
+            if (!data.message && (!data.images || data.images.length === 0)) {
+                return;
+            }
+            const payload: any = {
+                userID: user._id,
+                roomChatID: roomID,
+            };
+            if (data.message) {
+                payload.content = data.message.trim();
+            }
+            if (data.images?.length) {
+                payload.images = data.images;
+            }
+            const createdChat = await Chat.create(payload);
 
             const update = user.accountType === "user" ? 
                 {
@@ -66,7 +81,7 @@ export const initSocket = (io: Server) => {
                     $set: {
                         lastMessage: {
                             role: "user",
-                            message,
+                            message: data.message,
                             createdAt: new Date(),
                         },
                     },
@@ -78,7 +93,7 @@ export const initSocket = (io: Server) => {
                     $set: {
                         lastMessage: {
                             role: "admin",
-                            message,
+                            message: data.message,
                             createdAt: new Date(),
                         },
                     },
@@ -90,7 +105,7 @@ export const initSocket = (io: Server) => {
                         .populate("userID", "fullName avatar accountType")
                         .lean<IChatMessage>();
             io.to(roomID).emit("receive_message", chat);
-            io.emit("update_room", {
+            io.to("adminRoom").emit("update_room", {
                 roomID: roomID, 
                 lastMessage: {message: chat?.content, role: chat?.userID.accountType, createdAt: chat?.createdAt}
             });
