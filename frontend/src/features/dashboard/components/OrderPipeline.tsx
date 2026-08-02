@@ -1,4 +1,7 @@
 import { ClockCircleOutlined, SyncOutlined, CarOutlined, CheckCircleOutlined, CloseCircleOutlined, } from "@ant-design/icons";
+import { useOrderPipeline } from "../hooks/useOrderPipeline";
+import LoadingScreen from "../../../shared/components/LoadingScreen";
+import CustomAlert from "../../../shared/components/CustomAlert";
 
 interface PipelineStep {
     title: string;
@@ -9,50 +12,60 @@ interface PipelineStep {
     iconColor: string;
 }
 
-const pipelineData: PipelineStep[] = [
-    {
-        title: "Pending",
-        count: 12,
-        description: "Awaiting confirmation",
-        icon: <ClockCircleOutlined />,
-        iconBg: "bg-amber-100/60",
-        iconColor: "text-amber-600",
-    },
-    {
-        title: "Processing",
-        count: 28,
-        description: "Packing & Preparing",
-        icon: <SyncOutlined />,
-        iconBg: "bg-sky-100/60",
-        iconColor: "text-sky-500",
-    },
-    {
-        title: "On Delivery",
-        count: 45,
-        description: "Shipping in progress",
-        icon: <CarOutlined />,
-        iconBg: "bg-indigo-100/60",
-        iconColor: "text-indigo-600",
-    },
-    {
-        title: "Completed",
-        count: 180,
-        description: "Delivered successfully",
-        icon: <CheckCircleOutlined />,
-        iconBg: "bg-emerald-100/60",
-        iconColor: "text-emerald-600",
-    },
-    {
-        title: "Cancelled",
-        count: 3,
-        description: "Refunded / Cancelled",
-        icon: <CloseCircleOutlined />,
-        iconBg: "bg-rose-100/60",
-        iconColor: "text-rose-500",
-    },
-];
-
 const OrderPipeline = () => {
+    const {pipeline, loading, error} = useOrderPipeline();
+    if(loading){
+        return <LoadingScreen />
+    }
+    if(error){
+        return <CustomAlert error={error} />
+    }
+    const pipelineData: PipelineStep[] = pipeline.map((item) => {
+        switch (item.title) {
+            case "Pending":
+                return {
+                    ...item,
+                    icon: <ClockCircleOutlined />,
+                    iconBg: "bg-amber-100/60",
+                    iconColor: "text-amber-600",
+                };
+            case "Processing":
+                return {
+                    ...item,
+                    icon: <SyncOutlined />,
+                    iconBg: "bg-sky-100/60",
+                    iconColor: "text-sky-500",
+                };
+            case "On Delivery":
+                return {
+                    ...item,
+                    icon: <CarOutlined />,
+                    iconBg: "bg-indigo-100/60",
+                    iconColor: "text-indigo-600",
+                };
+            case "Completed":
+                return {
+                    ...item,
+                    icon: <CheckCircleOutlined />,
+                    iconBg: "bg-emerald-100/60",
+                    iconColor: "text-emerald-600",
+                };
+            case "Cancelled":
+                return {
+                    ...item,
+                    icon: <CloseCircleOutlined />,
+                    iconBg: "bg-rose-100/60",
+                    iconColor: "text-rose-500",
+                };
+            default:
+                return {
+                    ...item,
+                    icon: <ClockCircleOutlined />,
+                    iconBg: "bg-gray-100",
+                    iconColor: "text-gray-500",
+                };
+        }
+    });
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
             {pipelineData.map((item, index) => (

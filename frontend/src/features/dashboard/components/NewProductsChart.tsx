@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import Chart from "react-apexcharts";
 const NewProductsChart = () => {
     const options: ApexCharts.ApexOptions = {
@@ -91,8 +92,13 @@ const NewProductsChart = () => {
             ],
         },
     ];
-    return (
+    const [mounted, setMounted] = useState(false);
+    
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+    return mounted ? (
         <Chart series={series} options={options} type="bar" height={305} />
-    )
+    ) : null;
 }
 export default NewProductsChart;

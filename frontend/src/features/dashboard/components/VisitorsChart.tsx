@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import Chart from "react-apexcharts";
 const VisitorsChart = () => {
     const isDarkTheme = "dark";
@@ -52,8 +53,13 @@ const VisitorsChart = () => {
         name: "Visitors",
         data: [500, 590, 600, 520, 610, 550, 600]
     }];
-    return (
+    const [mounted, setMounted] = useState(false);
+    
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+    return mounted ? (
         <Chart height={305} options={options} series={series} type="area" />
-    )
+    ) : null;
 }
 export default VisitorsChart;

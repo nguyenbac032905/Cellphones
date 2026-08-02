@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeftSlide, VoucherIcon } from "../../../shared/components/Icons";
-import { Form, message } from "antd";
+import { Button, Form, message } from "antd";
 import { useFee } from "../hooks/useFee";
 import { createOrderSchema } from "../../orders/validations/order.validation";
 import { zodToAntFormErrors } from "../../../shared/utils/zodToAntFormErrors";
@@ -32,7 +32,7 @@ const CheckoutPage = () => {
     //mã giảm giá
     const user = useAppSelector(state => state.auth.user);
     const {coupons}= useCoupons();
-    const myCoupons = coupons.filter((coupon: Coupon) => user?.coupons.includes(coupon._id));
+    const myCoupons = coupons.filter((coupon: Coupon) => user?.coupons?.includes(coupon._id));
     const [isCouponModalOpen, setIsCouponModalOpen] = useState(false);
     const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
     const openCouponModal = () => {
@@ -43,7 +43,7 @@ const CheckoutPage = () => {
     };
     // tạo đơn hàng
     const {fee, getFee} = useFee();
-    const {createOrder} = useCreateOrder();
+    const {createOrder,loading} = useCreateOrder();
     //lay ra cart và tính giá sản phẩm
     const { products, subTotal, directDiscount, discountCoupon, isFreeShip, shippingFee, totalPrice, totalSaving, } = useCheckoutSummary({fee, selectedCoupon});
     //xử lí địa chỉ
@@ -193,15 +193,19 @@ const CheckoutPage = () => {
                             </div>
                         </div>
 
-                        <button
-                            type="submit"
-                            className="w-full mt-2 flex flex-col items-center justify-center rounded-md !text-white p-2 transition-all !bg-primary-500 hover:!bg-primary-600 active:!scale-[0.99] shadow-md hover:shadow-lg cursor-pointer"
+                        <Button
+                            htmlType="submit"
+                            loading={loading}
+                            className=" !flex !h-auto w-full mt-2 flex-col items-center justify-center gap-0.5 rounded-lg !bg-primary-500 hover:!bg-primary-600 !border-none !text-white px-4 !py-3 shadow-md hover:shadow-lg active:scale-[0.98] transition-all duration-200 "
                         >
-                            <strong className="text-base tracking-wide uppercase font-bold">MUA NGAY</strong>
-                            <span className="text-[11px] font-normal opacity-90">
+                            <strong className="text-base font-bold uppercase tracking-wide leading-none">
+                                MUA NGAY
+                            </strong>
+
+                            <span className="text-[11px] font-normal leading-none opacity-90">
                                 Giao nhanh từ 2 giờ hoặc nhận tại cửa hàng
                             </span>
-                        </button>
+                        </Button>
                     </div>
                 </div>
             </Form>

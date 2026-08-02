@@ -1,5 +1,6 @@
 import Chart from "react-apexcharts";
 import type { ApexOptions } from "apexcharts";
+import { useEffect, useState } from "react";
 const SaleChart = () => {
     const isDarkTheme = "dark";
     
@@ -134,8 +135,13 @@ const SaleChart = () => {
             color: "#FDBA8C",
         }
     ];
-    return (
-        <Chart type="area" options={options} series={series} height={420} />
-    )
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+    return mounted ? (
+        <Chart type="area" options={options} series={series} height={420}/>
+    ) : null;
 }
 export default SaleChart;

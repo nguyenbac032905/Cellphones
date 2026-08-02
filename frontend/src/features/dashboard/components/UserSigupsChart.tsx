@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import Chart from "react-apexcharts";
 const UserSignupsChart = () => {
     const isDarkTheme = "dark";
@@ -103,8 +104,13 @@ const UserSignupsChart = () => {
             data: [34, 45, 53, 38, 55, 32, 36],
         }
     ];
-    return (
+    const [mounted, setMounted] = useState(false);
+    
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+    return mounted ? (
         <Chart height={305} options={options} series={series} type="bar" />
-    )
+    ) : null;
 }
 export default UserSignupsChart;
