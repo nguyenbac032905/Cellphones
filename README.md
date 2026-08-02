@@ -317,3 +317,8 @@
     1. tạo api getRooms và getMessage
     2. tạo service và hooks call api tương ứng
     3. hiển thị ra giao diện
+98. xong tính năng chat cơ bản
+99. làm tính năng realtime thông báo khi có tin nhắn mới đến
+100. làm tính năng gửi ảnh bên admin
+101. bổ sung tính năng gửi ảnh bên client
+102. hiển thị dữ liệu stats và order pipeline trong dashboard

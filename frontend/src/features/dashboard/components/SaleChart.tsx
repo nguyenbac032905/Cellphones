@@ -1,7 +1,8 @@
 import Chart from "react-apexcharts";
 import type { ApexOptions } from "apexcharts";
 import { useEffect, useState } from "react";
-const SaleChart = () => {
+import type { RevenueChart } from "../types/dashboard.type";
+const SaleChart = ({revenueData}: {revenueData: RevenueChart}) => {
     const isDarkTheme = "dark";
     
     const borderColor = isDarkTheme ? "#374151" : "#F3F4F6";
@@ -55,15 +56,7 @@ const SaleChart = () => {
             }
         },
         xaxis: {
-            categories: [
-                "01 Feb",
-                "02 Feb",
-                "03 Feb",
-                "04 Feb",
-                "05 Feb",
-                "06 Feb",
-                "07 Feb",
-            ],
+            categories: revenueData.category,
             labels: {
                 style: {
                     colors: [labelColor],
@@ -95,7 +88,7 @@ const SaleChart = () => {
                     fontWeight: 500,
                 },
                 formatter: function (value:any) {
-                    return "$" + value;
+                    return value.toLocaleString("vi-VN") + "đ";
                 },
             },
         },
@@ -123,18 +116,7 @@ const SaleChart = () => {
             },
         ],
     };
-    const series = [
-        {
-            name: "Revenue",
-            data: [6356, 6218, 6156, 6526, 6356, 6256, 6056],
-            color: "#1A56DB",
-        },
-        {
-            name: "Revenue (previous period",
-            data: [6556, 6725, 6424, 6356, 6586, 6756, 6616],
-            color: "#FDBA8C",
-        }
-    ];
+    const series = revenueData.series;
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {

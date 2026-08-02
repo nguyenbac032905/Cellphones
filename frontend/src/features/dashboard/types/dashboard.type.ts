@@ -21,3 +21,17 @@ export interface OrderPipelineItem {
     description: string;
 }
 export type OrderPipelineResponse = ApiResponse<OrderPipelineItem[]>;
+
+export type SaleQuery = {
+    type: "week" | "month" | "year";
+};
+export interface RevenueChartSeries {
+    name: string;
+    data: number[];
+    color: string;
+}
+export interface RevenueChart {
+    category: string[];
+    series: RevenueChartSeries[];
+}
+export type RevenueChartResponse = ApiResponse<RevenueChart>;

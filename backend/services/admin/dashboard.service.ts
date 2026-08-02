@@ -1,6 +1,6 @@
 import Order from "../../models/order.model";
 import User from "../../models/user.model";
-
+import { SaleQuery } from "../../validations/admin/dashboard.validation";
 const calculateChange = (current: number, previous: number) => {
     if (previous === 0) {
         return current > 0 ? "100.00" : "0.00";
@@ -204,5 +204,165 @@ export const orderPipelineService = async () => {
                 description: "Refunded / Cancelled",
             },
         ],
+    };
+};
+
+export const saleWeekService = async (query: SaleQuery) => {
+    const { type = 'week' } = query;
+    const now = new Date();
+
+    let category: string[] = [];
+    let currentStart: Date;
+    let currentEnd: Date;
+    let prevStart: Date;
+    let prevEnd: Date;
+    let numBuckets = 0;
+
+    if (type === 'month') {
+        const year = now.getFullYear();
+        const month = now.getMonth();
+
+        // Tháng này
+        currentStart = new Date(year, month, 1, 0, 0, 0, 0);
+        currentEnd = new Date(year, month + 1, 0, 23, 59, 59, 999);
+
+        // Tháng trước
+        prevStart = new Date(year, month - 1, 1, 0, 0, 0, 0);
+        prevEnd = new Date(year, month, 0, 23, 59, 59, 999);
+
+        numBuckets = 4;
+        category = ['Tuần 1', 'Tuần 2', 'Tuần 3', 'Tuần 4'];
+    } 
+    else if (type === 'year') {
+        const year = now.getFullYear();
+
+        // Năm nay
+        currentStart = new Date(year, 0, 1, 0, 0, 0, 0);
+        currentEnd = new Date(year, 11, 31, 23, 59, 59, 999);
+
+        // Năm trước
+        prevStart = new Date(year - 1, 0, 1, 0, 0, 0, 0);
+        prevEnd = new Date(year - 1, 11, 31, 23, 59, 59, 999);
+
+        numBuckets = 12;
+        category = Array.from({ length: 12 }, (_, i) => `T${i + 1}`);
+    } 
+    else {
+        const dayOfWeek = now.getDay() === 0 ? 6 : now.getDay() - 1;
+
+        currentStart = new Date(now);
+        currentStart.setDate(now.getDate() - dayOfWeek);
+        currentStart.setHours(0, 0, 0, 0);
+
+        currentEnd = new Date(currentStart);
+        currentEnd.setDate(currentStart.getDate() + 6);
+        currentEnd.setHours(23, 59, 59, 999);
+
+        // Tuần trước
+        prevStart = new Date(currentStart);
+        prevStart.setDate(currentStart.getDate() - 7);
+
+        prevEnd = new Date(currentEnd);
+        prevEnd.setDate(currentEnd.getDate() - 7);
+
+        numBuckets = 7;
+        category = ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'];
+    }
+
+    const commonMatch = {
+        orderStatus: "DELIVERED"
+    };
+
+    const [result] = await Order.aggregate([
+        {
+            $facet: {
+                currentPeriod: [
+                    {
+                        $match: {
+                            ...commonMatch,
+                            createdAt: { $gte: currentStart, $lte: currentEnd }
+                        }
+                    },
+                    {
+                        $group: {
+                            _id: type === 'week'
+                                ? { $isoDayOfWeek: '$createdAt' } // 1 (Mon) -> 7 (Sun)
+                                : type === 'month'
+                                    ? {
+                                        // Phân bổ ngày vào 4 tuần trong tháng
+                                        $switch: {
+                                            branches: [
+                                                { case: { $lte: [{ $dayOfMonth: '$createdAt' }, 7] }, then: 1 },
+                                                { case: { $lte: [{ $dayOfMonth: '$createdAt' }, 14] }, then: 2 },
+                                                { case: { $lte: [{ $dayOfMonth: '$createdAt' }, 21] }, then: 3 }
+                                            ],
+                                            default: 4
+                                        }
+                                    }
+                                    : { $month: '$createdAt' }, // 1 -> 12 cho Năm
+                            totalRevenue: { $sum: '$pricing.totalPrice' }
+                        }
+                    }
+                ],
+                previousPeriod: [
+                    {
+                        $match: {
+                            ...commonMatch,
+                            createdAt: { $gte: prevStart, $lte: prevEnd }
+                        }
+                    },
+                    {
+                        $group: {
+                            _id: type === 'week'
+                                ? { $isoDayOfWeek: '$createdAt' }
+                                : type === 'month'
+                                    ? {
+                                        $switch: {
+                                            branches: [
+                                                { case: { $lte: [{ $dayOfMonth: '$createdAt' }, 7] }, then: 1 },
+                                                { case: { $lte: [{ $dayOfMonth: '$createdAt' }, 14] }, then: 2 },
+                                                { case: { $lte: [{ $dayOfMonth: '$createdAt' }, 21] }, then: 3 }
+                                            ],
+                                            default: 4
+                                        }
+                                    }
+                                    : { $month: '$createdAt' },
+                            totalRevenue: { $sum: '$pricing.totalPrice' }
+                        }
+                    }
+                ]
+            }
+        }
+    ]);
+
+    const currentSeriesData: number[] = new Array(numBuckets).fill(0);
+    const previousSeriesData: number[] = new Array(numBuckets).fill(0);
+    result?.currentPeriod?.forEach((item: { _id: number; totalRevenue: number }) => {
+        if (item._id >= 1 && item._id <= numBuckets) {
+            currentSeriesData[item._id - 1] = item.totalRevenue;
+        }
+    });
+    result?.previousPeriod?.forEach((item: { _id: number; totalRevenue: number }) => {
+        if (item._id >= 1 && item._id <= numBuckets) {
+            previousSeriesData[item._id - 1] = item.totalRevenue;
+        }
+    });
+
+    return {
+        data: {
+            category,
+            series: [
+                {
+                    name: 'Revenue',
+                    data: currentSeriesData,
+                    color: '#1A56DB'
+                },
+                {
+                    name: 'Revenue (previous period)',
+                    data: previousSeriesData,
+                    color: '#FDBA8C'
+                }
+            ]
+        }
     };
 };
