@@ -136,7 +136,7 @@ export const createOrderService = async ( userID: string, body: CreateOrderBody,
             paymentMethod,
             nextAction: {
                 type: "navigate",
-                url: `/orders/${order._id}`
+                url: `/my-account/orders/${order._id}`
             }
         }
     };

@@ -323,3 +323,5 @@
 101. bổ sung tính năng gửi ảnh bên client
 102. hiển thị dữ liệu stats và order pipeline trong dashboard
 103. hiển thị dữ liệu sale overview
+104. hiển thị danh mục sản phẩm trên header và làm tính năng search trên header
+105. làm trang search và tối ưu component products list

@@ -9,7 +9,7 @@ import { adminAuthRoutes, authRoutes } from "./features/auth/auth.route";
 import AdminPrivateRoute from "./features/auth/components/AdminPrivateRoute";
 import { adminRoleRoutes } from "./features/roles/role.route";
 import ForbiddenPage from "./shared/pages/ForbiddenPage";
-import { usersAdminRoutes } from "./features/users/user.route";
+import { userRoutes, usersAdminRoutes } from "./features/users/user.route";
 import MyAccountAdminPage from "./features/auth/pages/MyAccountAdminPage";
 import { productCategoryAdminRoutes } from "./features/productCategories/productCategory.route";
 import ClientPrivateRoute from "./features/auth/components/ClientPrivateRoute";
@@ -55,7 +55,7 @@ export const routes = [
                 children: [
                     {
                         element: <ClientPrivateRoute />,
-                        children: [...cartRoutes,...checkoutRoutes,...orderRoutes]
+                        children: [...cartRoutes,...checkoutRoutes,...orderRoutes,...userRoutes]
                     },
                     ...homeRoutes,
                     ...productRoutes

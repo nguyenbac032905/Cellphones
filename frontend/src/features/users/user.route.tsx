@@ -4,6 +4,10 @@ import UserDetailAdminPage from "./pages/UserDetailAdminPage";
 import UserAdminPage from "./pages/UsersAdminPage";
 import PermissionRoute from "../auth/components/PermissionRoute";
 import { PERMISSIONS } from "../roles/constants/role.const";
+import MyAccountPage from "./pages/MyAccountPage";
+import MyInfoPage from "./pages/MyInfoPage";
+import MyOrdersPage from "./pages/MyOrdersPage";
+import MyVoucherPage from "./pages/MyVoucherPage";
 
 export const usersAdminRoutes = [
     {
@@ -38,3 +42,23 @@ export const usersAdminRoutes = [
         ]
     }
 ]
+export const userRoutes = [
+    {
+        path: "my-account",
+        element: <MyAccountPage />,
+        children: [
+            {
+                index: true,
+                element: <MyInfoPage />,
+            },
+            {
+                path: "orders",
+                element: <MyOrdersPage />,
+            },
+            {
+                path: "vouchers",
+                element: <MyVoucherPage />
+            }
+        ],
+    },
+];

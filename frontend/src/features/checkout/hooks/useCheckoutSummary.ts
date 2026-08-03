@@ -60,7 +60,7 @@ export const useCheckoutSummary = ({ fee, selectedCoupon, }: { fee?: Fee | null;
 
     const shippingFee = isFreeShip ? 0 : fee?.total ?? 0;
 
-    const totalPrice = totalOrder + shippingFee;
+    const totalPrice = totalOrder + shippingFee - discountCoupon;
 
     const totalSaving = discountAmount + (isFreeShip ? fee?.total ?? 0 : 0);
 

@@ -2,7 +2,7 @@ import OrderDetailPage from "./pages/OrderDetailPage";
 
 export const orderRoutes = [
     {
-        path: "/orders/:orderID",
+        path: "/my-account/orders/:orderID",
         element: <OrderDetailPage />
     }
 ]

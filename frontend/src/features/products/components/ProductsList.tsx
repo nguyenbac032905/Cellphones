@@ -1,8 +1,4 @@
-import { useSearchParams } from "react-router-dom";
-import TopSlidingBanner from "../components/TopSlidingBanner";
-import { useProductQuery } from "../hooks/useProductQuery";
-import { useEffect, useState } from "react";
-import { useProducts } from "../hooks/useProducts";
+import { useState } from "react";
 import { ArrowLeftSlide, ArrowRightSlide, DecreaseIcon, HollowStar, IncreaseIcon, SaleIcon } from "../../../shared/components/Icons";
 import { ProductItem } from "../components/ProductItem";
 import type { ProductClientQuery, ProductListClient } from "../types/products.type";
