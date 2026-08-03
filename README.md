@@ -322,3 +322,4 @@
 100. làm tính năng gửi ảnh bên admin
 101. bổ sung tính năng gửi ảnh bên client
 102. hiển thị dữ liệu stats và order pipeline trong dashboard
+103. hiển thị dữ liệu sale overview

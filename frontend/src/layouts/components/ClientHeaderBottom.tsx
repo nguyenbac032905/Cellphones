@@ -1,13 +1,18 @@
 import { Link, useNavigate } from "react-router-dom";
-import { ArrowDownIcon, CartIcon, CartMobileIcon, CategoryIcon, LocationIcon, LocationMobileIcon, SearchIcon, UserOutlineIcon } from "../../shared/components/Icons";
+import { ArrowDownIcon, CartIcon, CartMobileIcon, CategoryIcon, LocationIcon, LocationMobileIcon, UserOutlineIcon } from "../../shared/components/Icons";
 import { useAppSelector } from "../../app/hooks";
 import { Dropdown, message } from "antd";
 import { UserOutlined, LogoutOutlined, ShoppingOutlined, GiftOutlined } from "@ant-design/icons";
 import { getLastName } from "../../shared/utils/getLastName";
 import { useLogout } from "../../features/auth/hooks/useLogout";
 import { getErrorMessage } from "../../shared/utils/errorHandler";
+import { useState } from "react";
+import BannerCategory from "../../features/home/components/BannerCategory";
+import BoxSearch from "./BoxSearch";
 const ClientHeaderBottom = () => {
     const user = useAppSelector(state => state.auth.user);
+    const [isOpenCategory, setIsOpenCategory] = useState(false);
+    const [isOpenSearch, setIsOpenSearch] = useState(false);
     const navigate = useNavigate();
     const { logout } = useLogout();
     const handleLogout = async () => {
@@ -22,7 +27,18 @@ const ClientHeaderBottom = () => {
     const cart = useAppSelector(state => state.cart.cart);
     
     return (
-        <div className="mx-auto flex w-full max-w-[1200px] items-center gap-3 px-2 py-4 xl:px-1">
+        <div className="mx-auto flex w-full max-w-[1200px] items-center gap-3 px-2 py-4 xl:px-1 relative">
+            {isOpenCategory && (
+                <>
+                    <div
+                        className="fixed inset-0 z-40 bg-black/30 backdrop-blur-[2px] mt-[98px]"
+                        onClick={() => setIsOpenCategory(false)}
+                    />
+                    <div className="absolute left-0 top-full z-50 w-full pt-2">
+                        <BannerCategory />
+                    </div>
+                </>
+            )}
             {/* LOGO CELLPHONES (Tự thích ứng PC / Mobile) */}
             <Link to="/" title="CellphoneS" className="flex h-10 items-center transition-all duration-300 md:hover:scale-95">
                 <div className="flex w-0 items-center overflow-hidden transition-all duration-200 lg:w-[169px]">
@@ -33,7 +49,7 @@ const ClientHeaderBottom = () => {
                 </div>
             </Link>
             {/* NÚT DANH MỤC (Chỉ hiện trên PC) */}
-            <button className="bg-primary-300 hover:bg-primary-500 hidden items-center justify-center gap-2 cursor-pointer border-none text-base px-4 py-1 min-h-[40px] rounded-lg text-white md:flex">
+            <button onClick={() => {setIsOpenCategory(!isOpenCategory); setIsOpenSearch(false)}} className="bg-primary-300 hover:bg-primary-500 hidden items-center justify-center gap-2 cursor-pointer border-none text-base px-4 py-1 min-h-[40px] rounded-lg text-white md:flex">
                 <CategoryIcon />
                 <span>Danh mục</span>
                 <ArrowDownIcon />
@@ -45,16 +61,7 @@ const ClientHeaderBottom = () => {
                 <ArrowDownIcon />
             </button>
             {/* THANH TÌM KIẾM */}
-            <div className="flex-1 relative">
-                <form onSubmit={(e) => e.preventDefault()}>
-                    <div className="z-10 w-full overflow-hidden rounded-lg text-neutral-600 flex items-center gap-2 px-3 bg-white h-[40px] border border-neutral-300 focus-within:border-none focus-within:ring-2 focus-within:ring-primary-500">
-                        <div className="flex items-center justify-center">
-                            <SearchIcon />
-                        </div>
-                        <input className="w-full bg-transparent text-sm placeholder-neutral-400 text-black" placeholder="Bạn muốn mua gì hôm nay?"/>
-                    </div>
-                </form>
-            </div>
+            <BoxSearch setIsOpenCategory={setIsOpenCategory} setIsOpenSearch={setIsOpenSearch} isOpenSearch={isOpenSearch}/>
             {/* NÚT GIỎ HÀNG */}
             <Link
                 to="/cart"

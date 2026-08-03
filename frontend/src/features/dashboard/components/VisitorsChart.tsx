@@ -51,7 +51,7 @@ const VisitorsChart = () => {
     };
     const series: any = [{
         name: "Visitors",
-        data: [500, 590, 600, 520, 610, 550, 600]
+        data: [50, 70, 100, 30, 20, 40, 15]
     }];
     const [mounted, setMounted] = useState(false);
     

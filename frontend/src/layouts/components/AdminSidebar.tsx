@@ -1,4 +1,4 @@
-import { DashboardOutlined, AppstoreOutlined, UserOutlined, ShoppingCartOutlined, ShoppingOutlined, SettingOutlined, SafetyCertificateOutlined, MessageOutlined, } from "@ant-design/icons";
+import { DashboardOutlined, AppstoreOutlined, UserOutlined, ShoppingCartOutlined, ShoppingOutlined, SettingOutlined, SafetyCertificateOutlined, MessageOutlined, GiftOutlined, } from "@ant-design/icons";
 import { Layout, Menu, type MenuProps } from 'antd';
 import type { Dispatch, SetStateAction } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -65,6 +65,11 @@ const AdminSidebar = ({ collapsed, setCollapsed }: AdminHeaderProps) => {
                     icon: <ShoppingCartOutlined />,
                     label: "Orders",
                 }: null,
+                {
+                    key: "/admin/coupons",
+                    icon: <GiftOutlined />,
+                    label: "Coupons",
+                }
             ],
         },
         {

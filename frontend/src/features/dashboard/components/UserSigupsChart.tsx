@@ -101,7 +101,7 @@ const UserSignupsChart = () => {
     const series = [
         {
             name: "Users",
-            data: [34, 45, 53, 38, 55, 32, 36],
+            data: [10, 30, 20, 60, 50, 20, 10],
         }
     ];
     const [mounted, setMounted] = useState(false);
