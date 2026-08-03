@@ -150,3 +150,12 @@ export const getOrderService = async (userID: string, orderID: string) => {
         data: order
     }
 }
+export const myOrdersService = async (userID: string) => {
+    const orders = await Order.find({userID: userID, deleted: false}).select("-userID -updatedAt").sort({createdAt: -1}).lean();
+    if(!orders){ 
+        throw new AppError("Order not found", 404);
+    }
+    return {
+        data: orders
+    }
+}

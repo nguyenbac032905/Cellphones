@@ -325,3 +325,4 @@
 103. hiển thị dữ liệu sale overview
 104. hiển thị danh mục sản phẩm trên header và làm tính năng search trên header
 105. làm trang search và tối ưu component products list
+106. làm trang my account

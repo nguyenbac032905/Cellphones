@@ -1,5 +1,5 @@
 import { privateClient } from "../../../shared/api/privateClient";
-import type { CreateOrderResponse, GetOrderResponse } from "../types/order.type";
+import type { CreateOrderResponse, GetOrderResponse, MyOrdersResponse } from "../types/order.type";
 import type { CreateOrderBody } from "../validations/order.validation";
 
 export const orderService = {
@@ -9,6 +9,10 @@ export const orderService = {
     },
     get: async (orderID: string): Promise<GetOrderResponse> => {
         const result = await privateClient.get<GetOrderResponse>(`/api/orders/${orderID}`);
+        return result.data;
+    },
+    getAll: async (): Promise<MyOrdersResponse> => {
+        const result = await privateClient.get<MyOrdersResponse>(`/api/orders`);
         return result.data;
     }
 }

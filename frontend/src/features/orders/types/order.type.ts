@@ -77,3 +77,5 @@ export interface Order {
 }
 
 export type GetOrderResponse = ApiResponse<Order>;
+
+export type MyOrdersResponse = ApiResponse<Order[]>;
