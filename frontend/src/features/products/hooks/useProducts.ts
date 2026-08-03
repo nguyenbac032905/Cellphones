@@ -1,10 +1,10 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import type {ProductClientQuery, ProductListClient} from "../types/products.type";
 import { getErrorMessage } from "../../../shared/utils/errorHandler";
 import type { PaginationMeta } from "../../../shared/types/common.type";
 import { productService } from "../services/product.service";
 
-export const useProducts = (query: ProductClientQuery) => {
+export const useProducts = (query: ProductClientQuery,defaultLimit = "20") => {
     const [products, setProducts] = useState<ProductListClient[]>([]);
     const [meta, setMeta] = useState<PaginationMeta>({
         total: 0,
@@ -15,12 +15,20 @@ export const useProducts = (query: ProductClientQuery) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string>("");
 
+    const finalQuery = useMemo(
+        () => ({
+            ...query,
+            limit: defaultLimit,
+        }),
+        [query, defaultLimit]
+    );
+
     const fetchProducts = useCallback(async () => {
         try {
             setLoading(true);
             setError("");
             
-            const res = await productService.getAll(query);
+            const res = await productService.getAll(finalQuery);
             
             if (res.success) {
                 setProducts(res.data);
@@ -32,14 +40,14 @@ export const useProducts = (query: ProductClientQuery) => {
             setLoading(false);
         }
     }, [
-        query.featured,
-        query.discount,
-        query.search,
-        query.sort,
-        query.page,
-        query.limit,
-        query.minPrice,
-        query.maxPrice,
+        finalQuery.featured,
+        finalQuery.discount,
+        finalQuery.search,
+        finalQuery.sort,
+        finalQuery.page,
+        finalQuery.limit,
+        finalQuery.minPrice,
+        finalQuery.maxPrice,
     ]);
 
     useEffect(() => {

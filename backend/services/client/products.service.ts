@@ -43,11 +43,11 @@ export const getProductsByCategoryService = async (categorySlug: string, query: 
         match.price = {};
 
         if (minPrice !== undefined) {
-            match.price.$gte = Number(minPrice);
+            match.price.$gte = Number(minPrice*1000000);
         }
 
         if (maxPrice !== undefined) {
-            match.price.$lte = Number(maxPrice);
+            match.price.$lte = Number(maxPrice*1000000);
         }
     }
 

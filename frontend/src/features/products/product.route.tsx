@@ -6,6 +6,7 @@ import AdminProductsPage from "./pages/AdminProductsPage";
 import AdminProductsUpdatePage from "./pages/AdminProductsUpdatePage";
 import ProductByCategoryPage from "./pages/ProductByCategoryPage";
 import ProductDetailPage from "./pages/ProductDetailPage";
+import ProductSearchPage from "./pages/ProductSearchPage";
 
 export const adminProductRoutes = [
     {
@@ -41,6 +42,10 @@ export const adminProductRoutes = [
     }
 ];
 export const productRoutes = [
+    {
+        path: "products",
+        element: <ProductSearchPage />
+    },
     {
         path: ":categorySlug",
         element: <ProductByCategoryPage />

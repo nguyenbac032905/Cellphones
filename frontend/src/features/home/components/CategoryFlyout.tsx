@@ -9,27 +9,27 @@ interface CategoryFlyoutProps {
 
 const filterPrice = [
     {
-        path: "price[lte]=5",
+        path: "maxPrice=5",
         title: "Dưới 5 triệu",
     },
     {
-        path: "price[gte]=5&price[lte]=10",
+        path: "minPrice=5&maxPrice=10",
         title: "Từ 5 - 10 triệu",
     },
     {
-        path: "price[gte]=10&price[lte]=15",
+        path: "minPrice=10&maxPrice=15",
         title: "Từ 10 - 15 triệu",
     },
     {
-        path: "price[gte]=15&price[lte]=20",
+        path: "minPrice=15&maxPrice=20",
         title: "Từ 15 - 20 triệu",
     },
     {
-        path: "price[gte]=20&price[lte]=30",
+        path: "minPrice=20&maxPrice=30",
         title: "Từ 20 - 30 triệu",
     },
     {
-        path: "price[gte]=30",
+        path: "minPrice=30",
         title: "Trên 30 triệu",
     },
 ];

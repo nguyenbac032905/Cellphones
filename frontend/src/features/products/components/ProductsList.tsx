@@ -1,10 +1,12 @@
-import { useState } from "react"
-import { ArrowLeftSlide, ArrowRightSlide, DecreaseIcon, HollowStar, IncreaseIcon, SaleIcon } from "../../../shared/components/Icons"
-import { useProductsByCategory } from "../hooks/useProductsByCategory";
+import { useSearchParams } from "react-router-dom";
+import TopSlidingBanner from "../components/TopSlidingBanner";
 import { useProductQuery } from "../hooks/useProductQuery";
-import { ProductItem } from "./ProductItem";
-import type { ProductClientQuery } from "../types/products.type";
-
+import { useEffect, useState } from "react";
+import { useProducts } from "../hooks/useProducts";
+import { ArrowLeftSlide, ArrowRightSlide, DecreaseIcon, HollowStar, IncreaseIcon, SaleIcon } from "../../../shared/components/Icons";
+import { ProductItem } from "../components/ProductItem";
+import type { ProductClientQuery, ProductListClient } from "../types/products.type";
+import type { PaginationMeta } from "../../../shared/types/common.type";
 type Filter = {
     key: string;
     icon: React.ReactNode;
@@ -16,13 +18,13 @@ const filters: Filter[] = [
         key: "featured",
         icon: <HollowStar />,
         label: "Nổi bật",
-        event: {featured: "true"}
+        event: { featured: "true" }
     },
     {
         key: "sale",
         icon: <SaleIcon />,
         label: "Khuyến mãi HOT",
-        event: {discount: "20"}
+        event: { discount: "20" }
     }
 ];
 const sorts: Filter[] = [
@@ -30,21 +32,23 @@ const sorts: Filter[] = [
         key: "increase",
         icon: <IncreaseIcon />,
         label: "Giá Thấp - Cao",
-        event: {sort: "price-asc"}
+        event: { sort: "price-asc" }
     },
     {
         key: "decrease",
         icon: <DecreaseIcon />,
         label: "Giá Cao - Thấp",
-        event: {sort: "price-desc"}
+        event: { sort: "price-desc" }
     }
 ]
-const ProductList = ({ categorySlug }: { categorySlug: string }) => {
+interface ProductListProps {
+    products: ProductListClient[],
+    meta: PaginationMeta,
+    updateQuery: (query: ProductClientQuery) => void,
+}
+const ProductsList = ({products, meta, updateQuery}: ProductListProps) => {
     const [filterActive, setFilterActive] = useState<any>([]);
     const [sortActive, setSortActive] = useState<string>();
-    const { query, updateQuery } = useProductQuery();
-    const { products, meta} = useProductsByCategory(categorySlug,query,"10");
-    
     return (
         <div className="flex flex-col gap-5">
             <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
@@ -65,20 +69,20 @@ const ProductList = ({ categorySlug }: { categorySlug: string }) => {
                                 });
                             }}
                             className={`
-                                shrink-0
-                                whitespace-nowrap
-                                flex items-center gap-2
-                                rounded-3xl border
-                                px-4 py-2
-                                text-sm font-medium
-                                transition-all duration-200
-                                active:scale-95
-                                cursor-pointer
-                                ${filterActive.includes(item.key)
+                                            shrink-0
+                                            whitespace-nowrap
+                                            flex items-center gap-2
+                                            rounded-3xl border
+                                            px-4 py-2
+                                            text-sm font-medium
+                                            transition-all duration-200
+                                            active:scale-95
+                                            cursor-pointer
+                                            ${filterActive.includes(item.key)
                                     ? "border-blue-500 bg-[#eff5ff] text-blue-600 shadow-[0_0_0_1px_#3b82f6]"
                                     : "border-neutral-200 bg-[#f7f7f8] text-neutral-800 hover:bg-[#e9e9ec] hover:border-neutral-300"
                                 }
-                            `}
+                                        `}
                         >
                             {item.icon}
                             <span>{item.label}</span>
@@ -99,20 +103,20 @@ const ProductList = ({ categorySlug }: { categorySlug: string }) => {
                                 updateQuery(item.event);
                             }}
                             className={`
-                                shrink-0
-                                whitespace-nowrap
-                                flex items-center gap-2
-                                rounded-3xl border
-                                px-4 py-2
-                                text-sm font-medium
-                                transition-all duration-200
-                                active:scale-95
-                                cursor-pointer
-                                ${sortActive === item.key
+                                            shrink-0
+                                            whitespace-nowrap
+                                            flex items-center gap-2
+                                            rounded-3xl border
+                                            px-4 py-2
+                                            text-sm font-medium
+                                            transition-all duration-200
+                                            active:scale-95
+                                            cursor-pointer
+                                            ${sortActive === item.key
                                     ? "border-blue-500 bg-[#eff5ff] text-blue-600 shadow-[0_0_0_1px_#3b82f6]"
                                     : "border-neutral-200 bg-[#f7f7f8] text-neutral-800 hover:bg-[#e9e9ec] hover:border-neutral-300"
                                 }
-                            `}
+                                        `}
                         >
                             {item.icon}
                             <span>{item.label}</span>
@@ -146,8 +150,8 @@ const ProductList = ({ categorySlug }: { categorySlug: string }) => {
                                             key={page}
                                             onClick={() => updateQuery({ page: String(page) })}
                                             className={`flex h-8 w-8 items-center justify-center rounded-full text-base font-medium transition-all duration-200 ${active
-                                                    ? "bg-primary-500 text-white shadow-md"
-                                                    : "text-neutral-600 hover:text-primary-500 hover:bg-white"
+                                                ? "bg-primary-500 text-white shadow-md"
+                                                : "text-neutral-600 hover:text-primary-500 hover:bg-white"
                                                 }`}
                                         >
                                             {page}
@@ -169,4 +173,4 @@ const ProductList = ({ categorySlug }: { categorySlug: string }) => {
         </div>
     )
 }
-export default ProductList
+export default ProductsList;
