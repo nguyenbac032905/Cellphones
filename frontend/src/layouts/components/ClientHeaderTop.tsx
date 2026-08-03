@@ -29,14 +29,14 @@ const ClientHeaderTop = () => {
                     <ShopIcon />
                     <span>Cửa hàng gần bạn</span>
                 </Link>
-                <Link to={"/"} className="flex items-center gap-1 shrink-0 whitespace-nowrap cursor-pointer hover:scale-95 transition-all duration-300 relative before:w-0.5 before:h-3 before:bg-primary-200 before:absolute before:top-1/2 before:-translate-y-1/2 before:-left-[15px]">
+                <Link to={"/my-account/orders"} className="flex items-center gap-1 shrink-0 whitespace-nowrap cursor-pointer hover:scale-95 transition-all duration-300 relative before:w-0.5 before:h-3 before:bg-primary-200 before:absolute before:top-1/2 before:-translate-y-1/2 before:-left-[15px]">
                     <OrderIcon />
                     <span>Tra cứu đơn hàng</span>
                 </Link>
-                <Link to={"/"} className="flex items-center gap-1 shrink-0 whitespace-nowrap cursor-pointer hover:scale-95 transition-all duration-300 relative before:w-0.5 before:h-3 before:bg-primary-200 before:absolute before:top-1/2 before:-translate-y-1/2 before:-left-[15px]">
+                <div className="flex items-center gap-1 shrink-0 whitespace-nowrap hover:scale-95 transition-all duration-300 relative before:w-0.5 before:h-3 before:bg-primary-200 before:absolute before:top-1/2 before:-translate-y-1/2 before:-left-[15px]">
                     <PhoneIcon />
                     <span>1800 2097</span>
-                </Link>
+                </div>
             </div>
         </div>
     )
