@@ -22,14 +22,12 @@ const AdminProductsPage = () => {
         return <CustomAlert error={error}/>
     }
     return (
-        <>
-            <div className="flex flex-col gap-5">
-                <AdminTitle title="Products List" description="Manage all products in your store" />
-                <AdminProductFilter query={query} updateQuery={updateQuery}/>
-                <AdminProductToolbar query={query} updateQuery={updateQuery} selectedRows={selectedRows} refetch={refetch}/>
-                <ProductTable products={products} meta={meta} updateQuery={updateQuery} refetch={refetch} setSelectedRows={setSelectedRows}/>
-            </div>
-        </>
+        <div className="flex flex-col gap-5">
+            <AdminTitle title="Products List" description="Manage all products in your store" />
+            <AdminProductFilter query={query} updateQuery={updateQuery}/>
+            <AdminProductToolbar query={query} updateQuery={updateQuery} selectedRows={selectedRows} refetch={refetch}/>
+            <ProductTable products={products} meta={meta} updateQuery={updateQuery} refetch={refetch} setSelectedRows={setSelectedRows}/>
+        </div>
     )
 }
 export default AdminProductsPage;

@@ -37,7 +37,7 @@ const UpdateUserPage = () => {
             phone: user.phone,
             accountType: user.accountType,
             status: user.status,
-            roleID: user.roleID._id,
+            roleID: user.roleID?._id,
             password: "",
             confirmPassword: "",
         });

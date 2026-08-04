@@ -15,7 +15,7 @@ import { productCategoryAdminRoutes } from "./features/productCategories/product
 import ClientPrivateRoute from "./features/auth/components/ClientPrivateRoute";
 import { cartRoutes } from "./features/cart/cart.route";
 import { checkoutRoutes } from "./features/checkout/checkout.route";
-import { orderRoutes } from "./features/orders/order.route";
+import { orderAdminRoutes, orderRoutes } from "./features/orders/order.route";
 import { chatAdminRoutes } from "./features/chat/chat.route";
 
 export const routes = [
@@ -36,6 +36,7 @@ export const routes = [
                             ...usersAdminRoutes,
                             ...productCategoryAdminRoutes,
                             ...chatAdminRoutes,
+                            ...orderAdminRoutes,
                             {
                                 path: "my-account",
                                 element: <MyAccountAdminPage />
