@@ -17,6 +17,7 @@ import { cartRoutes } from "./features/cart/cart.route";
 import { checkoutRoutes } from "./features/checkout/checkout.route";
 import { orderAdminRoutes, orderRoutes } from "./features/orders/order.route";
 import { chatAdminRoutes } from "./features/chat/chat.route";
+import { couponAdminRoutes } from "./features/coupons/coupon.route";
 
 export const routes = [
     {
@@ -37,6 +38,7 @@ export const routes = [
                             ...productCategoryAdminRoutes,
                             ...chatAdminRoutes,
                             ...orderAdminRoutes,
+                            ...couponAdminRoutes,
                             {
                                 path: "my-account",
                                 element: <MyAccountAdminPage />

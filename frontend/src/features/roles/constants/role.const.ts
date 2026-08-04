@@ -43,6 +43,23 @@ export const permissionGroups = [
         ],
     },
     {
+        title: "Orders",
+        permissions: [
+            { label: "View", value: "orders-read" },
+            { label: "Update", value: "orders-update" },
+            { label: "Delete", value: "orders-delete" },
+        ],
+    },
+    {
+        title: "Coupons",
+        permissions: [
+            { label: "View", value: "coupons-read" },
+            { label: "Create", value: "coupons-create" },
+            { label: "Update", value: "coupons-update" },
+            { label: "Delete", value: "coupons-delete" },
+        ],
+    },
+    {
         title: "Uploads",
         permissions: [
             { label: "Images", value: "uploads-images" }
@@ -56,33 +73,35 @@ export const PERMISSIONS = {
         UPDATE: "products-update",
         DELETE: "products-delete",
     },
-
     CATEGORIES: {
         READ: "categories-read",
         CREATE: "categories-create",
         UPDATE: "categories-update",
         DELETE: "categories-delete",
     },
-
     ORDERS: {
         READ: "orders-read",
         UPDATE: "orders-update",
+        DELETE: "orders-delete",
     },
-
     USERS: {
         READ: "users-read",
         CREATE: "users-create",
         UPDATE: "users-update",
         DELETE: "users-delete",
     },
-
     ROLES: {
         READ: "roles-read",
         CREATE: "roles-create",
         UPDATE: "roles-update",
         DELETE: "roles-delete",
     },
-    
+    COUPONS: {
+        READ: "coupons-read",
+        CREATE: "coupons-create",
+        UPDATE: "coupons-update",
+        DELETE: "coupons-delete",
+    },
     Uploads: {
         Images: "uploads-images"
     }

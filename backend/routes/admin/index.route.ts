@@ -11,6 +11,7 @@ import userRoutes from "./users.route";
 import chatRoutes from "./chat.route";
 import dashboardRoutes from "./dashboard.route";
 import orderRoutes from "./order.route";
+import couponRoutes from "./coupon.route";
 
 const routesClient = (app: Express) => {
     const PATH_ADMIN = systemConfig.prefixAdmin;
@@ -24,6 +25,7 @@ const routesClient = (app: Express) => {
     app.use(PATH_ADMIN + "/chats",authMiddleware, chatRoutes);
     app.use(PATH_ADMIN + "/dashboard",authMiddleware, dashboardRoutes);
     app.use(PATH_ADMIN + "/orders",authMiddleware, orderRoutes);
+    app.use(PATH_ADMIN + "/coupons",authMiddleware, couponRoutes);
 }
 
 export default routesClient;

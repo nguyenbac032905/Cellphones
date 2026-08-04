@@ -5,33 +5,35 @@ export const PERMISSIONS = {
         UPDATE: "products-update",
         DELETE: "products-delete",
     },
-
     CATEGORIES: {
         READ: "categories-read",
         CREATE: "categories-create",
         UPDATE: "categories-update",
         DELETE: "categories-delete",
     },
-
     ORDERS: {
         READ: "orders-read",
         UPDATE: "orders-update",
+        DELETE: "orders-delete",
     },
-
+    COUPONS: {
+        READ: "coupons-read",
+        CREATE: "coupons-create",
+        UPDATE: "coupons-update",
+        DELETE: "coupons-delete",
+    },
     USERS: {
         READ: "users-read",
         CREATE: "users-create",
         UPDATE: "users-update",
         DELETE: "users-delete",
     },
-
     ROLES: {
         READ: "roles-read",
         CREATE: "roles-create",
         UPDATE: "roles-update",
         DELETE: "roles-delete",
     },
-    
     Uploads: {
         Images: "uploads-images"
     }
