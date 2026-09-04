@@ -228,7 +228,7 @@ const MyOrdersPage: React.FC = () => {
                                         </div>
 
                                         <Link
-                                            to={`/orders/${item._id}`}
+                                            to={`/my-account/orders/${item._id}`}
                                             className="flex gap-1.5 items-center text-sm font-medium text-neutral-700"
                                         >
                                             Xem chi tiết
