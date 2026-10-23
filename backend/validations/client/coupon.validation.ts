@@ -14,3 +14,16 @@ export const addCouponSchema = z.object({
 });
 
 export type AddCouponBody = z.infer<typeof addCouponSchema>["body"];
+
+export const bestCouponSchema = z.object({
+    body: z.object({
+        products: z.array(
+            z.object({
+                productID: objectIdSchema,
+                quantity: z.number().int().min(1),
+            }).strict()
+        ).min(1),
+    }).strict()
+});
+
+export type BestCouponBody = z.infer<typeof bestCouponSchema>["body"];

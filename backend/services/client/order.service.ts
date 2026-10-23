@@ -9,7 +9,7 @@ import { calculatePricing, ICoupon } from "../../helpers/pricing";
 import { createGHNOrder } from "../../helpers/ghn";
 import Coupon from "../../models/coupon.model";
 
-export const createOrderService = async ( userID: string, body: CreateOrderBody, ) => {
+export const createOrderService = async (userID: string, body: CreateOrderBody,) => {
     const { products, fullName, phone, address, province, district, ward, districtID, wardCode, note, paymentMethod, couponID } = body;
     let coupon: ICoupon | null = null;
     if (couponID) {
@@ -20,7 +20,7 @@ export const createOrderService = async ( userID: string, body: CreateOrderBody,
     }
     const newProducts = [];
     for (const item of products) {
-        const product: any = await Product.findOne({_id: item.productID, deleted: false, status: "active"})
+        const product: any = await Product.findOne({ _id: item.productID, deleted: false, status: "active" })
             .select("title price discountPercentage stock images")
             .lean();
 
@@ -29,7 +29,7 @@ export const createOrderService = async ( userID: string, body: CreateOrderBody,
         }
 
         if (product.stock < item.quantity) {
-            throw new AppError( `Sản phẩm ${product.title} không đủ số lượng tồn kho!` );
+            throw new AppError(`Sản phẩm ${product.title} không đủ số lượng tồn kho!`);
         }
 
         const mainImage = product.images?.find((i: any) => i.isMain)?.url || product.images?.[0]?.url || "";
@@ -109,11 +109,11 @@ export const createOrderService = async ( userID: string, body: CreateOrderBody,
 
         order.shippingDetails = shippingDetails;
     }
-    
+
     await order.save();
 
     const paymentUrl = createPaymentUrlService({ paymentMethod, orderID: order._id.toString(), amount: pricing.totalPrice, });
-
+    console.log(paymentUrl)
     if (paymentUrl) {
         return {
             data: {
@@ -127,9 +127,9 @@ export const createOrderService = async ( userID: string, body: CreateOrderBody,
         };
     }
 
-    await Promise.all( newProducts.map((item) => Product.updateOne( { _id: item.productID }, { $inc: { stock: -item.quantity, sold: item.quantity } } ) ) );
-    await Cart.updateOne( { userID }, { $pull: { products: { productID: { $in: newProducts.map((i) => i.productID) } } } } );
-    
+    await Promise.all(newProducts.map((item) => Product.updateOne({ _id: item.productID }, { $inc: { stock: -item.quantity, sold: item.quantity } })));
+    await Cart.updateOne({ userID }, { $pull: { products: { productID: { $in: newProducts.map((i) => i.productID) } } } });
+
     return {
         data: {
             orderID: order._id,
@@ -143,7 +143,7 @@ export const createOrderService = async ( userID: string, body: CreateOrderBody,
 };
 export const getOrderService = async (userID: string, orderID: string) => {
     const order = await Order.findOne({ userID: userID, _id: orderID, deleted: false, }).select("-userID -updatedAt").lean();
-    if(!order){ 
+    if (!order) {
         throw new AppError("Order not found", 404);
     }
     return {
@@ -151,8 +151,8 @@ export const getOrderService = async (userID: string, orderID: string) => {
     }
 }
 export const myOrdersService = async (userID: string) => {
-    const orders = await Order.find({userID: userID, deleted: false}).select("-userID -updatedAt").sort({createdAt: -1}).lean();
-    if(!orders){ 
+    const orders = await Order.find({ userID: userID, deleted: false }).select("-userID -updatedAt").sort({ createdAt: -1 }).lean();
+    if (!orders) {
         throw new AppError("Order not found", 404);
     }
     return {
