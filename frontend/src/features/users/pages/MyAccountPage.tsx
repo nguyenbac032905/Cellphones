@@ -1,4 +1,4 @@
-import { GiftOutlined, LogoutOutlined, ShoppingOutlined, UserOutlined, } from "@ant-design/icons";
+import { GiftOutlined, HeartOutlined, LogoutOutlined, ShoppingOutlined, UserOutlined, } from "@ant-design/icons";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 
 const MyAccountPage = () => {
@@ -21,6 +21,11 @@ const MyAccountPage = () => {
             label: "Ưu đãi của tôi",
             icon: GiftOutlined,
             path: "/my-account/vouchers",
+        },
+        {
+            label: "Sản phẩm yêu thích",
+            icon: HeartOutlined,
+            path: "/my-account/wishlist",
         },
     ];
 

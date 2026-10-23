@@ -6,8 +6,10 @@ import { Provider } from 'react-redux';
 import { bootstrapAdminAuth } from './app/bootstrap/bootstrapAdminAuth.ts';
 import { bootstrapClientAuth } from './app/bootstrap/bootstrapClientAuth.ts';
 import { bootstrapCart } from './app/bootstrap/bootstrapCart.ts';
+import { bootstrapWishlist } from './app/bootstrap/bootstrapWishlist.ts';
 
 const renderApp = async () => {
+    bootstrapWishlist();
     if (window.location.pathname.startsWith("/admin")) {
         await bootstrapAdminAuth();
     } else {

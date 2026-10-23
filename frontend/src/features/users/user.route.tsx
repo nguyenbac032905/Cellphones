@@ -8,6 +8,7 @@ import MyAccountPage from "./pages/MyAccountPage";
 import MyInfoPage from "./pages/MyInfoPage";
 import MyOrdersPage from "./pages/MyOrdersPage";
 import MyVoucherPage from "./pages/MyVoucherPage";
+import MyWishlistPage from "../wishlist/pages/MyWishlistPage";
 
 export const usersAdminRoutes = [
     {
@@ -58,6 +59,10 @@ export const userRoutes = [
             {
                 path: "vouchers",
                 element: <MyVoucherPage />
+            },
+            {
+                path: "wishlist",
+                element: <MyWishlistPage />
             }
         ],
     },

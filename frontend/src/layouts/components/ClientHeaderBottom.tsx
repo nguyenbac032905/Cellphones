@@ -2,7 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { ArrowDownIcon, CartIcon, CartMobileIcon, CategoryIcon, LocationIcon, LocationMobileIcon, UserOutlineIcon } from "../../shared/components/Icons";
 import { useAppSelector } from "../../app/hooks";
 import { Dropdown, message } from "antd";
-import { UserOutlined, LogoutOutlined, ShoppingOutlined, GiftOutlined } from "@ant-design/icons";
+import { UserOutlined, LogoutOutlined, ShoppingOutlined, GiftOutlined, HeartOutlined } from "@ant-design/icons";
 import { getLastName } from "../../shared/utils/getLastName";
 import { useLogout } from "../../features/auth/hooks/useLogout";
 import { getErrorMessage } from "../../shared/utils/errorHandler";
@@ -18,14 +18,14 @@ const ClientHeaderBottom = () => {
     const handleLogout = async () => {
         try {
             const resLogout = await logout();
-            navigate("/login", {replace: true});
+            navigate("/login", { replace: true });
             message.success(resLogout.message);
         } catch (error) {
             message.error(getErrorMessage(error));
         }
     }
     const cart = useAppSelector(state => state.cart.cart);
-    
+
     return (
         <div className="mx-auto flex w-full max-w-[1200px] items-center gap-3 px-2 py-4 xl:px-1 relative">
             {isOpenCategory && (
@@ -49,7 +49,7 @@ const ClientHeaderBottom = () => {
                 </div>
             </Link>
             {/* NÚT DANH MỤC (Chỉ hiện trên PC) */}
-            <button onClick={() => {setIsOpenCategory(!isOpenCategory); setIsOpenSearch(false)}} className="bg-primary-300 hover:bg-primary-500 hidden items-center justify-center gap-2 cursor-pointer border-none text-base px-4 py-1 min-h-[40px] rounded-lg text-white md:flex">
+            <button onClick={() => { setIsOpenCategory(!isOpenCategory); setIsOpenSearch(false) }} className="bg-primary-300 hover:bg-primary-500 hidden items-center justify-center gap-2 cursor-pointer border-none text-base px-4 py-1 min-h-[40px] rounded-lg text-white md:flex">
                 <CategoryIcon />
                 <span>Danh mục</span>
                 <ArrowDownIcon />
@@ -61,7 +61,7 @@ const ClientHeaderBottom = () => {
                 <ArrowDownIcon />
             </button>
             {/* THANH TÌM KIẾM */}
-            <BoxSearch setIsOpenCategory={setIsOpenCategory} setIsOpenSearch={setIsOpenSearch} isOpenSearch={isOpenSearch}/>
+            <BoxSearch setIsOpenCategory={setIsOpenCategory} setIsOpenSearch={setIsOpenSearch} isOpenSearch={isOpenSearch} />
             {/* NÚT GIỎ HÀNG */}
             <Link
                 to="/cart"
@@ -97,7 +97,7 @@ const ClientHeaderBottom = () => {
                                             alt={user?.fullName || "Avatar"}
                                             className="h-11 w-11 shrink-0 rounded-full object-cover border border-primary-500"
                                         />
-                                        ) : (
+                                    ) : (
                                         <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-primary-500 font-bold text-white text-base">
                                             {user?.fullName ? user.fullName.charAt(0).toUpperCase() : "U"}
                                         </div>
@@ -133,6 +133,14 @@ const ClientHeaderBottom = () => {
                                     <GiftOutlined className="text-base text-neutral-500 group-hover:text-primary-500" />
                                     <span>Ưu đãi của tôi</span>
                                 </button>
+
+                                <button
+                                    onClick={() => navigate("/my-account/wishlist")}
+                                    className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-xs font-semibold text-neutral-700 transition-colors hover:bg-red-50 hover:text-primary-500 cursor-pointer"
+                                >
+                                    <HeartOutlined className="text-base text-neutral-500 group-hover:text-primary-500" />
+                                    <span>Sản phẩm yêu thích</span>
+                                </button>
                             </div>
                             {/* NÚT ĐĂNG XUẤT */}
                             <div className="border-t border-neutral-100 p-1.5 bg-neutral-50/50">
@@ -140,19 +148,19 @@ const ClientHeaderBottom = () => {
                                     onClick={() => handleLogout()}
                                     className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-xs font-semibold text-primary-500 transition-colors hover:bg-red-100/70 cursor-pointer"
                                 >
-                                <LogoutOutlined className="text-base text-primary-500" />
+                                    <LogoutOutlined className="text-base text-primary-500" />
                                     <span>Đăng xuất</span>
                                 </button>
                             </div>
                         </div>
                     )}
-                    >
+                >
                     <button className="max-md:hidden bg-primary-300 hover:bg-primary-500 flex min-h-[40px] min-w-[115px] cursor-pointer items-center justify-center gap-2 rounded-lg border-none px-4 py-1 text-sm text-white transition-all">
                         <UserOutlineIcon />
                         <span>{getLastName(user?.fullName || "")}</span>
                         <ArrowDownIcon />
                     </button>
-                    </Dropdown>
+                </Dropdown>
             ) : (
                 <Link to={"/login"} className="max-md:hidden bg-primary-300 hover:bg-primary-500 flex items-center justify-center gap-2 cursor-pointer border-none text-sm px-4 py-1 min-h-[40px] rounded-lg text-white min-w-[115px]" type="button">
                     <span>Đăng nhập</span>

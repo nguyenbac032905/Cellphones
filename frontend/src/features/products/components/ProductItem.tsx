@@ -3,9 +3,12 @@ import type { ProductListClient } from "../types/products.type";
 import { FireBlueIcon, HeartIcon, StarIcon, TruckIcon } from "../../../shared/components/Icons";
 import { useProductRating } from "../../reviews/hooks/useProductRating";
 import { formatRating } from "../../reviews/utils/reviewText";
+import { useWishlist } from "../../wishlist/hooks/useWishlist";
 
 export const ProductItem = ({ product }: { product: ProductListClient }) => {
     const { average, total } = useProductRating(product._id);
+    const { isInWishlist, toggleWishlist } = useWishlist();
+    const liked = isInWishlist(product._id);
     const formatPrice = (num: number) => num.toLocaleString("vi-VN") + "đ";
 
     // Tính toán giá mới
@@ -88,9 +91,16 @@ export const ProductItem = ({ product }: { product: ProductListClient }) => {
 
                     <button
                         type="button"
-                        className="group ml-auto flex h-8 items-center gap-1 rounded-full border border-white bg-white p-1 text-blue-500 hover:bg-gray-50"
+                        aria-pressed={liked}
+                        title={liked ? "Bỏ khỏi yêu thích" : "Thêm vào yêu thích"}
+                        onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            toggleWishlist(product);
+                        }}
+                        className="group ml-auto flex h-8 items-center gap-1 rounded-full border border-white bg-white p-1 text-blue-500 hover:bg-gray-50 cursor-pointer"
                     >
-                        <HeartIcon className="size-5.5 group-hover:animate-heartbeat"/>
+                        <HeartIcon className={`size-5.5 group-hover:animate-heartbeat ${liked ? "fill-blue-500" : ""}`}/>
                     </button>
                     </div>
             </div>
