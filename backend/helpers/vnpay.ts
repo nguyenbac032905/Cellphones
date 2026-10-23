@@ -9,14 +9,15 @@ interface CreateVNPayUrlParams {
 }
 
 const formatVNPayDate = (date: Date): string => {
+    const vn = new Date(date.getTime() + 7 * 60 * 60 * 1000);
     const pad = (n: number) => n.toString().padStart(2, "0");
     return (
-        date.getFullYear().toString() +
-        pad(date.getMonth() + 1) +
-        pad(date.getDate()) +
-        pad(date.getHours()) +
-        pad(date.getMinutes()) +
-        pad(date.getSeconds())
+        vn.getUTCFullYear().toString() +
+        pad(vn.getUTCMonth() + 1) +
+        pad(vn.getUTCDate()) +
+        pad(vn.getUTCHours()) +
+        pad(vn.getUTCMinutes()) +
+        pad(vn.getUTCSeconds())
     );
 };
 
@@ -64,6 +65,6 @@ export const createVNPayUrl = ({ orderID, amount, orderInfo = "Thanh toan hoa do
     const signed = hmac.update(Buffer.from(signData, "utf-8")).digest("hex");
 
     vnp_Params["vnp_SecureHash"] = signed;
-    console.log("Url:",`${vnpUrl}?${qs.stringify(vnp_Params, { encode: false })}`)
+    console.log("Url:", `${vnpUrl}?${qs.stringify(vnp_Params, { encode: false })}`)
     return `${vnpUrl}?${qs.stringify(vnp_Params, { encode: false })}`;
 };
