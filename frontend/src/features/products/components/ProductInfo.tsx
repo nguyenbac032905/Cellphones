@@ -7,6 +7,8 @@ import { message } from "antd";
 import { getErrorMessage } from "../../../shared/utils/errorHandler";
 import { useCoupons } from "../../coupons/hooks/useCoupons";
 import { useAppSelector } from "../../../app/hooks";
+import { useReviewSummary } from "../../reviews/hooks/useReviewSummary";
+import { formatRating } from "../../reviews/utils/reviewText";
 const promos = [
     "Chỉ thêm 30K - nhận Sim/Esim 5G VNSKY, có ngay 3GB data/ngày+500 phút gọi Mobifone & VNSKY, miễn phí 30 ngày đầu - chỉ áp dụng tại cửa hàng",
     "Giảm thêm 10% cho Pin dự phòng - Camera giám sát - Đồng hồ trẻ em - Gia dụng - Sức khỏe Làm đẹp khi mua Điện thoại/Laptop",
@@ -22,6 +24,10 @@ const ProductInfo = ({ product }: { product: ProductDetailClient }) => {
     const myCoupons = user?.coupons;
     const newPrice = Math.round(product.price * (1 - product.discountPercentage / 100));
     const {addItemToCart} = useAddItem();
+    const { summary } = useReviewSummary(product._id);
+    const scrollToReviews = () => {
+        document.getElementById("product-reviews")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    };
     const handleAddToCart = async () => {
         try {
             const cartItem = {
@@ -45,13 +51,19 @@ const ProductInfo = ({ product }: { product: ProductDetailClient }) => {
     return (
         <div className="flex flex-col gap-3 p-2">
             {/* danh gia */}
-            <div className="cursor-pointer">
+            <div>
                 <h1 className="font-semibold text-2xl mb-2">{product?.title}</h1>
-                <div className="flex gap-1">
-                    <FillStar className="size-5" />
-                    <span>5</span>
-                    <span className="text-[#71717A]">(19 đánh giá)</span>
-                </div>
+                <button type="button" onClick={scrollToReviews} className="flex items-center gap-1 cursor-pointer">
+                    {summary.total > 0 ? (
+                        <>
+                            <FillStar className="size-5" />
+                            <span>{formatRating(summary.average)}</span>
+                            <span className="text-[#71717A]">({summary.total} đánh giá)</span>
+                        </>
+                    ) : (
+                        <span className="text-[#71717A]">Chưa có đánh giá</span>
+                    )}
+                </button>
             </div>
             {/* yeu thich */}
             <div className="grid grid-cols-2 sm:grid-cols-4">

@@ -1,75 +1,84 @@
 import { useState } from "react";
-import { ClockIcon, FillStar } from "../../../shared/components/Icons";
+import { useLocation, useNavigate } from "react-router-dom";
+import { FillStar } from "../../../shared/components/Icons";
+import { useAppSelector } from "../../../app/hooks";
 import type { ProductDetailClient } from "../types/products.type";
+import type { StarFilter } from "../../reviews/types/review.type";
+import { useReviewSummary } from "../../reviews/hooks/useReviewSummary";
+import { useMyReview } from "../../reviews/hooks/useMyReview";
+import { RatingStars } from "../../reviews/components/RatingStars";
+import ReviewList from "../../reviews/components/ReviewList";
+import ReviewFormModal from "../../reviews/components/ReviewFormModal";
+import { formatRating } from "../../reviews/utils/reviewText";
 
-const filtersRate = [
-    {
-        key: "all",
-        label: "Tất cả"
-    },
-    {
-        key: "image",
-        label: "Có hình ảnh"
-    },
-    {
-        key: "5star",
-        label: "5 sao"
-    },
-    {
-        key: "4star",
-        label: "4 sao"
-    },
-    {
-        key: "3star",
-        label: "3 sao"
-    },
-    {
-        key: "2star",
-        label: "2 sao"
-    },
-    {
-        key: "1star",
-        label: "1 sao"
-    }
+const filtersRate: { key: string; label: string; star?: StarFilter }[] = [
+    { key: "all", label: "Tất cả" },
+    { key: "5star", label: "5 sao", star: "5" },
+    { key: "4star", label: "4 sao", star: "4" },
+    { key: "3star", label: "3 sao", star: "3" },
+    { key: "2star", label: "2 sao", star: "2" },
+    { key: "1star", label: "1 sao", star: "1" }
 ];
 
 const ProductRating = ({ product }: { product: ProductDetailClient }) => {
     const [filterRate, setFilterRate] = useState<string>(filtersRate[0].key);
+    const [openForm, setOpenForm] = useState(false);
+
+    const navigate = useNavigate();
+    const location = useLocation();
+    const accessToken = useAppSelector(state => state.auth.accessToken);
+    const isLoggedIn = !!accessToken;
+
+    const { summary } = useReviewSummary(product._id);
+    const { review: myReview } = useMyReview(product._id, isLoggedIn);
+
+    const activeStar = filtersRate.find(item => item.key === filterRate)?.star;
+
+    const handleWriteReview = () => {
+        if (!isLoggedIn) {
+            navigate("/login", { state: { from: location.pathname } });
+            return;
+        }
+        setOpenForm(true);
+    };
+
     return (
-        <div className="rounded-xl bg-[#f7f7f8] p-4 flex flex-col gap-4">
+        <div id="product-reviews" className="rounded-xl bg-[#f7f7f8] p-4 flex flex-col gap-4 scroll-mt-24">
             <h2 className="text-xl font-semibold">Đánh giá {product?.title}</h2>
             <div className="bg-white rounded-xl py-6 px-8 flex flex-col md:flex-row gap-8 items-stretch justify-between">
                 <div className="flex-[2] flex flex-col sm:flex-row items-center gap-6">
                     <div className="flex flex-col items-center min-w-[140px] shrink-0">
                         <div className="text-[#a1a1aa] text-[24px] leading-[36px]">
-                            <span className="text-[#18181b] text-[40px] font-bold">4.7</span>/5
+                            <span className="text-[#18181b] text-[40px] font-bold">{formatRating(summary.average)}</span>/5
                         </div>
-                        <div className="flex gap-0.5 my-1">
-                            {[...Array(5)].map((_, i) => (
-                                <FillStar key={i} className="size-4" />
-                            ))}
+                        <div className="my-1">
+                            <RatingStars value={summary.average} />
                         </div>
-                        <p className="text-sm text-[#4a4a4a] mb-2">45 lượt đánh giá</p>
-                        <button className="bg-primary-500 rounded-lg text-sm font-semibold text-white py-2 px-5 whitespace-nowrap">Viết đánh giá</button>
+                        <p className="text-sm text-[#4a4a4a] mb-2">{summary.total} lượt đánh giá</p>
+                        <button
+                            type="button"
+                            onClick={handleWriteReview}
+                            className="bg-primary-500 rounded-lg text-sm font-semibold text-white py-2 px-5 whitespace-nowrap"
+                        >
+                            {myReview ? "Sửa đánh giá" : "Viết đánh giá"}
+                        </button>
                     </div>
                     <div className="w-full sm:flex-1 flex flex-col gap-1.5 px-2 md:pr-8">
-                        {[
-                            { star: 5, count: 33, width: "73%" },
-                            { star: 4, count: 12, width: "27%" },
-                            { star: 3, count: 0, width: "0%" },
-                            { star: 2, count: 0, width: "0%" },
-                            { star: 1, count: 0, width: "0%" },
-                        ].map((item) => (
-                            <div key={item.star} className="flex items-center gap-2 text-xs text-neutral-600">
-                                <div className="flex items-center gap-0.5 w-6 justify-end shrink-0">
-                                    {item.star} <FillStar className="size-3 text-orange-400" />
+                        {([5, 4, 3, 2, 1] as const).map(star => {
+                            const count = summary.distribution[star];
+                            const width = summary.total > 0 ? `${(count / summary.total) * 100}%` : "0%";
+                            return (
+                                <div key={star} className="flex items-center gap-2 text-xs text-neutral-600">
+                                    <div className="flex items-center gap-0.5 w-6 justify-end shrink-0">
+                                        {star} <FillStar className="size-3 text-orange-400" />
+                                    </div>
+                                    <div className="flex-1 h-1.5 bg-neutral-100 rounded-full overflow-hidden">
+                                        <div className="h-full bg-primary-500" style={{ width }}></div>
+                                    </div>
+                                    <span className="w-20 text-neutral-400 shrink-0 text-right">{count} đánh giá</span>
                                 </div>
-                                <div className="flex-1 h-1.5 bg-neutral-100 rounded-full overflow-hidden">
-                                    <div className="h-full bg-primary-500" style={{ width: item.width }}></div>
-                                </div>
-                                <span className="w-20 text-neutral-400 shrink-0 text-right">{item.count} đánh giá</span>
-                            </div>
-                        ))}
+                            );
+                        })}
                     </div>
                 </div>
                 <div className="w-full md:w-auto md:flex-initial border-t md:border-t-0 md:border-l border-neutral-200 pt-6 md:pt-0 md:pl-8 flex flex-col gap-2">
@@ -102,64 +111,15 @@ const ProductRating = ({ product }: { product: ProductDetailClient }) => {
                         })}
                     </div>
                 </div>
-                <div className="flex flex-col mt-5 divide-y divide-neutral-100">
-                    {/* Comment 1 */}
-                    <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 py-4 items-start">
-                        <div className="flex gap-2 items-center w-full sm:w-[180px] shrink-0">
-                            <span className="flex items-center justify-center w-7 h-7 text-xs font-bold rounded-full bg-[#26157d] text-white shrink-0"> T </span>
-                            <span className="text-sm font-semibold text-neutral-800"> Trần Đức Tâm </span>
-                        </div>
-                        <div className="flex flex-col gap-2 flex-1 w-full">
-                            <div className="flex items-center gap-1.5 flex-wrap">
-                                <div className="flex gap-0.5">
-                                    {[...Array(5)].map((_, i) => (
-                                        <FillStar key={i} className="size-4" />
-                                    ))}
-                                </div>
-                                <span className="text-xs font-medium text-neutral-600"> Tốt </span>
-                            </div>
-                            <div className="flex gap-2 text-[11px] flex-wrap">
-                                <span className="bg-neutral-100 rounded-md text-neutral-700 py-1 px-2.5"> Hiệu năng Siêu mạnh mẽ </span>
-                                <span className="bg-neutral-100 rounded-md text-neutral-700 py-1 px-2.5"> Thời lượng pin Cực khủng </span>
-                                <span className="bg-neutral-100 rounded-md text-neutral-700 py-1 px-2.5"> Chất lượng camera Chụp đẹp, chuyên nghiệp </span>
-                            </div>
-                            <p className="text-xs text-neutral-800 leading-relaxed break-words"> Hôm nọ thấy giá 24990 mà chưa đủ tiền. Hôm nay gom đủ tiền lại lên thành hơn 27 là sao ta </p>
-                            <div className="flex items-center gap-1.5 text-[11px] text-[#a1a1aa] flex-wrap">
-                                <ClockIcon className="size-3.5 shrink-0" />
-                                <span>Đánh giá đã đăng vào 1 tuần trước</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Comment 2 */}
-                    <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 py-4 items-start">
-                        <div className="flex gap-2 items-center w-full sm:w-[180px] shrink-0">
-                            <span className="flex items-center justify-center w-7 h-7 text-xs font-bold rounded-full bg-[#26157d] text-white shrink-0"> T </span>
-                            <span className="text-sm font-semibold text-neutral-800"> Trần Đức Tâm </span>
-                        </div>
-                        <div className="flex flex-col gap-2 flex-1 w-full">
-                            <div className="flex items-center gap-1.5 flex-wrap">
-                                <div className="flex gap-0.5">
-                                    {[...Array(5)].map((_, i) => (
-                                        <FillStar key={i} className="size-4" />
-                                    ))}
-                                </div>
-                                <span className="text-xs font-medium text-neutral-600"> Tốt </span>
-                            </div>
-                            <div className="flex gap-2 text-[11px] flex-wrap">
-                                <span className="bg-neutral-100 rounded-md text-neutral-700 py-1 px-2.5"> Hiệu năng Siêu mạnh mẽ </span>
-                                <span className="bg-neutral-100 rounded-md text-neutral-700 py-1 px-2.5"> Thời lượng pin Cực khủng </span>
-                                <span className="bg-neutral-100 rounded-md text-neutral-700 py-1 px-2.5"> Chất lượng camera Chụp đẹp, chuyên nghiệp </span>
-                            </div>
-                            <p className="text-xs text-neutral-800 leading-relaxed break-words"> Hôm nọ thấy giá 24990 mà chưa đủ tiền. Hôm nay gom đủ tiền lại lên thành hơn 27 là sao ta </p>
-                            <div className="flex items-center gap-1.5 text-[11px] text-[#a1a1aa] flex-wrap">
-                                <ClockIcon className="size-3.5 shrink-0" />
-                                <span>Đánh giá đã đăng vào 1 tuần trước</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <ReviewList key={`${product._id}-${activeStar ?? "all"}`} productID={product._id} star={activeStar} />
             </div>
+            <ReviewFormModal
+                open={openForm}
+                onClose={() => setOpenForm(false)}
+                productID={product._id}
+                productTitle={product.title}
+                existing={myReview}
+            />
         </div>
     )
 }

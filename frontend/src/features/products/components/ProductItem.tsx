@@ -1,8 +1,11 @@
 import { Link } from "react-router-dom";
 import type { ProductListClient } from "../types/products.type";
 import { FireBlueIcon, HeartIcon, StarIcon, TruckIcon } from "../../../shared/components/Icons";
+import { useProductRating } from "../../reviews/hooks/useProductRating";
+import { formatRating } from "../../reviews/utils/reviewText";
 
 export const ProductItem = ({ product }: { product: ProductListClient }) => {
+    const { average, total } = useProductRating(product._id);
     const formatPrice = (num: number) => num.toLocaleString("vi-VN") + "đ";
 
     // Tính toán giá mới
@@ -76,10 +79,12 @@ export const ProductItem = ({ product }: { product: ProductListClient }) => {
                             </div>
                         </div>
                     </div>
-                    <div className="flex items-center gap-0.5 text-xs font-semibold">
-                        <StarIcon className="size-4 fill-yellow-400"/>
-                        <span>5</span>
-                    </div>
+                    {total > 0 && (
+                        <div className="flex items-center gap-0.5 text-xs font-semibold" title={`${total} đánh giá`}>
+                            <StarIcon className="size-4 fill-yellow-400"/>
+                            <span>{formatRating(average)}</span>
+                        </div>
+                    )}
 
                     <button
                         type="button"
