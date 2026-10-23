@@ -37,22 +37,23 @@ interface PricingResult {
     discountCoupon: number;
 }
 
+export const calculateCouponDiscount = ( orderTotal: number, coupon: Pick<ICoupon, "discountType" | "discountValue" | "maxDiscount" | "minOrderValue"> ): number => {
+    if (orderTotal < coupon.minOrderValue) return 0;
+
+    const discount = coupon.discountType === "percent"
+        ? Math.min( orderTotal * coupon.discountValue / 100, coupon.maxDiscount ?? Number.MAX_SAFE_INTEGER )
+        : Math.min(orderTotal, coupon.discountValue);
+
+    return Math.round(discount);
+};
+
 export const calculatePricing = ({ items, shippingFee,coupon, freeShippingThreshold = 300000 }: CalculatePricingParams): PricingResult => {
     const subTotal = Math.round( items.reduce( (sum, item) => sum + item.price * item.quantity, 0 ) );
 
     const discountDirect = Math.round( items.reduce( (sum, item) => sum + item.price * item.quantity * (item.discountPercentage / 100), 0 ) );
     const orderTotal = subTotal - discountDirect;
     
-    const discountCoupon = Math.round(coupon ? 
-        (orderTotal >= coupon.minOrderValue
-            ? coupon.discountType === "percent"
-                ? Math.min(
-                    orderTotal * coupon.discountValue / 100,
-                    coupon.maxDiscount ?? Number.MAX_SAFE_INTEGER
-                )
-                : Math.min(orderTotal, coupon.discountValue)
-            : 0)
-        : 0);
+    const discountCoupon = coupon ? calculateCouponDiscount(orderTotal, coupon) : 0;
     
     const discountAmount = discountCoupon + discountDirect;
 
