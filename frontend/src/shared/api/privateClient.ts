@@ -2,6 +2,7 @@ import axios from "axios";
 import { store } from "../../app/store";
 import { publicClient } from "./publicClient";
 import { clearAuth, setAuth } from "../../features/auth/auth.slice";
+import { BRANCH_HEADER, getStoredBranchId } from "../../features/branches/utils/branchStorage";
 const backendLocal = import.meta.env.VITE_BACKEND_LOCAL;
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
@@ -12,6 +13,7 @@ export const privateClient = axios.create(({
 }));
 
 privateClient.interceptors.request.use((config) => {
+    config.headers[BRANCH_HEADER] = getStoredBranchId();
     const token = store.getState().auth.accessToken;
     if(token) {
         config.headers.Authorization = `Bearer ${token}`;

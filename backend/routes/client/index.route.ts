@@ -11,6 +11,7 @@ import couponRoutes from "./coupon.route";
 import chatRoutes from "./chat.route";
 import uploadRoutes from "./uploads.route";
 import reviewRoutes from "./review.route";
+import branchRoutes from "./branches.route";
 const routesClient = (app: Express) => {
     const PATH ="/api";
     app.use(PATH + "/products", productRoutes);
@@ -24,6 +25,7 @@ const routesClient = (app: Express) => {
     app.use(PATH + "/chats",authMiddleware, chatRoutes);
     app.use(PATH + "/uploads",authMiddleware, uploadRoutes);
     app.use(PATH + "/reviews", reviewRoutes);
+    app.use(PATH + "/branches", branchRoutes);
 }
 
 export default routesClient;

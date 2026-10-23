@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { ArrowDownIcon, CartIcon, CartMobileIcon, CategoryIcon, LocationIcon, LocationMobileIcon, UserOutlineIcon } from "../../shared/components/Icons";
+import { ArrowDownIcon, CartIcon, CartMobileIcon, CategoryIcon, UserOutlineIcon } from "../../shared/components/Icons";
 import { useAppSelector } from "../../app/hooks";
 import { Dropdown, message } from "antd";
 import { UserOutlined, LogoutOutlined, ShoppingOutlined, GiftOutlined, HeartOutlined } from "@ant-design/icons";
@@ -9,6 +9,7 @@ import { getErrorMessage } from "../../shared/utils/errorHandler";
 import { useState } from "react";
 import BannerCategory from "../../features/home/components/BannerCategory";
 import BoxSearch from "./BoxSearch";
+import BranchDropdown from "./BranchDropdown";
 const ClientHeaderBottom = () => {
     const user = useAppSelector(state => state.auth.user);
     const [isOpenCategory, setIsOpenCategory] = useState(false);
@@ -55,11 +56,7 @@ const ClientHeaderBottom = () => {
                 <ArrowDownIcon />
             </button>
             {/* NÚT CHỌN KHU VỰC (Chỉ hiện trên PC) */}
-            <button className="bg-primary-300 hover:bg-primary-500 hidden items-center justify-center gap-1 cursor-pointer border-none text-base px-4 py-1 min-h-[40px] rounded-lg text-white h-10 md:flex">
-                <LocationIcon />
-                <span>Hà Nội</span>
-                <ArrowDownIcon />
-            </button>
+            <BranchDropdown variant="desktop" />
             {/* THANH TÌM KIẾM */}
             <BoxSearch setIsOpenCategory={setIsOpenCategory} setIsOpenSearch={setIsOpenSearch} isOpenSearch={isOpenSearch} />
             {/* NÚT GIỎ HÀNG */}
@@ -170,13 +167,7 @@ const ClientHeaderBottom = () => {
                 </Link>
             )}
             {/* NÚT CHỌN KHU VỰC RÚT GỌN (Chỉ hiện trên MOBILE) */}
-            <button className="bg-primary-300 hover:bg-primary-500 flex items-center justify-center gap-1 cursor-pointer border-none text-white h-10 px-2 rounded-lg md:hidden">
-                <LocationMobileIcon />
-                <div className="flex flex-col items-start leading-tight">
-                    <span className="text-[9px] opacity-80">Xem giá tại</span>
-                    <span className="text-xs font-semibold">Hà Nội</span>
-                </div>
-            </button>
+            <BranchDropdown variant="mobile" />
             {/* ICON GIỎ HÀNG RÚT GỌN (Chỉ hiện trên MOBILE) */}
             <a className="relative flex px-1 md:hidden text-white align-middle justify-center items-center" href="/cart">
                 <CartMobileIcon />

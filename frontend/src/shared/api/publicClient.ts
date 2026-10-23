@@ -1,4 +1,5 @@
 import axios from "axios";
+import { BRANCH_HEADER, getStoredBranchId } from "../../features/branches/utils/branchStorage";
 const backendLocal = import.meta.env.VITE_BACKEND_LOCAL;
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 export const publicClient = axios.create(({
@@ -7,6 +8,8 @@ export const publicClient = axios.create(({
     withCredentials:true
 }));
 publicClient.interceptors.request.use((config) => {
+    // Mọi request đều gửi chi nhánh người dùng đang chọn (mặc định Hà Nội)
+    config.headers[BRANCH_HEADER] = getStoredBranchId();
     return config;
 })
 publicClient.interceptors.response.use(

@@ -3,6 +3,7 @@ import { getErrorMessage } from "../../../shared/utils/errorHandler";
 import { productService } from "../services/product.service";
 import type { ProductClientQuery, ProductListClient, } from "../types/products.type";
 import type { PaginationMeta } from "../../../shared/types/common.type";
+import { useAppSelector } from "../../../app/hooks";
 
 export const useProductsByCategory = ( categorySlug: string, query?: ProductClientQuery,defaultLimit = "20" ) => {
     const [products, setProducts] = useState<ProductListClient[]>([]);
@@ -14,6 +15,8 @@ export const useProductsByCategory = ( categorySlug: string, query?: ProductClie
     });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+    // đổi chi nhánh thì gọi lại API (header x-branch-id được axios interceptor gắn tự động)
+    const branchId = useAppSelector((state) => state.branch.branchId);
 
     const finalQuery = useMemo(
         () => ({
@@ -42,7 +45,7 @@ export const useProductsByCategory = ( categorySlug: string, query?: ProductClie
         } finally {
             setLoading(false);
         }
-    }, [categorySlug, finalQuery]);
+    }, [categorySlug, finalQuery, branchId]);
 
     useEffect(() => {
         fetchApi();
