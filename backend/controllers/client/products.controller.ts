@@ -1,6 +1,6 @@
 import { Request,Response } from "express";
 import { asyncHandler } from "../../utils/asyncHandler";
-import { getProductsByCategoryService, getProductService, getProductsService } from "../../services/client/products.service";
+import { getProductsByCategoryService, getProductService, getProductsService, getProductVariantsService } from "../../services/client/products.service";
 import { getBranchId } from "../../helpers/branch";
 export const getProducts = asyncHandler(async (req: Request, res: Response) => {
     const result = await getProductsService(req.query, getBranchId(req));
@@ -20,6 +20,13 @@ export const getProductsByCategory = asyncHandler(async (req:Request<{categorySl
 });
 export const getProduct = asyncHandler(async (req: Request<{productSlug: string}>, res: Response) => {
     const result = await getProductService(req.params.productSlug, getBranchId(req));
+    return res.status(200).json({
+        success: true,
+        data: result.data
+    })
+});
+export const getProductVariants = asyncHandler(async (req: Request<{productSlug: string}>, res: Response) => {
+    const result = await getProductVariantsService(req.params.productSlug, getBranchId(req));
     return res.status(200).json({
         success: true,
         data: result.data

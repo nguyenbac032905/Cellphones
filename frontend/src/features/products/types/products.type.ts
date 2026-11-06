@@ -6,7 +6,7 @@ export type ProductImage = z.infer<typeof imageSchema>;
 export type PatchProductBody = z.infer<typeof updateProductSchema>;
 export type PostProductBody = z.infer<typeof createProductSchema>;
 
-export interface ProductQuery{
+export interface ProductQuery {
     status?: string;
     stock?: string;
     category?: string;
@@ -109,3 +109,18 @@ export type ProductDetailClient = {
 };
 
 export type ProductDetailClientResponse = ApiResponse<ProductDetailClient>;
+
+export interface ProductVariantClient {
+    _id: string;
+    sku: string;
+    attributes: Record<string, string>;
+    price: number;
+    images: {
+        url: string;
+        isMain: boolean;
+    }[];
+    sold: number;
+    stock: number;
+}
+
+export type ProductVariantsClientResponse = ApiResponse<ProductVariantClient[]>;

@@ -23,11 +23,7 @@ const productSchema = new mongoose.Schema(
             type: String,
             default: ""
         },
-        price: {
-            type: Number,
-            required: true,
-            min: 0
-        },
+        // price đã chuyển sang ProductVariant (mỗi variant một giá)
         discountPercentage: {
             type: Number,
             default: 0,
@@ -86,7 +82,6 @@ productSchema.index({status: 1});
 productSchema.index({product_category_id: 1});
 productSchema.index({title: 1});
 productSchema.index({position: 1});
-productSchema.index({price: 1});
 productSchema.index({deleted: 1});
 //danh index de ho tro search
 

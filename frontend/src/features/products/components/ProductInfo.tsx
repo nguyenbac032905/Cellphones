@@ -1,4 +1,5 @@
-import type { ProductDetailClient } from "../types/products.type";
+import type { ReactNode } from "react";
+import type { ProductDetailClient, ProductVariantClient } from "../types/products.type";
 import { Link } from "react-router-dom";
 import { CartIcon, CommentIcon, CpuIcon, FillStar, HeartIcon, PlusBorderIcon } from "../../../shared/components/Icons";
 import TicketPromo from "../../coupons/components/TicketPromo";
@@ -18,12 +19,20 @@ const promos = [
     "Tặng PMH trị giá 1.000.000 đ cho MAC MỚI - không áp dụng kèm ưu đãi khác/ HSSV",
     "Tặng PMH trị giá 1.000.000 đ cho APPLE WATCH SE3/S11/Ultra mới - không áp dụng kèm ưu đãi khác/ HSSV"
 ];
-const ProductInfo = ({ product }: { product: ProductDetailClient }) => {
-    const {coupons} = useCoupons();
+interface ProductInfoProps {
+    product: ProductDetailClient;
+    selectedVariant?: ProductVariantClient;
+    variantSelector?: ReactNode;
+}
+const ProductInfo = ({ product, selectedVariant, variantSelector }: ProductInfoProps) => {
+    const { coupons } = useCoupons();
     const user = useAppSelector(state => state.auth.user);
     const myCoupons = user?.coupons;
-    const newPrice = Math.round(product.price * (1 - product.discountPercentage / 100));
-    const {addItemToCart} = useAddItem();
+    const basePrice = selectedVariant?.price ?? product.price;
+    const variantImages = selectedVariant && selectedVariant.images.length > 0 ? selectedVariant.images : product.images;
+    const isOutOfStock = selectedVariant ? selectedVariant.stock <= 0 : product.stock <= 0;
+    const newPrice = Math.round(basePrice * (1 - product.discountPercentage / 100));
+    const { addItemToCart } = useAddItem();
     const { summary } = useReviewSummary(product._id);
     const scrollToReviews = () => {
         document.getElementById("product-reviews")?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -34,10 +43,10 @@ const ProductInfo = ({ product }: { product: ProductDetailClient }) => {
                 productID: {
                     _id: product._id,
                     title: product.title,
-                    price: product.price,
-                    stock: product.stock,
+                    price: basePrice,
+                    stock: selectedVariant?.stock ?? product.stock,
                     discountPercentage: product.discountPercentage,
-                    mainImage: product.images.find(item => item.isMain === true)?.url ?? "",
+                    mainImage: variantImages.find(item => item.isMain === true)?.url ?? variantImages[0]?.url ?? "",
                     slug: product.slug
                 },
                 quantity: 1
@@ -97,7 +106,7 @@ const ProductInfo = ({ product }: { product: ProductDetailClient }) => {
                             {newPrice.toLocaleString("vi-VN")}đ
                         </div>
                         <div className="text-sm text-gray-400 line-through">
-                            {product.price.toLocaleString("vi-VN")}đ
+                            {basePrice.toLocaleString("vi-VN")}đ
                         </div>
                     </div>
 
@@ -112,7 +121,7 @@ const ProductInfo = ({ product }: { product: ProductDetailClient }) => {
                             Thu cũ lên đời chỉ từ
                         </div>
                         <div className="text-xl font-semibold text-neutral-800">
-                            {Math.round(newPrice - Math.min(product.price * 9 / 100, 3000000)).toLocaleString("vi-VN")}đ
+                            {Math.round(newPrice - Math.min(basePrice * 9 / 100, 3000000)).toLocaleString("vi-VN")}đ
                         </div>
                         <div className="text-xs text-gray-700 ">
                             Trợ giá đến <span className="font-bold text-[#217bf4] text-sm mx-1">3 triệu</span>{" "}
@@ -137,16 +146,17 @@ const ProductInfo = ({ product }: { product: ProductDetailClient }) => {
                     </div>
                 </div>
             </div>
+            {variantSelector}
             {/* khuyen mai */}
             <div style={{ background: "linear-gradient(to top right, #fcfeff, #eff5ff) padding-box, linear-gradient(to top right, #dbe8fe, #609afa)" }}
                 className="rounded-2xl border border-[#4a91e2cb] sm:p-3 p-1"
             >
                 <div className="flex items-center gap-5 pb-2">
-                        {coupons?.map((item) => {
-                            const isAdded = myCoupons?.includes(item._id) ?? false;
+                    {coupons?.map((item) => {
+                        const isAdded = myCoupons?.includes(item._id) ?? false;
 
-                            return ( <TicketPromo variant="collect" key={item._id} coupon={item} isAdded={isAdded} /> );
-                        })}
+                        return (<TicketPromo variant="collect" key={item._id} coupon={item} isAdded={isAdded} />);
+                    })}
                 </div>
 
                 <div className="flex items-center justify-center gap-2 border-t border-dashed border-[#4a91e2cb] pt-3 mt-1">
@@ -170,7 +180,7 @@ const ProductInfo = ({ product }: { product: ProductDetailClient }) => {
                     <strong>MUA NGAY</strong>
                     <span className="text-xs">Giao nhanh từ 2 giờ hoặc nhận tại cửa hàng</span>
                 </button>
-                <button onClick={() => handleAddToCart()} className="flex items-center justify-center gap-1 !border !border-primary-500 rounded-xl !text-primary-500 p-1.5 hover:bg-[#fbe6e8] transition-all duration-200">
+                <button onClick={() => handleAddToCart()} disabled={isOutOfStock} className="disabled:cursor-not-allowed disabled:opacity-50 flex items-center justify-center gap-1 !border !border-primary-500 rounded-xl !text-primary-500 p-1.5 hover:bg-[#fbe6e8] transition-all duration-200">
                     <CartIcon className="size-6" />
                     <strong >Thêm vào giỏ hàng</strong>
                 </button>

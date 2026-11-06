@@ -1,25 +1,69 @@
 import { Types } from "mongoose";
 import Product from "../../models/product.model"
-import Inventory from "../../models/inventory.model";
+import ProductVariant from "../../models/productVariant.model";
 import ProductCategory from "../../models/productCategory.model";
 import { AppError } from "../../utils/AppError";
 import { getAllChildCategoryIds } from "../admin/productCategories.service";
+import { getBranchStockMap } from "../../helpers/inventory";
 
-// Chỉ giữ lại sản phẩm có tồn kho > 0 tại chi nhánh được chọn
+const variantPriceStages = (priceRange?: { min?: number; max?: number }) => {
+    const stages: any[] = [
+        {
+            $lookup: {
+                from: "product_variants",
+                let: { productId: "$_id" },
+                pipeline: [
+                    {
+                        $match: {
+                            status: "active",
+                            deleted: false,
+                            $expr: { $eq: ["$product_id", "$$productId"] }
+                        }
+                    },
+                    { $project: { _id: 1, price: 1 } }
+                ],
+                as: "variants"
+            }
+        },
+        {
+            $addFields: {
+                price: { $min: "$variants.price" }
+            }
+        }
+    ];
+
+    if (priceRange && (priceRange.min !== undefined || priceRange.max !== undefined)) {
+        const priceMatch: Record<string, number> = {};
+
+        if (priceRange.min !== undefined) {
+            priceMatch.$gte = priceRange.min;
+        }
+
+        if (priceRange.max !== undefined) {
+            priceMatch.$lte = priceRange.max;
+        }
+
+        stages.push({ $match: { price: priceMatch } });
+    }
+
+    return stages;
+};
+
 const inStockAtBranchStages = (branchId: string) => [
     {
         $lookup: {
             from: "inventories",
-            let: { productId: "$_id" },
+            let: { variantIds: "$variants._id" },
             pipeline: [
                 {
                     $match: {
                         branch_id: new Types.ObjectId(branchId),
                         stock: { $gt: 0 },
-                        $expr: { $eq: ["$product_id", "$$productId"] }
+                        $expr: { $in: ["$variant_id", "$$variantIds"] }
                     }
                 },
-                { $project: { _id: 0, stock: 1 } }
+                { $limit: 1 },
+                { $project: { _id: 1 } }
             ],
             as: "branchInventory"
         }
@@ -122,14 +166,14 @@ export const getProductsByCategoryService = async (categorySlug: string, query: 
     const match: any = {
         deleted: false,
         status: "active",
-        product_category_id: {$in: allChildCategoryIds}
+        product_category_id: { $in: allChildCategoryIds }
     };
 
     // featured
     if (featured) {
-        match.featured = featured==="true" ? true : false;
+        match.featured = featured === "true" ? true : false;
     }
-    
+
     // discount
     if (discount !== undefined) {
         match.discountPercentage = {
@@ -137,18 +181,10 @@ export const getProductsByCategoryService = async (categorySlug: string, query: 
         };
     }
 
-    // price
-    if (minPrice !== undefined || maxPrice !== undefined) {
-        match.price = {};
-
-        if (minPrice !== undefined) {
-            match.price.$gte = Number(minPrice*1000000);
-        }
-
-        if (maxPrice !== undefined) {
-            match.price.$lte = Number(maxPrice*1000000);
-        }
-    }
+    const priceRange = {
+        min: minPrice !== undefined ? Number(minPrice * 1000000) : undefined,
+        max: maxPrice !== undefined ? Number(maxPrice * 1000000) : undefined
+    };
 
     const pipeline: any = [];
 
@@ -169,6 +205,8 @@ export const getProductsByCategoryService = async (categorySlug: string, query: 
         $match: match
     });
 
+    pipeline.push(...variantPriceStages(priceRange));
+
     // Chỉ lấy sản phẩm còn hàng ở chi nhánh đang chọn
     pipeline.push(...inStockAtBranchStages(branchId));
 
@@ -177,9 +215,9 @@ export const getProductsByCategoryService = async (categorySlug: string, query: 
     const result = await Product.aggregate(pipeline).allowDiskUse(true);
 
     const products = result[0].products;
-    
+
     const total = result[0].total[0]?.count ?? 0;
-    
+
     return {
         data: products,
         meta: {
@@ -191,7 +229,7 @@ export const getProductsByCategoryService = async (categorySlug: string, query: 
     };
 };
 
-export const getProductsService = async ( query: any, branchId: string ) => {
+export const getProductsService = async (query: any, branchId: string) => {
     const { featured, discount, minPrice, maxPrice, search, sort, page = 1, limit = 20 } = query;
 
     const pageNum = Number(page);
@@ -205,9 +243,9 @@ export const getProductsService = async ( query: any, branchId: string ) => {
 
     // featured
     if (featured) {
-        match.featured = featured==="true" ? true : false;
+        match.featured = featured === "true" ? true : false;
     }
-    
+
     // discount
     if (discount !== undefined) {
         match.discountPercentage = {
@@ -215,18 +253,10 @@ export const getProductsService = async ( query: any, branchId: string ) => {
         };
     }
 
-    // price
-    if (minPrice !== undefined || maxPrice !== undefined) {
-        match.price = {};
-
-        if (minPrice !== undefined) {
-            match.price.$gte = Number(minPrice);
-        }
-
-        if (maxPrice !== undefined) {
-            match.price.$lte = Number(maxPrice);
-        }
-    }
+    const priceRange = {
+        min: minPrice !== undefined ? Number(minPrice) : undefined,
+        max: maxPrice !== undefined ? Number(maxPrice) : undefined
+    };
 
     const pipeline: any = [];
 
@@ -246,6 +276,8 @@ export const getProductsService = async ( query: any, branchId: string ) => {
     pipeline.push({
         $match: match
     });
+
+    pipeline.push(...variantPriceStages(priceRange));
 
     // Chỉ lấy sản phẩm còn hàng ở chi nhánh đang chọn
     pipeline.push(...inStockAtBranchStages(branchId));
@@ -269,21 +301,51 @@ export const getProductsService = async ( query: any, branchId: string ) => {
 };
 
 export const getProductService = async (productSlug: string, branchId: string) => {
-    const product = await Product.findOne({slug: productSlug,deleted: false, status: "active"})
-                    .populate("product_category_id", "slug title")
-                    .select("title slug description content price discountPercentage stock sold featured images").lean();
-    if(!product){
+    const product = await Product.findOne({ slug: productSlug, deleted: false, status: "active" })
+        .populate("product_category_id", "slug title")
+        .select("title slug description content discountPercentage sold featured images").lean();
+    if (!product) {
         throw new AppError("Product not found", 404);
     }
 
-    // Tồn kho hiển thị ở trang chi tiết là tồn kho của chi nhánh đang chọn
-    const inventory = await Inventory.findOne({ product_id: product._id, branch_id: branchId })
-                    .select("stock").lean();
+    const variants = await ProductVariant.find({ product_id: product._id, status: "active", deleted: false })
+        .select("_id price").lean();
+    const stockMap = await getBranchStockMap(branchId, variants.map((variant) => variant._id));
+
+    const price = variants.length > 0 ? Math.min(...variants.map((variant) => variant.price)) : 0;
+    const stock = variants.reduce((total, variant) => total + (stockMap.get(variant._id.toString()) ?? 0), 0);
 
     return {
         data: {
             ...product,
-            stock: inventory?.stock ?? 0
+            price,
+            stock
         }
     }
 }
+
+export const getProductVariantsService = async (productSlug: string, branchId: string) => {
+    const product = await Product.findOne({ slug: productSlug, deleted: false, status: "active" }).select("_id").lean();
+    if (!product) {
+        throw new AppError("Product not found", 404);
+    }
+
+    const variants = await ProductVariant.find({ product_id: product._id, status: "active", deleted: false })
+        .select("_id sku attributes price images sold position")
+        .sort({ position: 1, createdAt: 1 })
+        .lean();
+
+    const stockMap = await getBranchStockMap(branchId, variants.map((variant) => variant._id));
+
+    return {
+        data: variants.map((variant) => ({
+            _id: variant._id,
+            sku: variant.sku,
+            attributes: variant.attributes ?? {},
+            price: variant.price,
+            images: variant.images ?? [],
+            sold: variant.sold,
+            stock: stockMap.get(variant._id.toString()) ?? 0
+        }))
+    };
+};

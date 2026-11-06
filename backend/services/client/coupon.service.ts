@@ -1,6 +1,7 @@
 import Coupon from "../../models/coupon.model"
 import User from "../../models/user.model";
 import Product from "../../models/product.model";
+import ProductVariant from "../../models/productVariant.model";
 import { calculateCouponDiscount, ICoupon } from "../../helpers/pricing";
 import { AddCouponBody, BestCouponBody } from "../../validations/client/coupon.validation";
 
@@ -14,17 +15,30 @@ export const getBestCouponService = async ( userID: string, body: BestCouponBody
     // Tính giá trị đơn hàng (sau giảm giá trực tiếp) từ giá trong DB, không tin giá từ client
     const productIDs = body.products.map((item) => item.productID);
     const dbProducts = await Product.find({ _id: { $in: productIDs }, deleted: false, status: "active" })
-        .select("price discountPercentage")
+        .select("discountPercentage")
         .lean();
     const productMap = new Map(dbProducts.map((p) => [p._id.toString(), p]));
+
+    // price nằm ở ProductVariant. Giỏ hàng chưa mang variantID nên tạm lấy variant active có giá thấp nhất của mỗi sản phẩm
+    // TODO: khi cart/order có variantID thì tra giá theo đúng variant được chọn
+    const dbVariants = await ProductVariant.find({ product_id: { $in: dbProducts.map((p) => p._id) }, deleted: false, status: "active" })
+        .select("product_id price")
+        .sort({ price: 1 })
+        .lean();
+    const priceMap = new Map<string, number>();
+    for (const v of dbVariants) {
+        const key = v.product_id.toString();
+        if (!priceMap.has(key)) priceMap.set(key, v.price);
+    }
 
     let subTotal = 0;
     let discountDirect = 0;
     for (const item of body.products) {
         const product = productMap.get(item.productID);
-        if (!product) continue;
-        subTotal += product.price * item.quantity;
-        discountDirect += product.price * item.quantity * (product.discountPercentage / 100);
+        const price = priceMap.get(item.productID);
+        if (!product || price === undefined) continue;
+        subTotal += price * item.quantity;
+        discountDirect += price * item.quantity * (product.discountPercentage / 100);
     }
     const orderTotal = Math.round(subTotal) - Math.round(discountDirect);
 

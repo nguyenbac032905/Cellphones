@@ -27,8 +27,8 @@ const ProductImagesSliding = ({ images }: { images: SlideImage[] }) => {
                     spaceBetween={10}
                     slidesPerView={1}
                 >
-                    {images.map(image => (
-                        <SwiperSlide>
+                    {images.map((image, index) => (
+                        <SwiperSlide key={`${image.url}-${index}`}>
                             <div className="flex h-[300px] items-center justify-center">
                                 <img
                                     src={image.url}
@@ -64,7 +64,7 @@ const ProductImagesSliding = ({ images }: { images: SlideImage[] }) => {
                 >
                     {images.map((image, index) => {
                         const isActive = activeIndex === index;
-                        return <SwiperSlide onClick={() => handleChangeIndex(index)}>
+                        return <SwiperSlide key={`${image.url}-${index}`} onClick={() => handleChangeIndex(index)}>
                             <div className={`border border-neutral-200 w-[64px] h-[64px] rounded-xl overflow-hidden inline-block object-cover cursor-pointer ${isActive ? "border-primary-500" : ""}`}>
                                 <img className="aspect-square w-full object-cover" width={58} height={58} src={image.url} />
                             </div>
