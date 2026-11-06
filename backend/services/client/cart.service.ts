@@ -1,5 +1,6 @@
 import { Types } from "mongoose";
 import Cart from "../../models/cart.model"
+import { getBranchStockMap } from "../../helpers/inventory";
 import { AppError } from "../../utils/AppError";
 import { BulkDeleteBody, CartItemBody } from "../../validations/client/cart.validation";
 interface PopulatedProduct {
@@ -7,7 +8,6 @@ interface PopulatedProduct {
     title: string;
     price: number;
     discountPercentage: number;
-    stock: number;
     slug: string;
     images: {
         url: string;
@@ -15,16 +15,20 @@ interface PopulatedProduct {
     }[];
     mainImage?: string;
 }
-export const getCartService = async (userID: string) => {
+export const getCartService = async (userID: string, branchId: string) => {
     const cart = await Cart.findOne({ userID }).select("_id userID products")
         .populate<{ products: { productID: PopulatedProduct }[] }>({
             path: "products.productID",
-            select: "_id title price images discountPercentage stock slug"
+            select: "_id title price images discountPercentage slug"
         })
         .lean();
     if (!cart) {
         throw new AppError("Cart not found", 404);
     }
+    const stockMap = await getBranchStockMap(
+        branchId,
+        cart.products.filter(item => item.productID).map(item => item.productID._id)
+    );
     const data = {
         ...cart,
         products: cart.products.map(item => {
@@ -34,7 +38,7 @@ export const getCartService = async (userID: string) => {
                     _id: item.productID._id,
                     title: item.productID.title,
                     price: item.productID.price,
-                    stock: item.productID.stock,
+                    stock: stockMap.get(item.productID._id.toString()) ?? 0,
                     discountPercentage: item.productID.discountPercentage,
                     mainImage: item.productID.images.find(i => i.isMain)?.url,
                     slug: item.productID.slug
@@ -70,7 +74,7 @@ export const addItemService = async (userID: string, body: CartItemBody) => {
         message: "Add product to cart successfully"
     };
 };
-export const editItemService = async ( userID: string, body: CartItemBody ) => {
+export const editItemService = async (userID: string, body: CartItemBody) => {
     const cart = await Cart.findOneAndUpdate(
         {
             userID,
@@ -85,7 +89,7 @@ export const editItemService = async ( userID: string, body: CartItemBody ) => {
             new: true
         }
     );
-    
+
     if (!cart) {
         throw new AppError("Product not found in cart.", 404);
     }
@@ -117,7 +121,7 @@ export const deleteItemService = async (userID: string, body: CartItemBody) => {
         message: "Remove product from cart successfully"
     };
 };
-export const bulkDeleteItemService = async ( userID: string, body: BulkDeleteBody ) => {
+export const bulkDeleteItemService = async (userID: string, body: BulkDeleteBody) => {
     const cart = await Cart.findOneAndUpdate(
         {
             userID,

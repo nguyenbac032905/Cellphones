@@ -2,9 +2,9 @@ import mongoose from "mongoose";
 
 const inventorySchema = new mongoose.Schema(
     {
-        product_id: {
+        variant_id: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "Product",
+            ref: "ProductVariant",
             required: true
         },
         branch_id: {
@@ -24,7 +24,7 @@ const inventorySchema = new mongoose.Schema(
 );
 
 inventorySchema.index(
-    { product_id: 1, branch_id: 1 },
+    { variant_id: 1, branch_id: 1 },
     { unique: true }
 );
 

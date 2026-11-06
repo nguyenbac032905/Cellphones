@@ -3,7 +3,11 @@ import qs from "qs";
 import crypto from "crypto";
 import { AppError } from "../../utils/AppError";
 import Order from "../../models/order.model";
+import Product from "../../models/product.model";
+import Cart from "../../models/cart.model";
 import { createGHNOrder } from "../../helpers/ghn";
+import { deductInventoryAfterPayment } from "../../helpers/inventory";
+import { DEFAULT_BRANCH_ID } from "../../constants/branch";
 
 interface CreatePaymentUrlParams {
     paymentMethod: string;
@@ -31,11 +35,11 @@ export const returnPaymentService = async (query: Record<string, any>) => {
     //kí dữ liệu bằng chữ kí của mình
     const sortedParams = sortObject(vnpParams);
     const signData = qs.stringify(sortedParams, { encode: false });
-    const signed = crypto.createHmac("sha512", secretKey).update(Buffer.from(signData, "utf-8")) .digest("hex");
+    const signed = crypto.createHmac("sha512", secretKey).update(Buffer.from(signData, "utf-8")).digest("hex");
     //chuyển dữ liệu đã kí của vnpay và của mình sang buffer để so sánh bằng timingSafeEqual để chống timing attack
     const hashBuffer = Buffer.from(String(vnp_SecureHash), "utf-8");
     const signedBuffer = Buffer.from(signed, "utf-8");
-    if ( hashBuffer.length !== signedBuffer.length || !crypto.timingSafeEqual(hashBuffer, signedBuffer) ) {
+    if (hashBuffer.length !== signedBuffer.length || !crypto.timingSafeEqual(hashBuffer, signedBuffer)) {
         throw new AppError("Sai chữ ký", 400);
     }
 
@@ -57,7 +61,7 @@ export const returnPaymentService = async (query: Record<string, any>) => {
             paymentStatus: "FAILED"
         };
         await order.save();
-        return { orderID};
+        return { orderID };
     }
 
     // thanh toán thành công
@@ -86,6 +90,14 @@ export const returnPaymentService = async (query: Record<string, any>) => {
         paidAt: new Date(),
     };
     await order.save();
+
+    const branchId = order.branchID?.toString() ?? DEFAULT_BRANCH_ID;
+    const orderItems = order.items.map((item) => ({ productID: item.productID, quantity: item.quantity }));
+    await deductInventoryAfterPayment(branchId, orderItems.map((item) => ({ variantID: item.productID, quantity: item.quantity })));
+    await Promise.all(orderItems.map((item) => Product.updateOne({ _id: item.productID }, { $inc: { sold: item.quantity } })));
+    if (order.userID) {
+        await Cart.updateOne({ userID: order.userID }, { $pull: { products: { productID: { $in: orderItems.map((i) => i.productID) } } } });
+    }
 
     return {
         orderID

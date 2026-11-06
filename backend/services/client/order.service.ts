@@ -7,9 +7,10 @@ import { getFeeService } from "./shipping.service";
 import { createPaymentUrlService } from "./payment.service";
 import { calculatePricing, ICoupon } from "../../helpers/pricing";
 import { createGHNOrder } from "../../helpers/ghn";
+import { getBranchStockMap, reserveInventory, restoreInventory } from "../../helpers/inventory";
 import Coupon from "../../models/coupon.model";
 
-export const createOrderService = async (userID: string, body: CreateOrderBody,) => {
+export const createOrderService = async (userID: string, body: CreateOrderBody, branchId: string) => {
     const { products, fullName, phone, address, province, district, ward, districtID, wardCode, note, paymentMethod, couponID } = body;
     let coupon: ICoupon | null = null;
     if (couponID) {
@@ -18,18 +19,27 @@ export const createOrderService = async (userID: string, body: CreateOrderBody,)
             throw new AppError("Coupon not found", 404);
         }
     }
+
+    const stockMap = await getBranchStockMap(branchId, products.map((item) => item.productID));
+
+    const requestedQuantity = new Map<string, number>();
+    for (const item of products) {
+        requestedQuantity.set(item.productID, (requestedQuantity.get(item.productID) ?? 0) + item.quantity);
+    }
+
     const newProducts = [];
     for (const item of products) {
         const product: any = await Product.findOne({ _id: item.productID, deleted: false, status: "active" })
-            .select("title price discountPercentage stock images")
+            .select("title price discountPercentage images")
             .lean();
 
         if (!product) {
             throw new AppError("Sản phẩm không tồn tại hoặc đã bị xóa!");
         }
 
-        if (product.stock < item.quantity) {
-            throw new AppError(`Sản phẩm ${product.title} không đủ số lượng tồn kho!`);
+        const branchStock = stockMap.get(item.productID) ?? 0;
+        if (branchStock < (requestedQuantity.get(item.productID) ?? item.quantity)) {
+            throw new AppError(`Sản phẩm ${product.title} không đủ số lượng tồn kho tại chi nhánh này!`);
         }
 
         const mainImage = product.images?.find((i: any) => i.isMain)?.url || product.images?.[0]?.url || "";
@@ -54,63 +64,86 @@ export const createOrderService = async (userID: string, body: CreateOrderBody,)
         coupon: coupon
     });
 
-    const order = await Order.create({
-        userID,
-        items: newProducts.map((item) => ({
-            productID: item.productID,
-            title: item.title,
-            price: item.price,
-            discountPercentage: item.discountPercentage,
-            quantity: item.quantity,
-            mainImage: item.mainImage
-        })),
-        shippingAddress: {
-            fullName,
-            phone,
-            address,
-            province,
-            district,
-            ward,
-            note,
-            districtID,
-            wardCode,
-        },
-        paymentDetail: {
-            paymentMethod
-        },
-        pricing: {
-            subTotal: pricing.subTotal,
-            discountAmount: pricing.discountAmount,
-            shippingFee: pricing.actualShippingFee,
-            totalPrice: pricing.totalPrice
-        },
-        ...(coupon && {
-            coupon: {
-                couponID: coupon._id,
-                discountType: coupon.discountType,
-                discountValue: coupon.discountValue,
-                discountAmount: pricing.discountCoupon,
-            },
-        }),
-    });
+    const inventoryItems = newProducts.map((item) => ({
+        variantID: item.productID as string, // TODO: giỏ hàng/đơn hàng chưa mang variantID, cần bổ sung ở bước tích hợp variant vào cart/order
+        quantity: item.quantity as number,
+        title: item.title as string
+    }));
 
-    if (paymentMethod === "COD") {
-        const shippingDetails = await createGHNOrder({
-            fullName,
-            phone,
-            address,
-            districtID,
-            wardCode,
-            note,
-            codAmount: pricing.orderTotal,
-            paymentTypeID: pricing.paymentTypeID,
-            items: newProducts
-        });
-
-        order.shippingDetails = shippingDetails;
+    // COD: không có bước thanh toán online nên trừ tồn kho chi nhánh ngay (atomic, chống bán vượt tồn).
+    // VNPAY: tồn kho chỉ bị trừ khi VNPay báo thanh toán thành công (xem payment.service).
+    const isCOD = paymentMethod === "COD";
+    if (isCOD) {
+        await reserveInventory(branchId, inventoryItems);
     }
 
-    await order.save();
+    let order;
+    try {
+        order = await Order.create({
+            userID,
+            branchID: branchId,
+            items: newProducts.map((item) => ({
+                productID: item.productID,
+                title: item.title,
+                price: item.price,
+                discountPercentage: item.discountPercentage,
+                quantity: item.quantity,
+                mainImage: item.mainImage
+            })),
+            shippingAddress: {
+                fullName,
+                phone,
+                address,
+                province,
+                district,
+                ward,
+                note,
+                districtID,
+                wardCode,
+            },
+            paymentDetail: {
+                paymentMethod
+            },
+            pricing: {
+                subTotal: pricing.subTotal,
+                discountAmount: pricing.discountAmount,
+                shippingFee: pricing.actualShippingFee,
+                totalPrice: pricing.totalPrice
+            },
+            ...(coupon && {
+                coupon: {
+                    couponID: coupon._id,
+                    discountType: coupon.discountType,
+                    discountValue: coupon.discountValue,
+                    discountAmount: pricing.discountCoupon,
+                },
+            }),
+        });
+
+        if (isCOD) {
+            const shippingDetails = await createGHNOrder({
+                fullName,
+                phone,
+                address,
+                districtID,
+                wardCode,
+                note,
+                codAmount: pricing.orderTotal,
+                paymentTypeID: pricing.paymentTypeID,
+                items: newProducts
+            });
+
+            order.shippingDetails = shippingDetails;
+        }
+
+        await order.save();
+    } catch (error) {
+        // Tạo đơn / tạo vận đơn thất bại thì hoàn lại tồn kho đã giữ
+        if (isCOD) {
+            await restoreInventory(branchId, inventoryItems);
+        }
+        throw error;
+    }
 
     const paymentUrl = createPaymentUrlService({ paymentMethod, orderID: order._id.toString(), amount: pricing.totalPrice, });
     console.log(paymentUrl)
@@ -127,7 +160,8 @@ export const createOrderService = async (userID: string, body: CreateOrderBody,)
         };
     }
 
-    await Promise.all(newProducts.map((item) => Product.updateOne({ _id: item.productID }, { $inc: { stock: -item.quantity, sold: item.quantity } })));
+    // Tồn kho chi nhánh đã trừ ở trên, ở đây chỉ cập nhật số lượng đã bán của sản phẩm và dọn giỏ hàng
+    await Promise.all(newProducts.map((item) => Product.updateOne({ _id: item.productID }, { $inc: { sold: item.quantity } })));
     await Cart.updateOne({ userID }, { $pull: { products: { productID: { $in: newProducts.map((i) => i.productID) } } } });
 
     return {

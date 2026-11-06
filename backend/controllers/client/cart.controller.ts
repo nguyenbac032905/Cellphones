@@ -1,10 +1,11 @@
 import { addItemService, bulkDeleteItemService, deleteItemService, editItemService, getCartService } from "../../services/client/cart.service";
 import { asyncHandler } from "../../utils/asyncHandler";
+import { getBranchId } from "../../helpers/branch";
 import { Request, Response } from "express";
 
 export const getCart = asyncHandler(async (req: Request, res: Response) => {
     const user = req.user!;
-    const result = await getCartService(user?._id.toString());
+    const result = await getCartService(user?._id.toString(), getBranchId(req));
     return res.status(200).json({
         success: true,
         data: result.data

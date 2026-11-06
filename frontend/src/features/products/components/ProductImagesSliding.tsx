@@ -3,8 +3,8 @@ import { Navigation } from "swiper/modules";
 import { ArrowLeftSlide, ArrowRightSlide } from "../../../shared/components/Icons";
 import { useRef, useState } from "react";
 import type { Swiper as SwiperType } from "swiper";
-import type { ProductDetailClient } from "../types/products.type";
-const ProductImagesSliding = ({ product }: { product: ProductDetailClient }) => {
+type SlideImage = { url: string; isMain: boolean };
+const ProductImagesSliding = ({ images }: { images: SlideImage[] }) => {
     const swiperRef = useRef<SwiperType | null>(null);
     const [activeIndex, setActiveIndex] = useState<number>(0)
 
@@ -27,7 +27,7 @@ const ProductImagesSliding = ({ product }: { product: ProductDetailClient }) => 
                     spaceBetween={10}
                     slidesPerView={1}
                 >
-                    {product?.images.map(image => (
+                    {images.map(image => (
                         <SwiperSlide>
                             <div className="flex h-[300px] items-center justify-center">
                                 <img
@@ -62,7 +62,7 @@ const ProductImagesSliding = ({ product }: { product: ProductDetailClient }) => 
                         1280: { slidesPerView: 8 }
                     }}
                 >
-                    {product?.images.map((image, index) => {
+                    {images.map((image, index) => {
                         const isActive = activeIndex === index;
                         return <SwiperSlide onClick={() => handleChangeIndex(index)}>
                             <div className={`border border-neutral-200 w-[64px] h-[64px] rounded-xl overflow-hidden inline-block object-cover cursor-pointer ${isActive ? "border-primary-500" : ""}`}>

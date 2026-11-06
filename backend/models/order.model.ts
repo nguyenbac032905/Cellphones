@@ -19,6 +19,8 @@ const OrderPricingSchema = new Schema({
 const OrderSchema = new Schema({
     userID: { type: Schema.Types.ObjectId, ref: 'User', required: false },
 
+    branchID: { type: Schema.Types.ObjectId, ref: 'Branch', required: false },
+
     items: [OrderItemSchema],
 
     shippingAddress: {
@@ -29,8 +31,8 @@ const OrderSchema = new Schema({
         district: { type: String, required: true },
         ward: { type: String, required: true },
         note: { type: String },
-        districtID: {type: Number, required: true},
-        wardCode: {type: String, required: true},
+        districtID: { type: Number, required: true },
+        wardCode: { type: String, required: true },
     },
 
     paymentDetail: {
@@ -54,11 +56,11 @@ const OrderSchema = new Schema({
     shippingDetails: {
         shippingOrderCode: { type: String },
         expectedDeliveryDate: { type: Date },
-        ghnStatus: { 
-            type: String, 
+        ghnStatus: {
+            type: String,
             enum: [
-                'ready_to_pick', 'picking', 'cancel', 'picked', 
-                'storing', 'transporting', 'sorting', 'delivering', 
+                'ready_to_pick', 'picking', 'cancel', 'picked',
+                'storing', 'transporting', 'sorting', 'delivering',
                 'delivery_fail', 'delivered', 'waiting_to_return', 'return', 'returned'
             ]
         }

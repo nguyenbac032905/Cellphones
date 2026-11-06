@@ -22,55 +22,62 @@ interface ShippingDetails {
     shippingOrderCode: string;
     expectedDeliveryDate: Date;
     ghnStatus:
-        | "ready_to_pick"
-        | "picking"
-        | "cancel"
-        | "picked"
-        | "storing"
-        | "transporting"
-        | "sorting"
-        | "delivering"
-        | "delivery_fail"
-        | "delivered"
-        | "waiting_to_return"
-        | "return"
-        | "returned";
+    | "ready_to_pick"
+    | "picking"
+    | "cancel"
+    | "picked"
+    | "storing"
+    | "transporting"
+    | "sorting"
+    | "delivering"
+    | "delivery_fail"
+    | "delivered"
+    | "waiting_to_return"
+    | "return"
+    | "returned";
 }
 
-export const createGHNOrder = async ({ 
-    fullName, phone, address, districtID, wardCode, note, codAmount, paymentTypeID, items 
+export const createGHNOrder = async ({
+    fullName, phone, address, districtID, wardCode, note, codAmount, paymentTypeID, items
 }: CreateGHNOrderParams): Promise<ShippingDetails> => {
-    const res = await ghnClient.post("/v2/shipping-order/create", {
-        // type = 1 là shop trả, type = 2 là người dùng trả
-        payment_type_id: paymentTypeID,
-        cod_amount: codAmount,
-        note,
-        required_note: "KHONGCHOXEMHANG",
+    let res;
+    try {
+        res = await ghnClient.post("/v2/shipping-order/create", {
+            // type = 1 là shop trả, type = 2 là người dùng trả
+            payment_type_id: paymentTypeID,
+            cod_amount: codAmount,
+            note,
+            required_note: "KHONGCHOXEMHANG",
 
-        from_name: "Cellphones",
-        from_phone: "0353263314",
-        from_address: "25 Ngô Tất Tố, phường An Tảo, thành phố Hưng Yên, tỉnh Hưng Yên",
-        from_district_id: 1680,
-        from_ward_code: "220101",
+            from_name: "Cellphones",
+            from_phone: "0353263314",
+            from_address: "25 Ngô Tất Tố, phường An Tảo, thành phố Hưng Yên, tỉnh Hưng Yên",
+            from_district_id: 1680,
+            from_ward_code: "220101",
 
-        to_name: fullName,
-        to_phone: phone,
-        to_address: address,
-        to_district_id: districtID,
-        to_ward_code: wardCode,
+            to_name: fullName,
+            to_phone: phone,
+            to_address: address,
+            to_district_id: districtID,
+            to_ward_code: wardCode,
 
-        weight: 3000,
-        length: 40,
-        width: 30,
-        height: 10,
-        service_type_id: 2,
+            weight: 3000,
+            length: 40,
+            width: 30,
+            height: 10,
+            service_type_id: 2,
 
-        items: items.map((item) => ({
-            name: item.title,
-            quantity: item.quantity,
-            price: item.price
-        }))
-    });
+            items: items.map((item) => ({
+                name: item.title,
+                quantity: item.quantity,
+                price: item.price
+            }))
+        });
+    } catch (error: any) {
+        const ghnMessage = error?.response?.data?.code_message_value || error?.response?.data?.message || error?.message;
+        console.error("GHN create order failed:", error?.response?.status, error?.response?.data);
+        throw new AppError(`Tạo đơn GHN thất bại: ${ghnMessage}`);
+    }
 
     if (!res.data?.data) {
         throw new AppError("Tạo đơn hàng GHN thất bại!");
