@@ -20,8 +20,9 @@ const cartSlice = createSlice({
         addItemReducer: (state, action: PayloadAction<CartItem>) => {
             if (!state.cart) return;
 
+            // Cùng sản phẩm nhưng khác variant là 2 dòng riêng
             const existItem = state.cart.products.find(
-                (item) => item.productID._id === action.payload.productID._id
+                (item) => item.variant._id === action.payload.variant._id
             );
 
             if (existItem) {
@@ -34,7 +35,7 @@ const cartSlice = createSlice({
             if (!state.cart) return;
 
             const item = state.cart.products.find(
-                (item) => item.productID._id === action.payload.productID
+                (item) => item.variant._id === action.payload.variantID
             );
 
             if (item) {
@@ -45,15 +46,15 @@ const cartSlice = createSlice({
             if (!state.cart) return;
 
             state.cart.products = state.cart.products.filter(
-                (item) => item.productID._id !== action.payload.productID
+                (item) => item.variant._id !== action.payload.variantID
             );
         },
         deleteBulkReducer: (state, action: PayloadAction<DeleteBulkItem>) => {
             if (!state.cart) return;
 
-            const productIDSet = new Set(action.payload.productIDs);
+            const variantIDSet = new Set(action.payload.variantIDs);
             state.cart.products = state.cart.products.filter(
-                item => !productIDSet.has(item.productID._id)
+                item => !variantIDSet.has(item.variant._id)
             );
         },
         clearCartReducer: (state) => {

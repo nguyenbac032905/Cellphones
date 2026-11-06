@@ -137,7 +137,7 @@ const OrderDetailPage = () => {
                                 );
 
                                 return (
-                                    <div key={item.productID || index} className="py-4 flex flex-col gap-3">
+                                    <div key={item.variantID || `${item.productID}-${index}`} className="py-4 flex flex-col gap-3">
                                         <div className="flex items-center justify-between gap-3 sm:gap-4 relative py-1">
                                             <div className="flex items-center gap-3 shrink-0">
                                                 <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl border border-neutral-100 p-1 flex items-center justify-center shrink-0">
@@ -155,6 +155,15 @@ const OrderDetailPage = () => {
                                                 >
                                                     {item.title}
                                                 </div>
+                                                {item.attributes && Object.keys(item.attributes).length > 0 && (
+                                                    <div className="flex flex-wrap items-center gap-1.5">
+                                                        {Object.entries(item.attributes).map(([key, value]) => (
+                                                            <span key={key} className="text-[11px] sm:text-xs text-neutral-600 bg-neutral-100 rounded-md px-2 py-0.5">
+                                                                {value}
+                                                            </span>
+                                                        ))}
+                                                    </div>
+                                                )}
                                                 <div className="flex items-center gap-2">
                                                     <span className="text-sm sm:text-base font-bold text-primary-500">
                                                         {discountedPrice.toLocaleString("vi-VN")}đ

@@ -53,6 +53,7 @@ export const createOrderSchema = z.object({
         products: z.array(
                 z.object({
                     productID: objectIdSchema,
+                    variantID: objectIdSchema,
                     quantity: z
                         .number()
                         .int()

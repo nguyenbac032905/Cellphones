@@ -10,14 +10,14 @@ export const useDeleteBulkItem = () => {
 
     const deleteBulk = async (body: DeleteBulkItem) => {
         try {
-            setDeleting(body.productIDs);
-            
+            setDeleting(body.variantIDs);
+
             const result = await cartService.deleteBulk(body)
             dispatch(deleteBulkReducer(body));
 
             return result;
         } finally {
-            setDeleting(body.productIDs);
+            setDeleting(body.variantIDs);
         }
     };
 

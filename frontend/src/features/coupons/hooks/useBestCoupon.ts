@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { couponService } from "../services/coupon.service";
 import type { BestCouponData } from "../types/coupon.type";
 
-type CheckoutItem = { productID: string; quantity: number };
+type CheckoutItem = { productID: string; variantID: string; quantity: number };
 
 // Gọi API tính giảm giá của các voucher user đã lưu cho giỏ hàng đang checkout
 export const useBestCoupon = (items: CheckoutItem[], enabled: boolean = true) => {
@@ -11,7 +11,7 @@ export const useBestCoupon = (items: CheckoutItem[], enabled: boolean = true) =>
 
     // key ổn định để tránh gọi lại API khi mảng items đổi reference nhưng nội dung không đổi
     const key = useMemo(
-        () => JSON.stringify(items.map((i) => [i.productID, i.quantity])),
+        () => JSON.stringify(items.map((i) => [i.productID, i.variantID, i.quantity])),
         [items]
     );
 

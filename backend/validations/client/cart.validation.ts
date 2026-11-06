@@ -9,6 +9,7 @@ const objectIdSchema = z
     );
 const itemSchema = z.object({
     productID: objectIdSchema,
+    variantID: objectIdSchema,
     quantity: z.coerce
         .number()
         .int("Quantity must be an integer")
@@ -17,14 +18,15 @@ const itemSchema = z.object({
 export const cartItemSchema = z.object({
     body: itemSchema
 });
+// Một dòng giỏ hàng được định danh bằng variantID
 export const deleteItemSchema = z.object({
     body: z.object({
-        productID: objectIdSchema
+        variantID: objectIdSchema
     }).strict()
 })
 export const bulkDeleteItemSchema = z.object({
     body: z.object({
-        productIDs: z.array(objectIdSchema).min(1, "At least one product ID is required")
+        variantIDs: z.array(objectIdSchema).min(1, "At least one variant ID is required")
     }).strict()
 });
 

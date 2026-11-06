@@ -12,6 +12,10 @@ export type CreateOrderResponse = ApiResponse<CreateOrder>;
 //get order
 export interface OrderItem {
     productID: string;
+    // Snapshot biến thể khách đã chọn lúc đặt hàng (đơn cũ có thể không có)
+    variantID?: string;
+    sku?: string;
+    attributes?: Record<string, string>;
     title: string;
     price: number;
     discountPercentage: number;

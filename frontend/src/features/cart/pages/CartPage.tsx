@@ -22,14 +22,14 @@ const CartPage = () => {
     const {deleteBulk} = useDeleteBulkItem();
     const navigate = useNavigate();
     const {coupons} = useCoupons();
-    //xu li checkbox
+    //xu li checkbox (mỗi dòng giỏ hàng được định danh bằng variantID)
     const [selectedIDs, setSelectedIDs] = useState<string[]>([]);
-    const allProductIDs = useMemo( () => cart?.products.map(item => item.productID._id) ?? [], [cart] );
+    const allVariantIDs = useMemo( () => cart?.products.map(item => item.variant._id) ?? [], [cart] );
     useEffect(() => {
         setSelectedIDs(prev =>
-            prev.filter(id => allProductIDs.includes(id))
+            prev.filter(id => allVariantIDs.includes(id))
         );
-    }, [allProductIDs]);
+    }, [allVariantIDs]);
     const handleSelectOne = (id: string) => {
         setSelectedIDs((prev) =>
             prev.includes(id) 
@@ -39,42 +39,42 @@ const CartPage = () => {
     };
     const handleSelectAll = (e: any) => {
         if(e.target.checked){
-            setSelectedIDs(allProductIDs);
+            setSelectedIDs(allVariantIDs);
         }else{
             setSelectedIDs([]);
         }
     }
     
     const subTotal = Math.round(cart?.products.reduce((sum, item) => {
-        if (selectedIDs.includes(item.productID._id)) {
+        if (selectedIDs.includes(item.variant._id)) {
             return sum + item.productID.price * item.quantity;
         }
         return sum;
     }, 0) ?? 0);
     const directDiscount = Math.round(cart?.products.reduce((sum, item) => {
-        if (selectedIDs.includes(item.productID._id)) {
+        if (selectedIDs.includes(item.variant._id)) {
             return sum + item.productID.price * (item.productID.discountPercentage/100) * item.quantity;
         }
         return sum;
     }, 0) ?? 0);
     const quantitySelected = cart?.products.reduce((sum, item) => {
-        if (selectedIDs.includes(item.productID._id)) {
+        if (selectedIDs.includes(item.variant._id)) {
             return sum + item.quantity;
         }
         return sum;
     }, 0) ?? 0;
     //cac ham xu li cart
-    const handleChangeQuantity = async ({productID, quantity}: CartItemBody) => {
+    const handleChangeQuantity = async ({productID, variantID, quantity}: CartItemBody) => {
         try {
-            const result = await editItem({productID, quantity});
+            const result = await editItem({productID, variantID, quantity});
             message.success(result.message);
         } catch (error) {
             message.error(getErrorMessage(error));
         }
     }
-    const handleDeleteItem = async ({productID}: DeleteItemBody) => {
+    const handleDeleteItem = async ({variantID}: DeleteItemBody) => {
         try {
-            const result = await deleteItem({productID});
+            const result = await deleteItem({variantID});
             message.success(result.message);
         } catch (error) {
             message.error(getErrorMessage(error));
@@ -82,7 +82,7 @@ const CartPage = () => {
     }
     const handleDeleteSelected = async () => {
         try {
-            const result = await deleteBulk({productIDs: selectedIDs});
+            const result = await deleteBulk({variantIDs: selectedIDs});
             message.success(result.message);
         } catch (error) {
             message.error(getErrorMessage(error));
@@ -93,7 +93,7 @@ const CartPage = () => {
             message.error("Vui lòng chọn ít nhất 1 sản phẩm để thanh toán");
             return;
         }
-        sessionStorage.setItem("selectedProductIDs", JSON.stringify(selectedIDs));
+        sessionStorage.setItem("selectedVariantIDs", JSON.stringify(selectedIDs));
         navigate("/checkout");
     }
     return (
@@ -111,8 +111,8 @@ const CartPage = () => {
                 <div className="lg:col-span-8 flex flex-col gap-4 bg-white rounded-xl p-4 sm:p-5 border border-neutral-100 shadow-sm">
                     <div className="flex items-center justify-between border-b border-neutral-100 pb-3">
                         <label className="flex items-center gap-2.5 cursor-pointer text-sm sm:text-base font-medium">
-                            <input checked={allProductIDs.length > 0 && allProductIDs.length === selectedIDs.length} onChange={handleSelectAll} type="checkbox" className="w-4 h-4 rounded accent-blue-600 cursor-pointer" />
-                            <span>Tất cả ({allProductIDs.length} sản phẩm)</span>
+                            <input checked={allVariantIDs.length > 0 && allVariantIDs.length === selectedIDs.length} onChange={handleSelectAll} type="checkbox" className="w-4 h-4 rounded accent-blue-600 cursor-pointer" />
+                            <span>Tất cả ({allVariantIDs.length} sản phẩm)</span>
                         </label>
                         <button onClick={handleDeleteSelected} className="text-primary-500 hover:text-primary-600 hover:bg-red-50 text-xs sm:text-sm font-medium transition-colors px-3 py-1.5 rounded-lg flex items-center gap-1">
                             <DeleteOutlined />
@@ -122,10 +122,10 @@ const CartPage = () => {
                     {cart && cart.products?.length>0 ? (
                         <div className="divide-y divide-neutral-100">
                             {cart?.products.map(item => (
-                                <div className="py-4 flex flex-col gap-3" key={item._id}>
+                                <div className="py-4 flex flex-col gap-3" key={item.variant._id}>
                                     <div className="flex items-center justify-between gap-3 sm:gap-4 relative py-3">
                                         <div className="flex items-center gap-3 shrink-0">
-                                            <input checked={selectedIDs.includes(item.productID._id)} onChange={() => handleSelectOne(item.productID._id)} type="checkbox" className="w-4 h-4 rounded accent-blue-600 cursor-pointer" />
+                                            <input checked={selectedIDs.includes(item.variant._id)} onChange={() => handleSelectOne(item.variant._id)} type="checkbox" className="w-4 h-4 rounded accent-blue-600 cursor-pointer" />
                                             <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl border border-neutral-100 p-1 flex items-center justify-center shrink-0">
                                                 <img
                                                     className="w-full h-full object-contain"
@@ -142,6 +142,16 @@ const CartPage = () => {
                                             >
                                                {item.productID.title}
                                             </Link>
+                                            {/* Phiên bản đã chọn (màu / dung lượng...) */}
+                                            {Object.keys(item.variant.attributes ?? {}).length > 0 && (
+                                                <div className="flex flex-wrap items-center gap-1.5">
+                                                    {Object.entries(item.variant.attributes).map(([key, value]) => (
+                                                        <span key={key} className="text-[11px] sm:text-xs text-neutral-600 bg-neutral-100 rounded-md px-2 py-0.5">
+                                                            {value}
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                            )}
                                             <div className="flex items-center gap-2">
                                                 <span className="text-sm sm:text-base font-bold text-primary-500">{Math.round((item.productID.price*(1-item.productID.discountPercentage/100))).toLocaleString("vi-VN")}đ</span>
                                                 <span className="text-xs text-neutral-400 line-through">{item.productID.price.toLocaleString("vi-VN")}đ</span>
@@ -150,24 +160,24 @@ const CartPage = () => {
 
                                         <div className="flex items-center border border-neutral-200 rounded-lg bg-neutral-50 shrink-0">
                                             {item.quantity > 1 ? (
-                                                <button onClick={() => handleChangeQuantity({productID: item.productID._id, quantity: item.quantity-1})} className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center text-neutral-600 hover:bg-neutral-200 rounded-l-lg transition-colors">
+                                                <button onClick={() => handleChangeQuantity({productID: item.productID._id, variantID: item.variant._id, quantity: item.quantity-1})} className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center text-neutral-600 hover:bg-neutral-200 rounded-l-lg transition-colors">
                                                     <MinusOutlined className="text-[10px] sm:text-xs" />
                                                 </button>
                                             ) : (
-                                                <button onClick={() => handleDeleteItem({productID: item.productID._id})} className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center text-primary-500 hover:bg-neutral-200 rounded-l-lg transition-colors">
+                                                <button onClick={() => handleDeleteItem({variantID: item.variant._id})} className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center text-primary-500 hover:bg-neutral-200 rounded-l-lg transition-colors">
                                                     <DeleteOutlined />
                                                 </button>
                                             )}
                                             <span className="w-7 sm:w-9 text-center text-xs sm:text-sm font-medium text-neutral-800">
                                                 {item.quantity}
                                             </span>
-                                            <button onClick={() => handleChangeQuantity({productID: item.productID._id!, quantity: item.quantity+1})} className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center text-neutral-600 hover:bg-neutral-200 rounded-r-lg transition-colors">
+                                            <button onClick={() => handleChangeQuantity({productID: item.productID._id, variantID: item.variant._id, quantity: item.quantity+1})} className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center text-neutral-600 hover:bg-neutral-200 rounded-r-lg transition-colors">
                                                 <PlusOutlined className="text-[10px] sm:text-xs" />
                                             </button>
                                         </div>
 
                                         {/* Nút xóa Icon X */}
-                                        <button onClick={() => handleDeleteItem({productID: item.productID._id})} className="absolute top-[-10px] right-[0px] text-neutral-400 hover:!text-primary-500 transition-colors p-1 shrink-0 self-center">
+                                        <button onClick={() => handleDeleteItem({variantID: item.variant._id})} className="absolute top-[-10px] right-[0px] text-neutral-400 hover:!text-primary-500 transition-colors p-1 shrink-0 self-center">
                                             <CloseOutlined className="text-base sm:text-lg" />
                                         </button>
                                     </div>

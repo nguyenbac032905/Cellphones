@@ -10,14 +10,14 @@ export const useDeleteItem = () => {
 
     const deleteItem = async (body: DeleteItemBody) => {
         try {
-            setDeleting(body.productID);
+            setDeleting(body.variantID);
             
             const result = await cartService.deleteItem(body);
             dispatch(deleteItemReducer(body));
 
             return result;
         } finally {
-            setDeleting(body.productID);
+            setDeleting(body.variantID);
         }
     };
 

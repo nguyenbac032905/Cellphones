@@ -6,6 +6,10 @@ export const createOrderSchema = z.object({
             productID: z
                 .string()
                 .regex(/^[a-fA-F0-9]{24}$/, "ID sản phẩm không hợp lệ"),
+            // Biến thể (màu/dung lượng...) khách đã chọn cho dòng này
+            variantID: z
+                .string()
+                .regex(/^[a-fA-F0-9]{24}$/, "ID biến thể không hợp lệ"),
             quantity: z
                 .number({
                     error: "Số lượng phải là số",

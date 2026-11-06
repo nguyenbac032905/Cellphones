@@ -15,7 +15,7 @@ const ProductList = ({products}: {products: CartItem[]}) => {
             {products.length > 0 ? (
                 <div className="divide-y divide-neutral-100">
                     {products.map((item) => (
-                        <div className="py-3 flex items-center justify-between gap-3 sm:gap-4" key={item._id}>
+                        <div className="py-3 flex items-center justify-between gap-3 sm:gap-4" key={item.variant._id}>
                             <div className="flex items-center gap-3 shrink-0">
                                 <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl border border-neutral-100 p-1 flex items-center justify-center shrink-0 bg-neutral-50/50">
                                     <img
@@ -32,6 +32,15 @@ const ProductList = ({products}: {products: CartItem[]}) => {
                                 >
                                     {item.productID.title}
                                 </p>
+                                {Object.keys(item.variant.attributes ?? {}).length > 0 && (
+                                    <div className="flex flex-wrap items-center gap-1.5">
+                                        {Object.entries(item.variant.attributes).map(([key, value]) => (
+                                            <span key={key} className="text-[11px] sm:text-xs text-neutral-600 bg-neutral-100 rounded-md px-2 py-0.5">
+                                                {value}
+                                            </span>
+                                        ))}
+                                    </div>
+                                )}
                                 <div className="flex items-center gap-2 mt-0.5">
                                     <span className="text-sm sm:text-base font-bold text-primary-500">
                                         {Math.round(

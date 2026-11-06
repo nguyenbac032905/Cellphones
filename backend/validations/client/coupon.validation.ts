@@ -20,6 +20,7 @@ export const bestCouponSchema = z.object({
         products: z.array(
             z.object({
                 productID: objectIdSchema,
+                variantID: objectIdSchema,
                 quantity: z.number().int().min(1),
             }).strict()
         ).min(1),

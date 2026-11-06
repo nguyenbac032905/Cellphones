@@ -9,9 +9,16 @@ export interface ProductInCart {
     mainImage: string;
     slug: string
 }
+// Biến thể (màu/dung lượng...) người dùng đã chọn cho dòng giỏ hàng
+export interface VariantInCart {
+    _id: string;
+    sku: string;
+    attributes: Record<string, string>;
+}
 export interface CartItem {
     _id?: string;
     productID: ProductInCart;
+    variant: VariantInCart;
     quantity: number;
 }
 export interface Cart {
@@ -22,11 +29,13 @@ export interface Cart {
 export type CartResponse = ApiResponse<Cart>;
 export type CartItemBody = {
     productID: string,
+    variantID: string,
     quantity: number
 }
+// Một dòng giỏ hàng được định danh bằng variantID
 export type DeleteItemBody = {
-    productID: string
+    variantID: string
 }
 export type DeleteBulkItem = {
-    productIDs: string[]
+    variantIDs: string[]
 }

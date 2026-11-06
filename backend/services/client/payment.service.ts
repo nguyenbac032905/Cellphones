@@ -4,6 +4,7 @@ import crypto from "crypto";
 import { AppError } from "../../utils/AppError";
 import Order from "../../models/order.model";
 import Product from "../../models/product.model";
+import ProductVariant from "../../models/productVariant.model";
 import Cart from "../../models/cart.model";
 import { createGHNOrder } from "../../helpers/ghn";
 import { deductInventoryAfterPayment } from "../../helpers/inventory";
@@ -92,11 +93,17 @@ export const returnPaymentService = async (query: Record<string, any>) => {
     await order.save();
 
     const branchId = order.branchID?.toString() ?? DEFAULT_BRANCH_ID;
-    const orderItems = order.items.map((item) => ({ productID: item.productID, quantity: item.quantity }));
-    await deductInventoryAfterPayment(branchId, orderItems.map((item) => ({ variantID: item.productID, quantity: item.quantity })));
-    await Promise.all(orderItems.map((item) => Product.updateOne({ _id: item.productID }, { $inc: { sold: item.quantity } })));
+    const orderItems = order.items.map((item) => ({ productID: item.productID, variantID: item.variantID, quantity: item.quantity }));
+    // Đơn cũ (tạo trước khi có variant) không có variantID nên bỏ qua phần trừ tồn kho theo variant
+    const variantItems = orderItems.filter((item) => item.variantID);
+    await deductInventoryAfterPayment(branchId, variantItems.map((item) => ({ variantID: item.variantID!, quantity: item.quantity })));
+    await Promise.all([
+        ...orderItems.map((item) => Product.updateOne({ _id: item.productID }, { $inc: { sold: item.quantity } })),
+        ...variantItems.map((item) => ProductVariant.updateOne({ _id: item.variantID }, { $inc: { sold: item.quantity } }))
+    ]);
     if (order.userID) {
-        await Cart.updateOne({ userID: order.userID }, { $pull: { products: { productID: { $in: orderItems.map((i) => i.productID) } } } });
+        // Một dòng giỏ hàng được định danh bằng variantID
+        await Cart.updateOne({ userID: order.userID }, { $pull: { products: { variantID: { $in: variantItems.map((i) => i.variantID) } } } });
     }
 
     return {

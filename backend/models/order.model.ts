@@ -2,6 +2,10 @@ import mongoose, { Schema } from 'mongoose';
 
 const OrderItemSchema = new Schema({
     productID: { type: Schema.Types.ObjectId, ref: 'Product', required: true },
+    // Snapshot biến thể khách đã chọn tại thời điểm đặt hàng
+    variantID: { type: Schema.Types.ObjectId, ref: 'ProductVariant' },
+    sku: { type: String },
+    attributes: { type: Map, of: String, default: {} },
     title: { type: String, required: true },
     price: { type: Number, required: true },
     discountPercentage: { type: Number, default: 0 },

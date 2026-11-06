@@ -19,24 +19,20 @@ export const getBestCouponService = async ( userID: string, body: BestCouponBody
         .lean();
     const productMap = new Map(dbProducts.map((p) => [p._id.toString(), p]));
 
-    // price nằm ở ProductVariant. Giỏ hàng chưa mang variantID nên tạm lấy variant active có giá thấp nhất của mỗi sản phẩm
-    // TODO: khi cart/order có variantID thì tra giá theo đúng variant được chọn
-    const dbVariants = await ProductVariant.find({ product_id: { $in: dbProducts.map((p) => p._id) }, deleted: false, status: "active" })
-        .select("product_id price")
-        .sort({ price: 1 })
+    // price nằm ở ProductVariant: tra giá theo đúng variant khách đã chọn
+    const dbVariants = await ProductVariant.find({ _id: { $in: body.products.map((item) => item.variantID) }, deleted: false, status: "active" })
+        .select("_id product_id price")
         .lean();
-    const priceMap = new Map<string, number>();
-    for (const v of dbVariants) {
-        const key = v.product_id.toString();
-        if (!priceMap.has(key)) priceMap.set(key, v.price);
-    }
+    const variantMap = new Map(dbVariants.map((v) => [v._id.toString(), v]));
 
     let subTotal = 0;
     let discountDirect = 0;
     for (const item of body.products) {
         const product = productMap.get(item.productID);
-        const price = priceMap.get(item.productID);
-        if (!product || price === undefined) continue;
+        const variant = variantMap.get(item.variantID);
+        // variant phải thuộc đúng sản phẩm
+        if (!product || !variant || variant.product_id.toString() !== item.productID) continue;
+        const price = variant.price;
         subTotal += price * item.quantity;
         discountDirect += price * item.quantity * (product.discountPercentage / 100);
     }

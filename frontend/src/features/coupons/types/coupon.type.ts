@@ -19,7 +19,7 @@ export type AddCouponBody = {
 export type CouponsResponse = ApiResponse<Coupon[]>;
 
 export type BestCouponBody = {
-    products: { productID: string; quantity: number }[];
+    products: { productID: string; variantID: string; quantity: number }[];
 };
 
 export interface CouponDiscount {

@@ -201,6 +201,11 @@ const MyOrdersPage: React.FC = () => {
                                             <p className="font-semibold text-neutral-800 line-clamp-1">
                                                 {firstItem?.title}
                                             </p>
+                                            {firstItem?.attributes && Object.keys(firstItem.attributes).length > 0 && (
+                                                <p className="text-xs text-neutral-500">
+                                                    {Object.values(firstItem.attributes).join(" | ")}
+                                                </p>
+                                            )}
                                             <div className="text-sm text-neutral-500 flex items-center gap-2">
                                                 <span>Số lượng: {firstItem?.quantity}</span>
                                                 <span>|</span>

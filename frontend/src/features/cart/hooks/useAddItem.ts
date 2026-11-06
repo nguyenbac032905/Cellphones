@@ -12,7 +12,11 @@ export const useAddItem = () => {
         try {
             setLoading(true);
 
-            const result = await cartService.addItem({productID: cartItem.productID._id, quantity: cartItem.quantity});
+            const result = await cartService.addItem({
+                productID: cartItem.productID._id,
+                variantID: cartItem.variant._id,
+                quantity: cartItem.quantity
+            });
             dispatch(addItemReducer(cartItem));
 
             return result;

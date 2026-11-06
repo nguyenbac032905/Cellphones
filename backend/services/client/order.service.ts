@@ -1,6 +1,7 @@
 import Cart from "../../models/cart.model";
 import Order from "../../models/order.model";
 import Product from "../../models/product.model";
+import ProductVariant from "../../models/productVariant.model";
 import { AppError } from "../../utils/AppError";
 import { CreateOrderBody } from "../../validations/client/order.validation";
 import { getFeeService } from "./shipping.service";
@@ -9,6 +10,13 @@ import { calculatePricing, ICoupon } from "../../helpers/pricing";
 import { createGHNOrder } from "../../helpers/ghn";
 import { getBranchStockMap, reserveInventory, restoreInventory } from "../../helpers/inventory";
 import Coupon from "../../models/coupon.model";
+
+// attributes của variant có thể là Map (document) hoặc object thuần (lean) -> luôn đưa về object thuần để lưu snapshot
+const toPlainAttributes = (attributes: unknown): Record<string, string> => {
+    if (!attributes) return {};
+    if (attributes instanceof Map) return Object.fromEntries(attributes);
+    return { ...(attributes as Record<string, string>) };
+};
 
 export const createOrderService = async (userID: string, body: CreateOrderBody, branchId: string) => {
     const { products, fullName, phone, address, province, district, ward, districtID, wardCode, note, paymentMethod, couponID } = body;
@@ -20,30 +28,60 @@ export const createOrderService = async (userID: string, body: CreateOrderBody, 
         }
     }
 
-    const stockMap = await getBranchStockMap(branchId, products.map((item) => item.productID));
+    // Lấy giá / sku / thuộc tính từ DB theo đúng variant khách chọn, không tin giá từ client
+    const variants = await ProductVariant.find({
+        _id: { $in: products.map((item) => item.variantID) },
+        deleted: false,
+        status: "active"
+    }).select("_id product_id sku attributes price images").lean();
+    const variantMap = new Map(variants.map((v) => [v._id.toString(), v]));
+
+    // Tồn kho tính theo variant (mỗi variant có tồn kho riêng ở từng chi nhánh)
+    const stockMap = await getBranchStockMap(branchId, products.map((item) => item.variantID));
 
     const requestedQuantity = new Map<string, number>();
     for (const item of products) {
-        requestedQuantity.set(item.productID, (requestedQuantity.get(item.productID) ?? 0) + item.quantity);
+        requestedQuantity.set(item.variantID, (requestedQuantity.get(item.variantID) ?? 0) + item.quantity);
     }
 
     const newProducts = [];
     for (const item of products) {
+        const variant = variantMap.get(item.variantID);
+        if (!variant || variant.product_id.toString() !== item.productID) {
+            throw new AppError("Biến thể sản phẩm không tồn tại hoặc không thuộc sản phẩm này!");
+        }
+
         const product: any = await Product.findOne({ _id: item.productID, deleted: false, status: "active" })
-            .select("title price discountPercentage images")
+            .select("title discountPercentage images")
             .lean();
 
         if (!product) {
             throw new AppError("Sản phẩm không tồn tại hoặc đã bị xóa!");
         }
 
-        const branchStock = stockMap.get(item.productID) ?? 0;
-        if (branchStock < (requestedQuantity.get(item.productID) ?? item.quantity)) {
+        const branchStock = stockMap.get(item.variantID) ?? 0;
+        if (branchStock < (requestedQuantity.get(item.variantID) ?? item.quantity)) {
             throw new AppError(`Sản phẩm ${product.title} không đủ số lượng tồn kho tại chi nhánh này!`);
         }
 
-        const mainImage = product.images?.find((i: any) => i.isMain)?.url || product.images?.[0]?.url || "";
-        newProducts.push({ ...item, ...product, mainImage });
+        const mainImage =
+            variant.images?.find((i: any) => i.isMain)?.url ||
+            variant.images?.[0]?.url ||
+            product.images?.find((i: any) => i.isMain)?.url ||
+            product.images?.[0]?.url ||
+            "";
+
+        newProducts.push({
+            productID: item.productID,
+            variantID: item.variantID,
+            sku: variant.sku,
+            attributes: toPlainAttributes(variant.attributes),
+            title: product.title as string,
+            price: variant.price,
+            discountPercentage: (product.discountPercentage ?? 0) as number,
+            quantity: item.quantity,
+            mainImage
+        });
     }
 
     const feeRes = await getFeeService({
@@ -65,9 +103,9 @@ export const createOrderService = async (userID: string, body: CreateOrderBody, 
     });
 
     const inventoryItems = newProducts.map((item) => ({
-        variantID: item.productID as string, // TODO: giỏ hàng/đơn hàng chưa mang variantID, cần bổ sung ở bước tích hợp variant vào cart/order
-        quantity: item.quantity as number,
-        title: item.title as string
+        variantID: item.variantID,
+        quantity: item.quantity,
+        title: item.title
     }));
 
     // COD: không có bước thanh toán online nên trừ tồn kho chi nhánh ngay (atomic, chống bán vượt tồn).
@@ -84,6 +122,9 @@ export const createOrderService = async (userID: string, body: CreateOrderBody, 
             branchID: branchId,
             items: newProducts.map((item) => ({
                 productID: item.productID,
+                variantID: item.variantID,
+                sku: item.sku,
+                attributes: item.attributes,
                 title: item.title,
                 price: item.price,
                 discountPercentage: item.discountPercentage,
@@ -160,9 +201,13 @@ export const createOrderService = async (userID: string, body: CreateOrderBody, 
         };
     }
 
-    // Tồn kho chi nhánh đã trừ ở trên, ở đây chỉ cập nhật số lượng đã bán của sản phẩm và dọn giỏ hàng
-    await Promise.all(newProducts.map((item) => Product.updateOne({ _id: item.productID }, { $inc: { sold: item.quantity } })));
-    await Cart.updateOne({ userID }, { $pull: { products: { productID: { $in: newProducts.map((i) => i.productID) } } } });
+    // Tồn kho chi nhánh đã trừ ở trên, ở đây chỉ cập nhật số lượng đã bán (sản phẩm + variant) và dọn giỏ hàng
+    await Promise.all([
+        ...newProducts.map((item) => Product.updateOne({ _id: item.productID }, { $inc: { sold: item.quantity } })),
+        ...newProducts.map((item) => ProductVariant.updateOne({ _id: item.variantID }, { $inc: { sold: item.quantity } }))
+    ]);
+    // Một dòng giỏ hàng được định danh bằng variantID
+    await Cart.updateOne({ userID }, { $pull: { products: { variantID: { $in: newProducts.map((i) => i.variantID) } } } });
 
     return {
         data: {

@@ -39,6 +39,10 @@ const ProductInfo = ({ product, selectedVariant, variantSelector }: ProductInfoP
     };
     const handleAddToCart = async () => {
         try {
+            if (!selectedVariant) {
+                message.error("Vui lòng chọn phiên bản sản phẩm");
+                return;
+            }
             const cartItem = {
                 productID: {
                     _id: product._id,
@@ -48,6 +52,12 @@ const ProductInfo = ({ product, selectedVariant, variantSelector }: ProductInfoP
                     discountPercentage: product.discountPercentage,
                     mainImage: variantImages.find(item => item.isMain === true)?.url ?? variantImages[0]?.url ?? "",
                     slug: product.slug
+                },
+                // Biến thể người dùng đang chọn (màu/dung lượng...)
+                variant: {
+                    _id: selectedVariant._id,
+                    sku: selectedVariant.sku,
+                    attributes: selectedVariant.attributes
                 },
                 quantity: 1
             }

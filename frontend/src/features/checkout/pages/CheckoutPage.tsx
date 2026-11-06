@@ -49,7 +49,7 @@ const CheckoutPage = () => {
     const { products, subTotal, directDiscount, discountCoupon, isFreeShip, shippingFee, totalPrice, totalSaving, } = useCheckoutSummary({fee, selectedCoupon});
     // tự động gọi API tính mức giảm của các coupon ngay khi vào trang checkout
     const checkoutItems = useMemo(
-        () => products.map((item) => ({ productID: item.productID._id, quantity: item.quantity })),
+        () => products.map((item) => ({ productID: item.productID._id, variantID: item.variant._id, quantity: item.quantity })),
         [products]
     );
     const { data: bestCouponData, loading: bestCouponLoading } = useBestCoupon(checkoutItems, !!user);
@@ -58,7 +58,7 @@ const CheckoutPage = () => {
     //hàm submit
     const onFinish = async (values: CheckoutFormValues) => {
         const data = {
-            products: products.map(item => ({productID: item.productID._id, quantity: item.quantity})),
+            products: products.map(item => ({productID: item.productID._id, variantID: item.variant._id, quantity: item.quantity})),
             fullName: values.fullName,
             phone: values.phone,
             address: values.address,

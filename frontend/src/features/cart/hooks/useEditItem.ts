@@ -10,14 +10,14 @@ export const useEditItem = () => {
 
     const editItem = async (body: CartItemBody) => {
         try {
-            setEditing(body.productID);
+            setEditing(body.variantID);
             
             const result = await cartService.editItem(body);
             dispatch(editItemReducer(body));
 
             return result;
         } finally {
-            setEditing(body.productID);
+            setEditing(body.variantID);
         }
     };
 

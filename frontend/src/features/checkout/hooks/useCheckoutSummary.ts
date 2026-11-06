@@ -7,13 +7,13 @@ export const useCheckoutSummary = ({ fee, selectedCoupon, }: { fee?: Fee | null;
     const cart = useAppSelector((state) => state.cart.cart);
 
     const ids = useMemo(
-        () => JSON.parse(sessionStorage.getItem("selectedProductIDs") ?? "[]"),
+        () => JSON.parse(sessionStorage.getItem("selectedVariantIDs") ?? "[]"),
         []
     );
 
     const products = useMemo(() => {
         return cart?.products.filter((item) =>
-            ids.includes(item.productID._id)
+            ids.includes(item.variant._id)
         ) ?? [];
     }, [cart, ids]);
 

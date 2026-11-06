@@ -1,55 +1,94 @@
 import { Types } from "mongoose";
 import Cart from "../../models/cart.model"
+import ProductVariant from "../../models/productVariant.model";
 import { getBranchStockMap } from "../../helpers/inventory";
 import { AppError } from "../../utils/AppError";
-import { BulkDeleteBody, CartItemBody } from "../../validations/client/cart.validation";
+import { BulkDeleteBody, CartItemBody, DeleteCartBody } from "../../validations/client/cart.validation";
 interface PopulatedProduct {
     _id: Types.ObjectId;
     title: string;
-    price: number;
     discountPercentage: number;
     slug: string;
     images: {
         url: string;
         isMain: boolean;
     }[];
-    mainImage?: string;
 }
 export const getCartService = async (userID: string, branchId: string) => {
     const cart = await Cart.findOne({ userID }).select("_id userID products")
-        .populate<{ products: { productID: PopulatedProduct }[] }>({
+        .populate<{ products: { _id: Types.ObjectId; productID: PopulatedProduct | null; variantID?: Types.ObjectId; quantity: number }[] }>({
             path: "products.productID",
-            select: "_id title price images discountPercentage slug"
+            select: "_id title images discountPercentage slug"
         })
         .lean();
     if (!cart) {
         throw new AppError("Cart not found", 404);
     }
-    const stockMap = await getBranchStockMap(
-        branchId,
-        cart.products.filter(item => item.productID).map(item => item.productID._id)
-    );
-    const data = {
-        ...cart,
-        products: cart.products.map(item => {
+
+    // Chỉ giữ các dòng có đủ sản phẩm + variant (bỏ dòng cũ chưa có variant hoặc sản phẩm đã bị xóa)
+    const validLines = cart.products.filter(item => item.productID && item.variantID);
+
+    const variants = await ProductVariant.find({
+        _id: { $in: validLines.map(item => item.variantID) },
+        deleted: false,
+        status: "active"
+    }).select("_id sku attributes price images").lean();
+    const variantMap = new Map(variants.map(v => [v._id.toString(), v]));
+
+    const stockMap = await getBranchStockMap(branchId, variants.map(v => v._id));
+
+    const products = validLines
+        .filter(item => variantMap.has(item.variantID!.toString()))
+        .map(item => {
+            const product = item.productID!;
+            const variant = variantMap.get(item.variantID!.toString())!;
+            const variantImage = variant.images?.find(i => i.isMain)?.url ?? variant.images?.[0]?.url;
+            const productImage = product.images?.find(i => i.isMain)?.url ?? product.images?.[0]?.url;
+
             return {
-                ...item,
+                _id: item._id,
+                quantity: item.quantity,
                 productID: {
-                    _id: item.productID._id,
-                    title: item.productID.title,
-                    price: item.productID.price,
-                    stock: stockMap.get(item.productID._id.toString()) ?? 0,
-                    discountPercentage: item.productID.discountPercentage,
-                    mainImage: item.productID.images.find(i => i.isMain)?.url,
-                    slug: item.productID.slug
+                    _id: product._id,
+                    title: product.title,
+                    // Giá + tồn kho theo đúng variant người dùng đã chọn
+                    price: variant.price,
+                    stock: stockMap.get(variant._id.toString()) ?? 0,
+                    discountPercentage: product.discountPercentage,
+                    mainImage: variantImage ?? productImage,
+                    slug: product.slug
+                },
+                variant: {
+                    _id: variant._id,
+                    sku: variant.sku,
+                    attributes: variant.attributes ?? {}
                 }
-            }
-        })
-    }
+            };
+        });
+
     return {
-        data: data
+        data: {
+            _id: cart._id,
+            userID: cart.userID,
+            products
+        }
     }
 }
+
+// Kiểm tra variant tồn tại, đang bán và thuộc đúng sản phẩm
+const assertVariantBelongsToProduct = async (productID: string, variantID: string) => {
+    const variant = await ProductVariant.findOne({
+        _id: variantID,
+        product_id: productID,
+        deleted: false,
+        status: "active"
+    }).select("_id").lean();
+
+    if (!variant) {
+        throw new AppError("Biến thể sản phẩm không tồn tại hoặc không thuộc sản phẩm này", 404);
+    }
+};
+
 export const addItemService = async (userID: string, body: CartItemBody) => {
     const cart = await Cart.findOne({ userID });
 
@@ -57,13 +96,16 @@ export const addItemService = async (userID: string, body: CartItemBody) => {
         throw new AppError("Cart not found", 404);
     }
 
-    const existingProduct = cart.products.find(item => item.productID.toString() === body.productID);
+    await assertVariantBelongsToProduct(body.productID, body.variantID);
+
+    const existingProduct = cart.products.find(item => item.variantID?.toString() === body.variantID);
 
     if (existingProduct) {
         existingProduct.quantity += body.quantity;
     } else {
         cart.products.push({
             productID: body.productID,
+            variantID: body.variantID,
             quantity: body.quantity
         });
     }
@@ -78,7 +120,7 @@ export const editItemService = async (userID: string, body: CartItemBody) => {
     const cart = await Cart.findOneAndUpdate(
         {
             userID,
-            "products.productID": body.productID
+            "products.variantID": body.variantID
         },
         {
             $set: {
@@ -98,16 +140,16 @@ export const editItemService = async (userID: string, body: CartItemBody) => {
         message: "Update cart item successfully"
     };
 };
-export const deleteItemService = async (userID: string, body: CartItemBody) => {
+export const deleteItemService = async (userID: string, body: DeleteCartBody) => {
     const result = await Cart.updateOne(
         {
             userID,
-            "products.productID": body.productID
+            "products.variantID": body.variantID
         },
         {
             $pull: {
                 products: {
-                    productID: body.productID
+                    variantID: body.variantID
                 }
             }
         }
@@ -125,13 +167,13 @@ export const bulkDeleteItemService = async (userID: string, body: BulkDeleteBody
     const cart = await Cart.findOneAndUpdate(
         {
             userID,
-            "products.productID": { $in: body.productIDs }
+            "products.variantID": { $in: body.variantIDs }
         },
         {
             $pull: {
                 products: {
-                    productID: {
-                        $in: body.productIDs
+                    variantID: {
+                        $in: body.variantIDs
                     }
                 }
             }
