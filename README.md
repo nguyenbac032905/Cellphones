@@ -1,329 +1,118 @@
-1. Cấu hình project
-    1. npm create vite@latest để cài vite vào thư mục root
-    2. Project name: frontend Framework: React Variant: TypeScript
-    3. cài 1 số thư viện npm install react-router-dom, npm install antd, npm install tailwindcss @tailwindcss/vite
-    4. Setup TailwindCSS cho Vite trong file vite.config.ts, import vào index.css
-    5. tạo cấu trúc thư mục
-2. Tạo giao diện cơ bản
-    1. cài react-router-dom
-    2. tạo layout client và admin
-    3. tạo page dashboard và home
-    4. tạo route dashboard và home
-    5. tạo file rotes tổng
-    6. nhúng routes vào app.tsx
-    7. npm i express cors dotenv, npm i -D nodemon,typescript,ts-node-dev,@types/node,@types/express,@types/cors
-    8. cau hinh thu muc
-3. Kết nối mongoDb
-    1.Thêm DATABASE_URL vào .env và tạo file database.config để kết nối để database,
-    2. Cài mongoose-slug-updater và thêm file types cho nó vì thư viện này chưa hỗ trợ ts, khai báo nơi đọc types trong tsconfig 
-    3. Tạo model Product và ProductCategory
-    4. Thêm index cho Product và ProductCategory cho hợp lí
-    5. call thử api
-4. Dựng layout phía admin
-    1. Nhúng layout mẫu của ant
-    2. tách ra thành các components sidebar, header admin.
-    3. bổ sung thanh tìm kiếm, block user và notifycation trênh header
-5. Call Api bằng axios
-    1.tạo file handle error
-    2.Cấu hình axios instance và tạo interceptor cho privateClient và publicClient (handle error cho interceptor)
-    3.Tạo service product để call api và trả về dữ liệu chuẩn
-    4. Gọi service bên UI
-6. Tạo giao diện trang products list admin
-    1.Tạo admin product table: tạo biến column để chứa tên các cột, sử dụng render để render ra mã tsx nếu cần. sử dụng thuộc tính pagination bottomCenter để căn giữa pagination sử dụng rowSelected để tạo checkbox chọn row và trả về rowKey
-    3.Tạo admin product Filter: sử dụng grid của tailwind để chia layout và responsive 
-    4.Tạo admin product Toolbar: sử dụng grid của tailwind để chia layout và responsive 
-    5.responsive cho table product, header admin
-7. Làm tính năng filter, sort, search, pagination
-    1. Tạo useAdminProductQuery để tạo query và hàm updatequerry và gọi hook đó bên productPage để truyền vào useProducts để callAPI.
-    và bên backend sẽ nhận được các query đó.
-    2. filter: tạo 1 biết match để thêm nhưng field status, stock và điều kiện của nó. category thì cần lấy ra những thằng con của danh mục đó rồi tìm tât cả sản phẩm trong các danh mục đó, sau đó mới thêm vào match.
-    3. Sort: tạo sortOption và sử dụng switch để xử lí các trường hợp sắp xếp
-    4. Search: mình cần đánh index search cho slug, title để tìm kiếm tốt hơn trên mongo atlas, sau đó tạo toán tử $search để tìm
-    5. sau đó mình sẽ push vào pipeline theo thứ  tự search rồi mới đến match (thỏa mãn điều kiện), rồi mới đến lookup(join bảng),unwind (vì bảng trả về mảng nên phải tách thành object),set(dùng để thay đổi các trường) rồi mới đến sort và facet ( dùng để tạo 2 luồng query cùng lúc, 1 cái lấy ra products và 1 cái dùng để đếm số sản phẩm). cuối cùng gọi đến hàm agregate và truyền pipeline vào
-    6. Pagination: sử dụng pagination sẵn của ant và bắt sự kiện change để thay đổi query
-8. làm tính năng thay đổi trạng thái sản phẩm
-    1. tạo class AppError để chuẩn hóa lỗi, tạo route,controller, service patch, kiểm tra type của productID, sử dụng whitelist sercurity
-    2. thêm type patchProduct, tạo hook update product, tạo service update, bắt sự kiện onchange cho switch để gọi đến hook cập nhật lại trạng thái
-    3. nhúng message của ant để tạo thông báo
-9. tính năng thay đổi vị trí sản phẩm
-    1. bắt sự kiện onblur cho ô input position, khi người dùng click ra ngoài thì sẽ update lại vị trí sản phẩm nếu nó thay đổi
-    2. thêm disable cho ô input khi người dùng gửi lên
-    3. thêm các thông báo
-10. Tính năng bulk actions
-    1. tạo api delete bên backend
-    2. tạo service delete bên frontend
-    3. tạo hook delete bên frontend
-    4. bắt sự kiện khi người dùng tích chọn dòng thì lấy ra từng row để lấy ra ids sản phẩm cần cập nhật
-    5. khi người dùng click apply trên toolbar thì cập nhật lại tất cả sản phẩm bằng promise.all
-    6. vấn đề gặp phải là khi cập nhật xong chọn refetch mà hook không chạy lại làm dữ liệu không đổi.
-11. làm trang chi tiết sản phẩm
-    1. tạo api get product
-    2. tách riêng component loading và custom alert vào shared
-    3. tạo service call api và tạo hook call service, không cần throw error trong hook vì đã xử lí UI rồi.
-    4. tạo page detail product bên frontend
-12. làm giao diện trang tạo mới sản phẩm
-13. làm tính năng tạo mới sản phẩm và upload ảnh
-    1. cài multer để upload file và cloudinary để upload file lên cloud
-    3. tạo middleware upload ảnh, khai báo thêm kiểu file và files cho express.d.ts vì express không hiểu kiểu req.file của multer gắn vào.
-    4. tạo api upload ảnh, cho nó chạy qua middleware uploadCloud và trả về key dạng {url: ""}
-    5. tạo api upload product 
-    6. tạo service post product, và hook tương ứng
-    7. set action cho Upload của ant, khi người dùng chọn file sẽ post ảnh lên api đó
-    7. khi người dùng chọn file thì hàm onChange được kích hoạt, hàm này nhận được filelist và kiểm tra xem có ảnh nào không upload được không (do cloudinary free chỉ cho phép upload ảnh <10mb). lọc qua từng phần tử của filelist và lấy ra url, id của upload.
-    8. tạo itemsRender cho upload để hiển thị tag ảnh main, khi người dùng click vào 1 ảnh thì sẽ chạy đến hàm selectMain và set lại state mainImageId là ảnh vừa chọn.
-    9. khi submit mình chạy qua các phần tử của filelist và chuẩn hóa nó về dạng lưu trong db. gọi đến hàm createProdut và gửi dữ liệu lên. sau khi gửi xong nếu có product trả về thì reset lại form và thông báo tạo thành công
-14. làm tính năng sửa sản phẩm ( tương tự tạo mới sản phẩm )
-15. làm tính năng thùng rác
-    1. tạo api product deleted bên backend
-    2. tạo service, type, hook cho api đó
-    3. tạo giao diện trang thùng rác và gọi hook và đổ data ra
-    4. tạo api product restore bên backend
-    5. tạo service, type, hook cho api đó
-    6. bắt sự kiện cho nút restore và xử lí thông báo lỗi,thành công, call api
-    7. tạo api force delete product bên backend
-    8. tạo service, type, hook cho api đó
-    9. bắt sự kiện cho nút force delete và xử lí thông báo lỗi,thành công, call api
-16. Tính năng đăng nhập, đăng kí admin, auth bằng accessToken và refreshToken
-    1. tạo model user, sửa cấu hình cors có credentials: true để client có thể gửi cookie lên
-    2. tạo các hàm generate accesstoken và refreshToken trong utils/jwt, khi gọi thì sẽ truyền vào payload và hàm sẽ sign bằng payload và secret key.
-    3. tạo route register, controller register, service register. khi người dùng gửi thông tin lên thì bên service sẽ tạo tài khoản mới, tạo access token và refresh token và lưu refreshToken vào db. sau đó trả lại res cho controller, controller sẽ lưu refreshToken vào trong cookie với httpOnly, và trả về cho client {message, accessToken, user}
-    4. tạo api login tương tự register
-    5. tạo route refresh-token, khi client gọi đến route này thì controller sẽ gửi refreshToken trong cookie sang service(phải cải thư viện cookie-parse để đọc được cookie trong req). bên service sẽ decoded refreshToken, nếu refreshToken hết hạn hoặc sai thì nó sẽ ném ra lỗi 401, service sẽ gọi đến user có userID mình đã decoded ra và generateAccessToken mới và trả về cho controller.controller trả {accessToken} về cho client.
-    6. tạo authMiddleware cho nhưng route private, ở đây sẽ check xem những request của người dùng có gửi accessToken lên không (tức là đã đăng nhập chưa) và nó có đúng không bằng cách verify accessToken và secretKey. nếu lỗi thì ném ra lỗi 401 tương ứng.
-    7. Bên Frontend sẽ cài react-redux và redux tool kit để quản lí state auth
-    8. tạo store.ts để để lưu state tổng. tạo authSlice để cấu hình state auth bao gồm state, các hàm reducers(clearAuth và setAuth). bọc Provider bên ngoài App để dùng store cho cả app.
-    9. tạo privateClient để cấu hình instance private cho axios. mỗi request sẽ lấy ra accessToken trong store và gửi kèm lên headers. 
-    10. mỗi response trả về sẽ bắt lỗi, nếu là lỗi 401(Unauthorization) thì sẽ kiểm tra xem request này đã gửi yêu cầu tạo accessToken mới chưa, nếu chưa thì call đến api /admin/api/auth/refresh-token để yêu cầu tạo accessToken mới, nếu mà server tạo thành công và trả về thì mình sẽ lưu lại accessToken mới vào state và gọi lại request bị lỗi với accessToken mới. còn nếu server không trả về accessToken mới tức là refreshToken đã hết hạn nên mình sẽ clearAuth đi và redirect về trang login để người dùng đăng nhập, từ đó tạo refreshToken mới.
-    11. xử lí vấn đề nhiều request A,B,C cung lúc gây ra tạo nhiều accessTOken lại bằng cách tạo hàng đợi, mỗi response lỗi trả về sẽ check xem request A đó có yêu cầu tạo mới chưa, nếu có rồi thì sẽ đẩy vào hàng đợi, khi nào reqquest A tạo mới accessToken xong sẽ trả về cho từng request BCD và gọi lại các request đó với accessToken mới.
-    12. tạo service login và hook login, route auth 
-    13. tạo trang login, bắt sự kiện cho nút login, khi người dùng đăng nhập sẽ call hook login và gửi lên email, mật khẩu và nhận data trả về, gọi đến hàm dispatch để gửi action lên (tạo app/hooks để tạo hàm dispatch vì dùng typescript).
-    14. tạo AminPrivateRoute để bọc những route private vào.
-    15. sửa lại các service products, products category bên admin phải dùng privateClient.
-    17. luồng tổng: Người dùng đăng nhập => server trả về accessToken và lưu refreshToken vào HTTP Only Cookie => mỗi request client sẽ gửi kèm accessToken => server verify token, nếu hợp lệ thì xử lí request, nếu hết hạn sẽ trả 401 Unauthorized => client tự động gọi API refresh-token để lấy accessToken mới và retry request cũ => nếu refreshToken hết hạn thì logout và chuyển về trang login.
-    16. vấn đề đặt ra là khi F5 trang web sẽ xóa state auth đi và bị đẩy ra login dù token chưa hết hạn.
-17. Xử lí vấn đề f5 sẽ xóa state auth đi và bị đẩy ra login
-    1. viết api /auth/me để trả về thông tin user 
-    2. tạo bootstrap auth, hàm này sẽ chạy mỗi khi reload trang. trong hàm này sẽ gọi đến hàm refresh-token để lấy accessToken mới, dùng accessToken đó để gọi đến /auth/me để lấy thông tin user. sau đó setStateAuth bằng user và accessToken đó.
-    3. nhúng hàm vào main.tsx
-19. validate backend bằng zod
-    1. tạo file product.validation và createProductSchema, updateProductSchema
-    2. tạo file validate middleware để đọc schema validate
-    3. nhúng vào route
-    4. xử lí bên create product, khi upload ảnh phải custom request để có thể gửi lên accessToken trong header
-20. validate frontend bàng zod
-    1. tạo product.validation và createProductSchema, updateProductSchema
-    2. sửa lại type của PostProductBody và PatchProductBody bằng infer type của zod cho đồng bộ type
-    3. parse  dữ liệu trước khi gửi gọi service post,patch. khi lỗi thì chuyển lỗi sang format của ant bằng cách tạo hàm zodToAntFormErrors. sau đó truyền lỗi vào form.
-21. chuẩn hóa response product bên backend và xử lí bên frontend
-    1. sửa lại service bên backend trả về dữ liệu chỉ gồm các raw key {data, meta,message}
-    2. sửa lại controller, bổ sung thêm status success mỗi khi trả dữ liệu về
-    3. sửa lại type của product response
-    4. sửa lại service chỉ trả về raw data
-    5. sửa lại hook actions create, update, delete không cần trả về data,error nữa, và bỏ try catch vì chỉ cần try catch ở UI và xử lí dựa vào success và message trả về thôi
-    6. sửa lại hook fetch như products, product detail trả về đúng key products chứ không để raw nữa
-    7. sửa lại các file giao diện tương ứng
-22. chuẩn hóa response cho productcategory, auth, upload
-23. chuẩn hóa lỗi phía backend, validate cả params bằng zod cho productID, clean controller và service products
-    1. Sửa lại App Error để nhận cả chi tiết error nữa
-    2. tạo middleware errorHandler để xử lí lỗi khi người dùng truyền next(error) và nhúng vào cuối của index.ts
-    3. tạo asyncHandler để bọc controller, tự động throw lỗi mà mình không cần try catch cho các controller
-    4. sửa lại product.validation, tạo thêm schema để validate productID, sửa validateMiddleware giúp validate cả params và query, truyền các schema validate tương ứng vào route
-    5. clean controller và service products
-24. clean controller categories, auth, upload, recycle-bin và validate cho auth, recycle-bin
-25. thêm global, login rate limit và security middleware
-    1. tạo global rateLimiterMiddleware để rateLimit tổng, mỗi người có tối đa 300 request trong 15p
-    2. tạo loginLimiterMiddleware, mỗi người được phép login sai 5 lần trong 15p
-    3. sử dụng helmet() trong index.ts để thêm bảo mật cho header, hpp để chuẩn hóa query, sử dụng globalRateLimiter
-    4. sử dụng loginRateLimiter trong auth route
-26. bổ sung ratelimit cho register,upload, ratelimit size file. validate cho query product
-    1. rate limit cho register, upload, force delete
-    2. rate limit size file <1mb và giới hạn loại file có thể upload là jpeg, png, webp
-    3. bổ sung validattion cho query
-27. triển khai anti xss phía backend
-    1. tạo hàm sanitizeHTMLS để whitelisst cho các thẻ được phép chứa trong desc,content
-    2.  sử dụng để lọc desc,content trước khi lưu vào db
-28. triển khai anti xss phía frontend
-    1. tạo sanitizeHTMLs để xóa các tag, attribute nguy hiểm
-    2. bọc sanitize trước khi dùng dangerouslySetInnerHTML
-    3. không cần sanitize form trước khi submit vì tiny-mce đã tự làm rồi
-29. Tối ưu query phía backend
-    1. sử dụng toán tử $project để lấy những trường cần thiết, loại bỏ những trường nặng như desc, content
-    2. chuyển mảng images thành chỉ lấy ra mainImage
-    3. chỉ lấy ra _id và title của category
-    4. tạo type productItemList bên frontend
-    5. sửa lại phía giao diện hiển thị đúng mainImage
-30. sửa lại toán tử để tối ưu query
-    1. đầu tiên phải search trước vì đây là toán tử lọc rất mạnh, tiếp theo là đến match
-    2. phải để sort trước skip và limit vì nếu sort sau thì chỉ sort được 1 số sản phẩm đã limit thôi
-    3. tiếp theo là skip và limit để giảm số sản phẩm.
-    4. tiếp theo mới đến lookup để join lấy category, rồi mới sử dụng $project để chọn các trường trả về cho db
-    5. phải để count bên ngoài nhánh products vì products trả về {products: []} đã lọc rồi, không phải tổng số products trong sản phẩm
-31. triển khai test unit cho products service, xong getProducts
-    1. npm i -D jest @types/jest ts-jest và sửa lệnh test thì chạy "jest" và thêm "test:watch": "jest --watch". thêm type "jest" vào ts.config
-    2. tạo file product.service.test
-    3. mock model Product vì mình có gọi db trong service, mock aggregate vì có gọi đến hàm đó để truyền pipeline vào
-    4. sử dụng hàm beforeEach để mặc định xóa đi những mock cũ trước khi test, và tạo hàm allowDiskUse trong aggregate và fake dữ liệu trả về cho nó dạng {products: [], total: [{count}: 10]}
-    5. tạo test search vì nó là (test business rule). có 2 test case là truyền search vào query thì phải có toán tử search trong pipeline và khi không truyền search thì không có toán tử search trong pipeline.
-    5. tạo test filter vì nó là (test business rule). test case 1 là khi truyền status, stock, category vào query thì phải build đúng $match, ở đây phải mock getAllCategoryChildIds vì nó gọi đến db. test case 2 là test nhánh logic của stock, khi truyền stock=outofstock thì phải filter stock=0 (test Branch Coverage). test case 3 là default lấy ra những sản phẩm deleted= false
-    6. tạo test sort vì nó là (test business rule). test case 1 mình sẽ test tất cả các nhánh logic switch case của sort bằng test.each (test Branch Coverage). test case mình sẽ test default là position giảm dần khi không truyền vào query.
-    7. tạo test pagination vì nó là (test business rule). test case 1 mình sẽ test truyền page và limit vào thì có toán tử skip, limit tương ứng. test case 2 mình là default, không truyền vào query thì sẽ lấy skip=0 và limit=4.
-    8. tạo test thứ tự toán tử trong pipeline (test structural rule). ở đây mình sẽ test xem các toán tử có đúng thứ tự để tối ưu query không.
-    9. tạo test return value chuẩn (test output). test case 1 là service phải trả về đúng dạng {data: [], meta: {}}.test case 2 khi total trả về rỗng thì total và total page = 0 (Test edge case). case 3: test bắt buộc phải gọi allowDiskUse vì nếu không gọi sẽ có nguy cơ tràn Ram.
-32. xong test unit product service
-33. xong test unit auth service
-33. xong test unit auth middleware
-34. xong test unit validate middleware
-35. xong test unit errorHandler middleware
-36. viết test cho createTree và recycleBin.service
-37. cấu hình test integration và triển khai test integration cho products
-    1. cài các package cần thiết: supertest, @types/supertest, mongodb-memory-server. tạo file jest.integration.config.js và thêm vào include trong `tsconfig` để TypeScript đọc được file config này
-    2. tách riêng app.ts và index.ts để khi test chỉ import app, tránh chạy server thật
-    3. tạo file setup để cấu hình database ảo (mongodb-memory-server), gồm các hàm connect DB, clear DB sau mỗi test và close DB sau khi test xong
-    4. tạo auth.helper để tự động đăng ký/login và trả về accessToken dùng cho các API cần authentication
-    5. tạo file integration test cho products. trước khi test sẽ connect DB và lấy accessToken, sau mỗi test sẽ clear DB và cuối cùng close DB. integration test sẽ kiểm tra toàn bộ flow thật của hệ thống: route -> middleware -> controller -> service -> MongoDB
-38. viết test integration cho auth (còn test E2E sẽ để tới khi làm payment sẽ giá trị hơn)
-39. tạo file request logging và error logging ở môi trường production
-    1. npm i pino pino-http
-    2. tạo file config cho request và error logging
-    3. tạo middleware request và error logging
-    4. (phần audit logging mình sẽ làm sau)
-40. làm giao diện trang role list
-41. làm tính năng tạo mới role
-42. làm tính năng chi tiết và cập nhật role
-43. làm tính năng xóa role
-44. triển khai authorization bên backend
-    1. sửa lại authMiddleware lấy ra cả perrmission và gán vào req.user, thêm bắt lỗi cho AppError mà khi check role không tồn tại ném ra phía trên.
-    2. mở rộng type cho express để req.user không bị lỗi, khai báo ts-node {files: true } để đọc toàn bộ file .d.ts
-    3. tạo permissionMiddleware để check role
-    4. tạo file const permission bên backend để tạo enum tránh điền nhầm permission và cũng sử dụng nó để check validate bằng zod
-    5. sử dụng phân quyền trong route
-45. triển khai authorization bên frontent
-    1. populate lấy ra cả permission vào trong thông tin user khi đăng nhập và đăng kí
-    2. sửa lại authMiddleware lấy ra user kèm permission
-    3. sửa lại type user bên backend, frontend chứa cả permission
-    4. tạo use perrmission để lấy ra danh sách quyền của người dùng
-    5. tạo permission route để xác minh có được vào route đó không
-    6. bọc permission route vào các route
-    7. xác mình quyền để hiển thị ui tương ứng
-    8. tạo trang forbidden
-46. làm giao diện danh sách user và các tính năng lọc, phân trang
-47. xong tính năng tạo mới user
-48. xong tính năng chi tiết, sửa, xóa user
-49. triển khai author cho user
-50. làm tính năng logout admin
-51. làm trang my account và hiển thị đúng tên user trên header
-52. làm trang category list
-53. làm tính năng create category
-54. xong tính năng xem chi tiết, sửa, xóa category
-55. fix update, delete category
-    1. khi cập nhật category thành inactive thì phải cho tất cả category con cháu của nó inactive
-    2. khi cập nhật category thành active thì phải kiểm tra nếu không có category cha ông inactive thì mới được active
-    3. khi xóa 1 category thì tất cả category con cháu cũng phải bị xóa theo
-56. làm header trang client
-57. làm footer trang client
-58. làm phần banner category trang home
-    1. sử dụng flex để 3 khối menu,main banner, sider thành hàng ngang
-    2. phần menu mình sẽ lọc qua từng phần tử của category và vẽ ra giao diện, set width của nó là 56, và ẩn đi khi co vào màn lg
-    3. phần sidebar right mình sẽ set width cho nó là 55, flex col để tách nó làm 2 khối và ẩn đi khi co vào màn md
-    4. phần main banner mình sẽ cho nó chiếm phần còn lại bằng flex-1, flex-col để chia làm 2 box chứa quảng cáo và slide banner
-    5. đối với component slide banner mình sẽ tạo 2 phần tabs để click vào chuyển slide, và slide sử dụng swiper. phần tabs để chuyển slide khai báo state activeIndex để lưu tab index, nếu tab nào active thì sẽ cho bg màu trắng hiện ảnh tai mèo lên, còn không thì opacity=0 để ẩn nó đi và bg màu trắng.đối với phần slide mình sẽ cho nó autoplay và thêm navigation vào để css button và css cho button đó.
-59. xong banner category trang home
-    1. khi hover vào item trong category mình sẽ set lại state category đang được active, banner category nhận được và mở flyoutCategory lên, trong flyoutCategory thì hiện các thông tin tương ứng. hiệu ứng tắt khi người dùng move chuột ra ngoài banner category
-60. xong product tab section
-    1. tạo productTabSection, bên trong chứa phần tab và phần slide, đối với phần tabs sẽ render ra 3 tab, khi chuyển tabs thì truyền query vào useProducts để call api tương ứng. khi 1 tab active thì cho nó có border xanh và bỏ border bottom,làm mờ text đi và hiện ảnh lên sử dụng opacity để nó chuyển mượt không bị nhấp nháy, tabs mặc định thì có màu xám và border-bottom.
-    2. đối với phần slide thì hiện ảnh slide tương ứng và responsive cho nó
-    3. đối với productItem thì hiện thông tin tương ứng, phần badge sử dụng ảnh và thêm position absolute để xác định vị trí theo phần tử cha
-61. làm product mobile section
-62. làm product laptop section
-63. hoàn thiện trang home
-64. xong trang products list theo category
-65. làm trang chi tiết sản phẩm
-66. là giao diện trang đăng nhập, đăng kí
-67. làm tính năng register bên client
-    1. tạo helper sendmail, tạo route register, khi người dùng gửi đúng email sẽ gửi otp về email đó
-    2. tạo api verify-token, khi người dùng xác nhận đúng OTP thì gắn registerToken vào trong http only cookie
-    3. tạo api setPassword, kiểm tra xem người dùng có registerToken không, nếu có mới cho set mật khẩu
-    4. tạo service,hook cho api register và trang register
-    5. tạo service,hook cho api verify-token và trang verify
-    6. tạo service,hook cho api setPassword và trang setPassword
-68. làm tính năng đăng nhập client
-    1. tạo api login cho client
-    2. tạo api refresh token cho client
-    3. tạo api get me cho client
-    4. sửa lại kiểu kiểu trả về khi login của client khác admin 
-    5. fronted:
-    6. viết authmiddleware cho client
-    7. sửa lại instance private trước đây dùng thành admin chứ không phải client và tạo instance cho privateClient
-    8. sửa lại auth type cho kiểu tr ả về khi login tương ứng với backend
-    9. thêm validate login
-    10. tạo client service login, tạo hook client login
-    11. xử lí sự kiện khi người dùng bấm nút đăng nhập bên trang login
-    12. sửa lại auth slice lưu kiểu user là client hoặc admin
-    13. sửa lại header client, hiển thị dropdown và nút đăng nhập, fullName tương ứng
-    14. tạo bootstrapClient và bootstrapAdmin riêng vì client sau này trả về cả cart riêng
-69. làm trang cart
-70. viết các api cart và lưu cart vào state, hiển thị cart trong state ra giao diện
-    1. sửa lại login service, khi user login sẽ tạo cart cho họ nếu chưa có
-    2. tạo api getCart
-    3. tạo api addItem
-    4. tạo api edit quantity
-    5. tạo api deleteItem
-    6. tạo getCart service, addItem service
-    7. tạo hook addItem
-    8. tạo cart.slice để lưu state cart
-    9. viết bootstrap cart để call lại state khi load trang, sử dụng trong main.tsx
-    10. sử dụng bootstrapcart để call state cart khi login trong hook useLogin
-    11. lấy ra cart trong state và hiển thị ra giao diện trang cart, header
-71. lam tinh nang add to cart
-72. xong tính năng change item quantity, remove item from cart, remove bulk item
-73. làm trang checkout
-74. làm api shipping lấy tỉnh, quận, xã của ghn và tính fee
-75. viết api create order và tạo đơn hàng bên giao hàng nhanh
-    1. tạo model order
-    2. luồng xử lí: người dùng gửi thông tin đơn hàng lên, lấy ra thông tin sản phẩm, tính giá phía backend, tạo đơn hàng với thông tin cơ bản. tạo đơn hàng giao hàng nhanh, cập nhật thông tin đơn hàng với thông tin giao hàng nhanh. thay đổi stock, sold, xóa sản phẩm trong cart.
-76. làm tính năng thanh toán vnpay, tối ưu code
-    1. tạo helper tạo url thanh toán vnpay: nhận vào orderID, amount => tạo params, sort params theo yêu cầu vnpay, kí dữ liệu và tạo url và trả về url
-    2. tạo helper pricing : nhận vào các itemProduct và phí ship, trả về thông tin pricing
-    3. tạo helper tạo đơn hàng giao hàng nhanh, nhận vào thông tin đơn hàng, gọi đến api tạo đơn hàng giao hàng nhanh và trả về shippingDetails
-    4. tạo payment service, nhận vào paymentMethod, orderID, amount và gọi đến helper thanh toán tương ứng, trả về url thanh toán
-    5. luồng xử lí order service: nhận vào thông tin đơn hàng, lấy ra thông tin sản phẩm, tính pricing, nếu thanh toán COD thì gọi đến helper tạo đơn hàng giao hàng nhanh luôn, nếu phương thức thanh toán là vnpay thì tạo url thanh toán vnpay và trả về type là redirect để frontend redirect, còn không thì trả về type là navigate để frontend navigate.
-86. call api hiển thị select chọn địa chỉ ra trang checkout, và làm tính năng tạo đơn hàng
-    1. tạo service lấy tỉnh, huyện, xã, tính phí ship, đổ thông tin ra giao diện.
-    2. tính subtotal, discountAmount, shippingFee, và hiển thị ra giao diện.
-    3. tạo service và hooks tạo đơn hàng và bắt sự kiện tạo đơn hàng.
-87. hoàn thiện tính năng thanh toán online
-    1. sửa lại axios frontend call api tới local
-    2. tạo route return_payment_url để vnpay trả dữ liệu về khi thanh toán xong
-    3. service sẽ lấy ra vnp_params mà vnpay trả về, sử dụng secretkey để kí params đó và so sánh xem có giống với params mà vnpay trả về không. nếu sai chữ kí thì cập nhật trạng thái thanh toán là failed và redirect người dùng về trang chi tiết đơn hàng, nếu đúng chữ kí thì tạo đơn hàng giao hàng nhanh, cập nhật lại trạng thái thanh toán là PAID và lưu lại đơn hàng.
-    4. sửa lại authController, nếu môi trường là dev thì để samesite là lax
-88. làm tính năng chi tiết đơn hàng
-89. làm giao diện dashboard
-90. hoàn thiện giao diện dashboard
-92. Tối ưu component checkoutpage và hiển thị modal mã giảm giá ra cho người dùng chọn
-93. xong tính năng áp mã giảm giá bên client
-94. làm float button hiển thị boxchat
-95. làm tính năng client gửi chat realtime
-    1. khi client login nếu chưa có roomchat thì tạo mới roomchat cho họ
-    2. tạo api get my room chat
-    3. tạo authMiddleware của socket để lấy ra token người dùng gửi lên khi connect và decode, gắn nó vào auth của socket
-    3. cấu hình socket trong socket.ts, sử dụng authMiddleware, bắt sự kiện connection, khi connect thì lắng nghe sự kiện join_room client gửi lên lấy ra room đó và join vào 
-    4. lắng nghe sự kiện send_message client gửi lên và lưu message vào db, sau khi lưu xong thì dùng io để emit message về roomchat
-    5. tạo service, hooks call api lấy ra roomchat tương ứng
-    6. cấu hình socket.ts cho frontend, cấu hình urlbackend, hàm connectSocket khi connect thì gửi lên accessToken, hàm disconnectSocket.
-    7. chatBox lấy ra roomID, bắt sự kiện connect thì phát emit join_room, trả về hàm clean khi đóng boxchat thì xóa các sự kiện đang lắng nghe và disconnect socket đi. phải hủy đi vì khi disconnect các sự kiện k tự mất đi, khi connect lại thì sẽ bị chồng sự kiện lên nhau.
-    8. khi người dùng gửi tin nhắn thì emit lên message của người dùng và lắng nghe server trả về tin nhắn và push vào mảng tin nhắn
-96. làm trang chat bên admin
-97. lấy ra danh sách phòng chat với các user và hiển thị tin nhắn tương ứng
-    1. tạo api getRooms và getMessage
-    2. tạo service và hooks call api tương ứng
-    3. hiển thị ra giao diện
-98. xong tính năng chat cơ bản
-99. làm tính năng realtime thông báo khi có tin nhắn mới đến
-100. làm tính năng gửi ảnh bên admin
-101. bổ sung tính năng gửi ảnh bên client
-102. hiển thị dữ liệu stats và order pipeline trong dashboard
-103. hiển thị dữ liệu sale overview
-104. hiển thị danh mục sản phẩm trên header và làm tính năng search trên header
-105. làm trang search và tối ưu component products list
-106. làm trang my account
-107. làm trang my orders
+# Cellphones – Hướng dẫn chạy dự án
+
+Dự án gồm 2 phần: **backend** (Node.js + Express + MongoDB) và **frontend** (React + Vite).
+
+## Yêu cầu
+
+- [Node.js](https://nodejs.org/) (khuyến nghị bản LTS 20 trở lên)
+- [Git](https://git-scm.com/)
+- Tài khoản MongoDB Atlas, Cloudinary, GHN, VNPay sandbox, Gmail (xem Bước 3)
+
+## Bước 1: Clone dự án về máy
+
+```bash
+git clone <link-repo-cua-ban>
+cd Cellphones
+```
+
+## Bước 2: Cài thư viện (backend và frontend)
+
+Mở 2 terminal, mỗi terminal chạy một phần:
+
+```bash
+# Terminal 1 - backend
+cd backend
+npm install
+```
+
+```bash
+# Terminal 2 - frontend
+cd frontend
+npm install
+```
+
+## Bước 3: Tạo file `.env`
+
+### Backend: tạo file `backend/.env`
+
+```env
+NODE_ENV=dev
+PORT=3000
+
+# MongoDB Atlas
+MONGO_URL=
+
+# Cloudinary (upload ảnh)
+CLOUD_NAME=
+CLOUD_KEY=
+CLOUD_SECRET=
+
+# JWT
+JWT_ACCESS_SECRET=
+JWT_REFRESH_SECRET=
+ACCESS_TOKEN_EXPIRES=15m
+REFRESH_TOKEN_EXPIRES=30d
+REGISTER_SECRET=
+REGISTER_TOKEN_EXPIRES=30m
+
+# Gmail gửi OTP (dùng App Password, không phải mật khẩu đăng nhập)
+EMAIL_USER=
+EMAIL_APP_PASS=
+
+# Giao Hàng Nhanh (GHN)
+GHN_TOKEN=
+GHN_SHOP_ID=
+GHN_BASE_URL=https://dev-online-gateway.ghn.vn/shiip/public-api
+
+# VNPay sandbox
+VNP_TMN_CODE=
+VNP_HASH_SECRET=
+VNP_URL=https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
+VNP_RETURN_URL=http://localhost:3000/api/payment/return_payment_url
+```
+
+Điền các giá trị còn trống:
+
+| Key | Lấy ở đâu |
+| --- | --- |
+| `MONGO_URL` | MongoDB Atlas → Connect → Drivers (nhớ thêm tên database `Cellphones` vào chuỗi kết nối) |
+| `CLOUD_NAME`, `CLOUD_KEY`, `CLOUD_SECRET` | Cloudinary → Dashboard |
+| `JWT_*`, `REGISTER_SECRET` | Tự đặt chuỗi bí mật bất kỳ (dài, khó đoán) |
+| `EMAIL_USER`, `EMAIL_APP_PASS` | Gmail → Bảo mật → Bật xác minh 2 bước → Mật khẩu ứng dụng |
+| `GHN_TOKEN`, `GHN_SHOP_ID` | Tài khoản GHN dev |
+| `VNP_TMN_CODE`, `VNP_HASH_SECRET` | Email VNPay sandbox gửi khi đăng ký |
+
+### Frontend: tạo file `frontend/.env`
+
+```env
+VITE_BACKEND_LOCAL=http://localhost:3000
+VITE_BACKEND_URL=<link-backend-deploy-neu-co>
+```
+
+> ⚠️ Không commit file `.env` lên Git và không chia sẻ các key này cho người khác.
+
+## Bước 4: Chạy dự án
+
+```bash
+# Terminal 1 - chạy backend (http://localhost:3000)
+cd backend
+npm run dev
+```
+
+```bash
+# Terminal 2 - chạy frontend (http://localhost:5173)
+cd frontend
+npm run dev
+```
+
+Mở trình duyệt vào địa chỉ mà terminal frontend in ra (thường là `http://localhost:5173`).
+
+## Lệnh hữu ích
+
+| Lệnh | Thư mục | Công dụng |
+| --- | --- | --- |
+| `npm run dev` | backend / frontend | Chạy chế độ phát triển |
+| `npm run build` | backend / frontend | Build bản production |
+| `npm test` | backend | Chạy unit test |
+| `npm run test:integration` | backend | Chạy integration test |
+| `npm run lint` | frontend | Kiểm tra code |
