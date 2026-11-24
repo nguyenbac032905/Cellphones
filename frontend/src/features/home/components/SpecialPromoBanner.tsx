@@ -1,7 +1,7 @@
 const promoBanner = {
     href: '/chao-nam-hoc-moi',
     altText: 'Back to School - Đặc quyền ưu đãi học sinh, sinh viên mùa tựu trường',
-    desktopSrc: 'https://cdn2.cellphones.com.vn/insecure/rs:fill:1200:75/q:100/plain/https://media-asset.cellphones.com.vn/dashboard-v1/manage-banner/Special-banner-1-D2---2.gif',
+    desktopSrc: 'https://cdn2.cellphones.com.vn/insecure/rs:fill:1200:75/q:100/plain/https://media-asset.cellphones.com.vn/dashboard-v1/s-edu-2-0-special-desk.gif',
     mobileSrc: 'https://cdn2.cellphones.com.vn/insecure/rs:fill:800:150/q:100/plain/https://media-asset.cellphones.com.vn/dashboard-v1/manage-banner/SpecialBanner_Mobile_dday2.gif',
 }
 const SpecialPromoBanner = () => {

@@ -15,6 +15,13 @@ const productSchema = new mongoose.Schema(
             ref: "ProductCategory",
             default: null
         },
+        // TODO (thêm sau): liên kết sản phẩm với thương hiệu (model Brand).
+        // Product thuộc 1 category (điện thoại/đồng hồ...) VÀ 1 brand (Samsung/Apple...).
+        // brand_id: {
+        //     type: mongoose.Schema.Types.ObjectId,
+        //     ref: "Brand",
+        //     default: null
+        // },
         description: {
             type: String,
             default: ""
@@ -80,6 +87,9 @@ const productSchema = new mongoose.Schema(
 //danh index de ho tro query, filter, sort
 productSchema.index({status: 1});
 productSchema.index({product_category_id: 1});
+// TODO (thêm sau, khi bật brand_id): productSchema.index({brand_id: 1});
+// TODO (thêm sau): index kết hợp để lọc nhanh theo danh mục + hãng:
+// productSchema.index({product_category_id: 1, brand_id: 1});
 productSchema.index({title: 1});
 productSchema.index({position: 1});
 productSchema.index({deleted: 1});

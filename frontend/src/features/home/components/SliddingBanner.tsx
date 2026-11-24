@@ -37,14 +37,14 @@ const BANNER_DATA: BannerItem[] = [
         id: 2,
         title: "OPPO RENO16 F 5G",
         subtitle: "Mở bán tặng quà khủng",
-        imageUrl: "https://cdn2.cellphones.com.vn/insecure/rs:fill:1036:450/q:100/plain/https://media-asset.cellphones.com.vn/dashboard-v1/manage-banner/OppoReno16F_home_open.png",
+        imageUrl: "https://cdn2.cellphones.com.vn/insecure/rs:fill:1036:450/q:100/plain/https://media-asset.cellphones.com.vn/dashboard-v1/manage-banner/ffffff.png",
         link: "/dien-thoai-oppo-reno16-f.html"
     },
     {
         id: 3,
         title: "THU CŨ BALO",
         subtitle: "Nhận ngay voucher 25%",
-        imageUrl: "https://cdn2.cellphones.com.vn/insecure/rs:fill:1036:450/q:100/plain/https://media-asset.cellphones.com.vn/dashboard-v1/manage-banner/chuong-trinh-thu-cu-balo-tui-xach-doi-voucher-giam-25-home.jpg",
+        imageUrl: "https://cdn2.cellphones.com.vn/insecure/rs:fill:1036:450/q:100/plain/https://media-asset.cellphones.com.vn/dashboard-v1/manage-banner/oppo-find-x10-open-home.png",
         link: "/chuong-trinh-thu-cu-balo-tui-xach-doi-voucher-giam-25"
     }
 ];
@@ -84,8 +84,8 @@ const SliddingBanner: React.FC = () => {
                                 key={tab.id}
                                 onClick={() => handleTabClick(index)}
                                 className={`flex-1 flex h-full items-center justify-center cursor-pointer text-center relative transition-all duration-300 ${isActive
-                                        ? "bg-neutral-100 text-neutral-800 font-bold z-10"
-                                        : "bg-white text-neutral-500 hover:bg-neutral-50"
+                                    ? "bg-neutral-100 text-neutral-800 font-bold z-10"
+                                    : "bg-white text-neutral-500 hover:bg-neutral-50"
                                     }`}
                             >
                                 {/* Nội dung chữ */}
@@ -147,10 +147,10 @@ const SliddingBanner: React.FC = () => {
                 </Swiper>
 
                 <button className="custom-swiper-button-prev absolute top-1/2 left-0 z-20 flex aspect-1/2 h-15 -translate-y-1/2 cursor-pointer items-center rounded-r-full bg-black/30 text-white shadow-lg opacity-0 transition-all duration-300 group-hover:opacity-100 hover:bg-black/70">
-                    <ArrowLeftSlide className="ml-1.5 size-6"/>
+                    <ArrowLeftSlide className="ml-1.5 size-6" />
                 </button>
                 <button className="custom-swiper-button-next absolute top-1/2 right-0 z-20 flex aspect-1/2 h-15 -translate-y-1/2 cursor-pointer items-center rounded-l-full bg-black/30 text-white shadow-lg opacity-0 transition-all duration-300 group-hover:opacity-100 hover:bg-black/70">
-                    <ArrowRightSlide  className="ml-1.5 size-6"/>
+                    <ArrowRightSlide className="ml-1.5 size-6" />
                 </button>
             </div>
         </div>

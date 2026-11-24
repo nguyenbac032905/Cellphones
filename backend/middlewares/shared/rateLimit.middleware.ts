@@ -1,8 +1,8 @@
 import rateLimit from "express-rate-limit";
 
 export const globalRateLimitMiddleware = rateLimit({
-    windowMs: 15*60*1000,
-    max:300,
+    windowMs: 15 * 60 * 1000,
+    max: 300,
     // express sẽ trả về các header chuẩn mới cho biết còn bao nhiêu request,..
     standardHeaders: true,
     // tắt các header cũ
@@ -14,8 +14,8 @@ export const globalRateLimitMiddleware = rateLimit({
 });
 //auth
 export const loginRateLimitMiddleware = rateLimit({
-    windowMs: 15*60*1000,
-    max: 15,
+    windowMs: 15 * 60 * 1000,
+    max: 5,
     //chỉ tính request lỗi
     skipSuccessfulRequests: true,
     standardHeaders: true,

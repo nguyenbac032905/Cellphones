@@ -15,6 +15,12 @@ const productCategorySchema = new mongoose.Schema(
             ref: "ProductCategory",
             default: null
         },
+        // LƯU Ý (sửa sau): ProductCategory chỉ nên biểu diễn LOẠI sản phẩm
+        // (Điện thoại, Đồng hồ, Laptop...). Không tạo category theo hãng
+        // (vd "Samsung - Điện thoại", "Samsung - Đồng hồ"); hãng đã có model Brand riêng.
+        // Nếu DB hiện có category kiểu theo hãng thì cần gộp/migrate lại khi bật tính năng brand.
+        // TODO (tuỳ chọn, thêm sau): brand_ids để biết danh mục này có những hãng nào:
+        // brand_ids: [{ type: mongoose.Schema.Types.ObjectId, ref: "Brand" }],
         description: {
             type: String,
             default: ""
